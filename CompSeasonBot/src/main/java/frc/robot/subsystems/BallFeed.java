@@ -16,7 +16,7 @@ public class BallFeed extends SubsystemBase {
   /**
    * Creates a new BallFeed.
    */
-  private WPI_TalonSRX ballFeedMotor; // this is the big white lower one
+  private WPI_TalonSRX ballFeedMotor; // this is the big blue lower one with the logo
   private WPI_TalonSRX shooterFeedMotor; // this is the small blue one
 
 
@@ -39,6 +39,10 @@ shooterFeedMotor = new WPI_TalonSRX(13);
   }
   public void stopShooterFeedMotor(){
     shooterFeedMotor.set(0.0);
+  }
+
+  public double getBallFedVelocity() {
+    return ballFeedMotor.get();
   }
   @Override
   public void periodic() {

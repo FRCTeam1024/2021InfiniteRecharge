@@ -195,6 +195,8 @@ if(xboxController.getRightStickY() > 0.2 || xboxController.getRightStickY() < 0.
 
     
     SmartDashboard.putData("Score Power Cell", new ShootPowerCell(intake, ballFeed, drivetrain, shooter));
+    SmartDashboard.putNumber("Shooter Speed", shooter.getShooterSpeed());
+    SmartDashboard.putNumber("Ballfeed Speed", ballFeed.getBallFedVelocity());
     //runShooterAndBallFeed.whenActive(new RunShooterFeed(ballFeed, 0.25), new RunBallFeed(ballFeed, 0.25));
     SmartDashboard.putData(drivetrain);
     SmartDashboard.putData("Run Intake", new RunIntake(intake, 0.35));

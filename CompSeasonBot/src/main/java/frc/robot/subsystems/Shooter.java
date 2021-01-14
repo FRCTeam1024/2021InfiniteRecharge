@@ -86,6 +86,11 @@ public class Shooter extends SubsystemBase {
     shooterOne.set(0.0);
     shooterTwo.set(0.0);
   }
+
+  public double getShooterSpeed() {
+    return ((shooterEncoderOne.getVelocity() + shooterEncoderTwo.getVelocity()) / 2);
+  }
+
   public void runShooterMotorsUntil(double motorOneSpeed, double motorTwoSpeed, double encoderSetpoint){
     if(shooterEncoderOne.getPosition() < encoderSetpoint && shooterEncoderTwo.getPosition() < encoderSetpoint){
       shooterOne.set(motorOneSpeed);
