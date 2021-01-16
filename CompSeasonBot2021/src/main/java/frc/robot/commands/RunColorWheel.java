@@ -15,14 +15,15 @@ public class RunColorWheel extends CommandBase {
   /**
    * Creates a new RunColorWheel.
    */
-  ColorWheel colorWheel;
-  double motorSpeed;
+  /*ColorWheel colorWheel;
+  double motorSpeed;*/
   public RunColorWheel(ColorWheel colorWheel, double motorSpeed) {
-    this.colorWheel = colorWheel;
-    this.motorSpeed = motorSpeed;
+    /*this.colorWheel = colorWheel;
+    this.motorSpeed = motorSpeed;*/
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
+  /*
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
@@ -44,5 +45,5 @@ public class RunColorWheel extends CommandBase {
   @Override
   public boolean isFinished() {
     return false;
-  }
+  } */
 }

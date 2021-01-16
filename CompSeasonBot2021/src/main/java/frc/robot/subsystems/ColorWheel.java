@@ -15,16 +15,16 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ColorWheel extends SubsystemBase {
-  /**
+  /** 
    * Creates a new ColorWheel.
-   */
-  private WPI_TalonSRX colorWheelMotor;
+   */ 
+  // private WPI_TalonSRX colorWheelMotor;
 
   public ColorWheel() {
-    colorWheelMotor = new WPI_TalonSRX(10);
+    // colorWheelMotor = new WPI_TalonSRX(10);
 
   }
-
+/*
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -37,4 +37,5 @@ public class ColorWheel extends SubsystemBase {
   public void stopColorWheel(){
     colorWheelMotor.set(ControlMode.PercentOutput, 0.0);
   }
+*/
 }
