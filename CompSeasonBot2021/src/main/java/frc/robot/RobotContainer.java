@@ -56,7 +56,7 @@ public class RobotContainer {
   private final Intake intake = new Intake();
   private final Shooter shooter = new Shooter();
   private final Climber climber  = new Climber();
-  private final ColorWheel colorWheel = new ColorWheel();
+  // private final ColorWheel colorWheel = new ColorWheel();
   private final BallFeed ballFeed  = new BallFeed();
   private final Limelight limelight = new Limelight();
 
@@ -186,8 +186,8 @@ if(xboxController.getRightStickY() > 0.2 || xboxController.getRightStickY() < 0.
     xboxDPadUp.toggleWhenActive(new ExtendIntake(intake));
     xboxDPadDown.toggleWhenActive(new RetractIntake(intake));
   
-    xboxDPadLeft.whileActiveContinuous(new RunColorWheel(colorWheel, 0.5));
-    xboxDPadRight.whileActiveContinuous(new RunColorWheel(colorWheel, -0.5));
+    // xboxDPadLeft.whileActiveContinuous(new RunColorWheel(colorWheel, 0.5));
+    // xboxDPadRight.whileActiveContinuous(new RunColorWheel(colorWheel, -0.5));
     xboxRightBumper.toggleWhenPressed(new RunShooter(shooter, 1.0));
     xboxRightTrigger.whileHeld(new RunShooterFeed(ballFeed, -1.0));
 
