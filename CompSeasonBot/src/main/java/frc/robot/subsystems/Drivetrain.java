@@ -19,25 +19,27 @@ import edu.wpi.first.wpilibj.Solenoid;
 public class Drivetrain extends SubsystemBase {
   // Was 0
   public Solenoid shifter = new Solenoid(1);
-  private WPI_TalonSRX frontRight;
-  private WPI_TalonSRX middleRight;
-  private WPI_TalonSRX rearRight;
-  public WPI_TalonSRX frontLeft; // This is being used as the encoder
-  private WPI_TalonSRX middleLeft;
-  private WPI_TalonSRX rearLeft;
+
+
+  public WPI_TalonSRX frontRight;
+  public  WPI_TalonSRX middleRight;
+  public  WPI_TalonSRX rearRight;
+  public  WPI_TalonSRX frontLeft; // This is being used as the encoder
+  public  WPI_TalonSRX middleLeft;
+  public  WPI_TalonSRX rearLeft; 
   public AHRS ahrs;
-    
+ 
   /**
    * Creates a new Drivetrain.
    */
   public Drivetrain() {
+    
     frontRight = new WPI_TalonSRX(20);
     middleRight = new WPI_TalonSRX(11);
     rearRight = new WPI_TalonSRX(4);
     frontLeft = new WPI_TalonSRX(6);
     middleLeft = new WPI_TalonSRX(5);
     rearLeft = new WPI_TalonSRX(8);
-
     ahrs = new AHRS(SerialPort.Port.kMXP); // ONLY when connected directly to RIO
   }
 
@@ -98,7 +100,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void resetGyro() {
-    ahrs.reset();
+    //ahrs.reset();
   }
   
   public void shiftHigh(){

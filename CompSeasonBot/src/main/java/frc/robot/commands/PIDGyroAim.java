@@ -32,7 +32,7 @@ public class PIDGyroAim extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    drivetrain.ahrs.reset();
+   // drivetrain.ahrs.reset();
   }
 
   // Called every time the scheduler runs while the command is scheduled.

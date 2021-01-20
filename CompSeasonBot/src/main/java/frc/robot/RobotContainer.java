@@ -187,7 +187,7 @@ if(xboxController.getRightStickY() > 0.2 || xboxController.getRightStickY() < 0.
   
     xboxDPadLeft.whileActiveContinuous(new RunColorWheel(colorWheel, 0.5));
     xboxDPadRight.whileActiveContinuous(new RunColorWheel(colorWheel, -0.5));
-    xboxRightBumper.toggleWhenPressed(new RunShooter(shooter, 1.0));
+    xboxRightBumper.toggleWhenPressed(new RunShooter(shooter, 0.5));
     xboxRightTrigger.whileHeld(new RunShooterFeed(ballFeed, -1.0));
 
     xboxStartButton.whileHeld(new RunBallFeed(ballFeed, 0.75));
@@ -223,7 +223,7 @@ if(xboxController.getRightStickY() > 0.2 || xboxController.getRightStickY() < 0.
     SmartDashboard.putData("Fail Safe Auto", new FailSafeAutoWithVelocity(shooter, ballFeed, 1.0, 1.0, 1.0));
     SmartDashboard.putData("PID Gyro Aim", new PIDGyroAim(drivetrain, 65));
     SmartDashboard.putData("Reset Gyro Senser", new ResetGyro(drivetrain));
-    SmartDashboard.putNumber("Gyro Angle", drivetrain.ahrs.getAngle());
+   // SmartDashboard.putNumber("Gyro Angle", drivetrain.ahrs.getAngle());
     Shuffleboard.getTab("Shooter").add("Run Shooter PID", new RunShooterPID(shooter));
   }
 
