@@ -58,6 +58,7 @@ public class RobotContainer {
   private final Climber climber  = new Climber();
   // private final ColorWheel colorWheel = new ColorWheel();
   private final BallFeed ballFeed  = new BallFeed();
+  private final Limelight limelight = new Limelight();
 
 
   public Joystick leftJoystick = new Joystick(1);
@@ -65,7 +66,7 @@ public class RobotContainer {
   public Logitech xboxController = new Logitech(0);
 
   
- // public JoystickButton runShooterAndBallFeed = new JoystickButton(leftJoystick, 6);
+  // public JoystickButton runShooterAndBallFeed = new JoystickButton(leftJoystick, 6);
 
   
   // below this done with Marc
@@ -90,19 +91,19 @@ public class RobotContainer {
   public Trigger xboxDPadDown = new Trigger( () -> xboxController.getDPadState().equals(Logitech.DPadState.DOWN));
 
   //JUST FOR MARC
- // public JoystickButton runIntakeAndBallFeedJoystick = new JoystickButton(leftJoystick, 1);
- public JoystickButton shiftHighJoystick = new JoystickButton(leftJoystick, 3);
- public JoystickButton shiftLowJoystick = new JoystickButton(rightJoystick, 4);
- 
- public JoystickButton leftTrigger = new JoystickButton(leftJoystick, 1);
- public JoystickButton rightTrigger = new JoystickButton(rightJoystick, 1);
+  // public JoystickButton runIntakeAndBallFeedJoystick = new JoystickButton(leftJoystick, 1);
+  public JoystickButton shiftHighJoystick = new JoystickButton(leftJoystick, 3);
+  public JoystickButton shiftLowJoystick = new JoystickButton(rightJoystick, 4);
+
+  public JoystickButton leftTrigger = new JoystickButton(leftJoystick, 1);
+  public JoystickButton rightTrigger = new JoystickButton(rightJoystick, 1);
 
  
 
   public JoystickButton switchCamModeDefault = new JoystickButton(leftJoystick, 2);
   public JoystickButton switchCamModeCamera = new JoystickButton(rightJoystick, 2);
- // public JoystickButton runShooterJoystick = new JoystickButton(rightJoystick, 3);
- // public JoystickButton runBothFeedersJoystick = new JoystickButton(rightJoystick, 1);
+  // public JoystickButton runShooterJoystick = new JoystickButton(rightJoystick, 3);
+  // public JoystickButton runBothFeedersJoystick = new JoystickButton(rightJoystick, 1);
   public JoystickButton xBoxBackButton = new JoystickButton(xboxController, CONSTANTS_OI.XBOX_BACK_BUTTON);
   public JoystickButton xboxStartButton = new JoystickButton(xboxController, CONSTANTS_OI.XBOX_START_BUTTON);
 
@@ -110,7 +111,6 @@ public class RobotContainer {
   // private final Command m_autoCommand = new LimelightCenter(drivetrain);
   // private final Command m_autoCommand = new FailSafeAutoBackward(drivetrain, shooter, ballFeed, 1.0, 1.0, -1.0);
   private final Command m_autoCommand = new AutoSequentialShooter(shooter, ballFeed);
-// 
 
   private final DriveWithJoysticks driveWithJoysticks = new DriveWithJoysticks(drivetrain, leftJoystick, rightJoystick);
   private final DriveClimberDefault driveClimberDefault = new DriveClimberDefault(climber, xboxController);
@@ -157,14 +157,14 @@ public class RobotContainer {
     rightTrigger.whenPressed(new LimelightShooter(drivetrain, shooter, ballFeed));
 
     //DEAD BAND FOR LOGITECH JOYSTICK CONTROLLERS
-if(xboxController.getLeftStickY() > 0.2 || xboxController.getLeftStickY() < 0.2){
-  xboxLeftClimberStick.whenActive(new RunClimberLeft(climber, xboxController.getRawAxis(CONSTANTS_OI.XBOX_LEFT_STICK_Y_AXIS)));
-}
-if(xboxController.getRightStickY() > 0.2 || xboxController.getRightStickY() < 0.2){
-  xboxLeftClimberStick.whenActive(new RunClimberRight(climber, xboxController.getRawAxis(CONSTANTS_OI.XBOX_LEFT_STICK_Y_AXIS)));
-}
+    if(xboxController.getLeftStickY() > 0.2 || xboxController.getLeftStickY() < 0.2){
+      xboxLeftClimberStick.whenActive(new RunClimberLeft(climber, xboxController.getRawAxis(CONSTANTS_OI.XBOX_LEFT_STICK_Y_AXIS)));
+    }
+    if(xboxController.getRightStickY() > 0.2 || xboxController.getRightStickY() < 0.2){
+      xboxLeftClimberStick.whenActive(new RunClimberRight(climber, xboxController.getRawAxis(CONSTANTS_OI.XBOX_LEFT_STICK_Y_AXIS)));
+    }
     //xboxLeftClimberStick.whenActive(new RunClimberLeft(climber, xboxController.getRawAxis(CONSTANTS_OI.XBOX_LEFT_STICK_Y_AXIS)));
-  //  xboxRightClimberStick.whenActive(new RunClimberRight(climber, xboxController.getRawAxis(CONSTANTS_OI.XBOX_RIGHT_STICK_Y_AXIS)));
+    //  xboxRightClimberStick.whenActive(new RunClimberRight(climber, xboxController.getRawAxis(CONSTANTS_OI.XBOX_RIGHT_STICK_Y_AXIS)));
 
     //xboxLeftTrigger.whileHeld(new RunIntake(intake, .61));
     // when intake is done and we want to run it with ball feeder, replace above line with this
@@ -174,9 +174,9 @@ if(xboxController.getRightStickY() > 0.2 || xboxController.getRightStickY() < 0.
     //xboxLeftBumper.whileHeld(new RunIntake(intake, -.61));
     xboxLeftBumper.whileHeld(new RunIntakeAndBallFeedAndShooterFeed(intake, ballFeed, -0.35, -0.75, 1.0));
 
-   // runIntakeAndBallFeedJoystick.whileHeld(new RunIntakeAndBallFeed(intake, ballFeed, 0.35, 0.75));
-  //  runShooterJoystick.toggleWhenActive(new RunShooter(shooter, 1.0));
-  //  runBothFeedersJoystick.whileHeld(new RunBothFeeders(ballFeed));
+    // runIntakeAndBallFeedJoystick.whileHeld(new RunIntakeAndBallFeed(intake, ballFeed, 0.35, 0.75));
+    // runShooterJoystick.toggleWhenActive(new RunShooter(shooter, 1.0));
+    // runBothFeedersJoystick.whileHeld(new RunBothFeeders(ballFeed));
     // Left and right joysticks. Button below circle pad
     // Left - Default limelight
     // Right - Camera View

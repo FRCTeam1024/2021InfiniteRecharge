@@ -12,6 +12,7 @@ public class Limelight extends SubsystemBase {
   private NetworkTableEntry xOffset;
   private NetworkTableEntry yOffset;
   private NetworkTableEntry targetArea;
+  private NetworkTableEntry ledMode;
 
   /** Creates a new Limelight. */
   public Limelight() {
@@ -20,6 +21,7 @@ public class Limelight extends SubsystemBase {
     this.xOffset = limelight.getEntry("tx");
     this.yOffset = limelight.getEntry("ty");
     this.targetArea = limelight.getEntry("ta");
+    this.ledMode = limelight.getEntry("ledMode");
   }
 
   @Override
@@ -27,8 +29,8 @@ public class Limelight extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  public NetworkTableEntry getXOffSet() {
-    return this.xOffset;
+  public double getXOffSet() {
+    return this.xOffset.getDouble(0.0);
   }
 
   public NetworkTableEntry getYOffSet() {
@@ -37,5 +39,19 @@ public class Limelight extends SubsystemBase {
 
   public NetworkTableEntry getTargetArea() {
     return this.targetArea;
+  }
+
+  /**
+   * Toggles the LED of the limelight.
+   * @param state - 0 for off and 1 for on
+   */
+  public void toggleLimelightLED(int state) {
+    if (state == 0) {
+      this.ledMode.setNumber(1);
+    } else if (state == 1) {
+      this.ledMode.setNumber(3);
+    } else {
+      return;
+    }
   }
 }
