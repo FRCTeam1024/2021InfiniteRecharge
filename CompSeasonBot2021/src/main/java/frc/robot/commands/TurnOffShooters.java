@@ -4,47 +4,35 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.*;
 
-public class AdjustShooterSpeed extends CommandBase {
+public class TurnOffShooters extends CommandBase {
   Shooter shooter;
-  double shooterSpeed;
-  /** Creates a new AdjustShooterSpeed. */
-  public AdjustShooterSpeed(Shooter shooter) {
-    addRequirements(shooter);
+  /** Creates a new TurnOffShooters. */
+  public TurnOffShooters(Shooter shooter) {
     this.shooter = shooter;
-    // SmartDashboard.putNumber("Direct Shooter Speed", this.shooterSpeed);
+    addRequirements(shooter);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    this.shooterSpeed = SmartDashboard.getNumber("Desired Shooter Speed", 1.0);
-    if(this.shooterSpeed > 1.0) {
-      this.shooterSpeed = 1.0;
-    }
-    SmartDashboard.putNumber("Direct Shooter Speed", this.shooterSpeed);
-    shooter.runShooterMotors(shooterSpeed, shooterSpeed);
+    shooter.runShooterMotors(0, 0);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    shooter.runShooterMotors(0.0, 0.0);
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }
