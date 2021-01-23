@@ -33,7 +33,6 @@ public class Drivetrain extends SubsystemBase {
    * Creates a new Drivetrain.
    */
   public Drivetrain() {
-    
     frontRight = new WPI_TalonSRX(20);
     middleRight = new WPI_TalonSRX(11);
     rearRight = new WPI_TalonSRX(4);

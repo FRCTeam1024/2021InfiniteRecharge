@@ -26,7 +26,6 @@ import frc.robot.commands.auto.FailSafeAutoWithVelocity;
 import frc.robot.commands.auto.LimelightCenter;
 import frc.robot.commands.auto.LimelightShooter;
 import frc.robot.commands.auto.SequentialShooter;
-import frc.robot.commands.SwitchCamMode;
 import frc.robot.oi.CONSTANTS_OI;
 import frc.robot.oi.Logitech;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -196,8 +195,10 @@ public class RobotContainer {
     
     SmartDashboard.putData("Score Power Cell", new ShootPowerCell(intake, ballFeed, drivetrain, shooter));
     SmartDashboard.putNumber("Shooter Speed", shooter.getShooterSpeed());
+    SmartDashboard.putNumber("Desired Shooter Speed", 1.0);
     SmartDashboard.putNumber("Ballfeed Speed", ballFeed.getBallFedVelocity());
     //runShooterAndBallFeed.whenActive(new RunShooterFeed(ballFeed, 0.25), new RunBallFeed(ballFeed, 0.25));
+    SmartDashboard.putData("Set Shooters to Desired Speed", new AdjustShooterSpeed(shooter, SmartDashboard.getNumber("Desired Shooter Speed", 1.0)));
     SmartDashboard.putData(drivetrain);
     SmartDashboard.putData("Run Intake", new RunIntake(intake, 0.35));
 

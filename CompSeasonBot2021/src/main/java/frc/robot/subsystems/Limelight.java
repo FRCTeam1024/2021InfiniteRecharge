@@ -16,7 +16,6 @@ public class Limelight extends SubsystemBase {
 
   /** Creates a new Limelight. */
   public Limelight() {
-
     this.limelight = NetworkTableInstance.getDefault().getTable("limelight");
     this.xOffset = limelight.getEntry("tx");
     this.yOffset = limelight.getEntry("ty");
