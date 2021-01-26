@@ -1,1 +1,2 @@
-THE MAIN ROBOT FOLDER FOR THIS SEASON IS "COMPSEASONBOT2021" NOT "COMPSEASONBOT"
+# 2021 Infinite Recharge at Home
+The main source can be found at `CompSeasonBot2021`.
