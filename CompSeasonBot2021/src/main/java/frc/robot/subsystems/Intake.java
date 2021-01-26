@@ -29,7 +29,7 @@ public class Intake extends SubsystemBase {
 
   // Was 1
   //testing it on port 2
-   private final Solenoid intakeSolenoid = new Solenoid(0);
+  private final Solenoid intakeSolenoid = new Solenoid(0);
 
   public Intake() {
     intakeMotor = new CANSparkMax(24, MotorType.kBrushless);
