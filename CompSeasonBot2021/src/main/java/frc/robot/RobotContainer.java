@@ -58,6 +58,7 @@ public class RobotContainer {
   // private final ColorWheel colorWheel = new ColorWheel();
   private final BallFeed ballFeed  = new BallFeed();
   private final Limelight limelight = new Limelight();
+  private final Pixy2 pixy = new Pixy2();
 
 
   public Joystick leftJoystick = new Joystick(1);

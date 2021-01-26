@@ -88,7 +88,8 @@ public class Shooter extends SubsystemBase {
   }
 
   public double getShooterSpeed() {
-    return ((shooterEncoderOne.getVelocity() + shooterEncoderTwo.getVelocity()) / 2);
+    return 0.0;
+    //return ((shooterEncoderOne.getVelocity() + shooterEncoderTwo.getVelocity()) / 2);
   }
 
   public void runShooterMotorsUntil(double motorOneSpeed, double motorTwoSpeed, double encoderSetpoint){
