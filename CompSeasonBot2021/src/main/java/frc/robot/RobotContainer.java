@@ -201,6 +201,10 @@ public class RobotContainer {
     SmartDashboard.putNumber("Desired Shooter Speed", 1.0);
     SmartDashboard.putData("Set Shooters to Desired Speed", new AdjustShooterSpeed(shooter));
     // SmartDashboard.putNumber("Shooter Speed", shooter.getShooterSpeed());
+
+    // Shooter Hood
+    SmartDashboard.putData("Extend hood", new ExtendHood(shooter));
+    SmartDashboard.putData("Retract hood", new RetractHood(shooter));
    
     SmartDashboard.putData(drivetrain);
     SmartDashboard.putData("Run Intake", new RunIntake(intake, 0.35));

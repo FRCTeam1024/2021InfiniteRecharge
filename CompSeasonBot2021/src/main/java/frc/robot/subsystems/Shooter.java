@@ -12,6 +12,7 @@ import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -25,6 +26,8 @@ public class Shooter extends SubsystemBase {
   private CANEncoder shooterEncoderTwo;
 
   private CANPIDController pidController;
+
+  private final Solenoid hoodSolenoid = new Solenoid(4);
   
   /**
    * Creates a new Shooter.
@@ -88,7 +91,8 @@ public class Shooter extends SubsystemBase {
   }
 
   public double getShooterSpeed() {
-    return ((shooterEncoderOne.getVelocity() + shooterEncoderTwo.getVelocity()) / 2);
+    return 0.0;
+    // return ((shooterEncoderOne.getVelocity() + shooterEncoderTwo.getVelocity()) / 2);
   }
 
   public void runShooterMotorsUntil(double motorOneSpeed, double motorTwoSpeed, double encoderSetpoint){
@@ -98,6 +102,13 @@ public class Shooter extends SubsystemBase {
     } else if(shooterEncoderOne.getPosition() >= encoderSetpoint && shooterEncoderTwo.getPosition() >= encoderSetpoint){
       stopShooterMotors();
     }
+  }
+
+  public void extendHood(){
+    hoodSolenoid.set(true);
+  }
+  public void retractHood(){
+    hoodSolenoid.set(false);
   }
 
   @Override
