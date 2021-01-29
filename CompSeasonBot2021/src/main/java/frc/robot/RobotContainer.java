@@ -135,9 +135,8 @@ public class RobotContainer {
     
     // autoCenter.whileHeld(m_autoCommand);
     
-     NetworkTable limelight = NetworkTableInstance.getDefault().getTable("limelight");
-     NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(1);
-     
+    NetworkTable limelight = NetworkTableInstance.getDefault().getTable("limelight");
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(1);
      
     // NetworkTableEntry xOffset = limelight.getEntry("tx");
 
@@ -233,6 +232,14 @@ public class RobotContainer {
     SmartDashboard.putData("PID Gyro Aim", new PIDGyroAim(drivetrain, 65));
     SmartDashboard.putData("Reset Gyro Senser", new ResetGyro(drivetrain));
     SmartDashboard.putNumber("Gyro Angle", drivetrain.ahrs.getAngle());
+
+    // Interstellar Accuracy Challenge Speed Buttons
+    SmartDashboard.putData("Shooter Zone 1", new RunShooter(shooter, 0.40));
+    SmartDashboard.putData("Shooter Zone 2", new RunShooter(shooter, 0.48)); // hood back 0.34, hood forward 0.48
+    SmartDashboard.putData("Shooter Zone 3", new RunShooter(shooter, 0.43)); // hood back 0.43, hood forward ?
+    SmartDashboard.putData("Shooter Zone 4", new RunShooter(shooter, 0.40)); // hood back ?, hood forward ?
+    SmartDashboard.putData("Shooter Zone 5", new RunShooter(shooter, 0.40)); // hood back ?, hood forward ?
+
     Shuffleboard.getTab("Shooter").add("Run Shooter PID", new RunShooterPID(shooter));
   }
 

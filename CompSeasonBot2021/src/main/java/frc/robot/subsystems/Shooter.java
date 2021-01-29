@@ -25,7 +25,7 @@ public class Shooter extends SubsystemBase {
   public CANEncoder shooterEncoderOne;
   private CANEncoder shooterEncoderTwo;
 
-  private CANPIDController pidController;
+  public CANPIDController shooterPID;
 
   private final Solenoid hoodSolenoid = new Solenoid(4);
   
@@ -37,8 +37,7 @@ public class Shooter extends SubsystemBase {
     shooterTwo = new CANSparkMax(47, MotorType.kBrushless);
     shooterOne.restoreFactoryDefaults();
     shooterTwo.restoreFactoryDefaults();
-
-    pidController = shooterOne.getPIDController();
+    shooterPID = shooterOne.getPIDController();
     shooterTwo.follow(shooterOne, true);
     
     shooterEncoderOne = shooterOne.getEncoder();
@@ -60,7 +59,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public CANPIDController getPIDController() {
-    return pidController;
+    return shooterPID;
   }
 
   private void setUpShuffleboard() {
