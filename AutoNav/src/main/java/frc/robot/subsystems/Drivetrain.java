@@ -48,16 +48,16 @@ public class Drivetrain extends SubsystemBase {
     rightLeader.config_kI(Constants.kSlot_DistLow, Constants.lowGearkI, Constants.kTimeoutMs);
     rightLeader.config_kD(Constants.kSlot_DistLow, Constants.lowGearkD, Constants.kTimeoutMs);
 
-    leftLeader.configSelectedFeedbackSensor(	FeedbackDevice.QuadEncoder,				// Local Feedback Source
-													Constants.PID_PRIMARY,					// PID Slot for Source [0, 1]
-                          Constants.kTimeoutMs);	
+    leftLeader.configSelectedFeedbackSensor(	FeedbackDevice.QuadEncoder,	// Local Feedback Source
+						Constants.PID_PRIMARY,		// PID Slot for Source [0, 1]
+                          			Constants.kTimeoutMs);	
                           
-    rightLeader.configRemoteFeedbackFilter(leftLeader.getDeviceID(),					// Device ID of Source
-                          RemoteSensorSource.TalonSRX_SelectedSensor,	// Remote Feedback Source
-                          Constants.REMOTE_0,							// Source number [0, 1]
-                          Constants.kTimeoutMs);	
+    rightLeader.configRemoteFeedbackFilter(	leftLeader.getDeviceID(),			// Device ID of Source
+                          			RemoteSensorSource.TalonSRX_SelectedSensor,	// Remote Feedback Source
+                         		 	Constants.REMOTE_0,				// Source number [0, 1]
+                          			Constants.kTimeoutMs);	
 
-    rightLeader.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0, Constants.kTimeoutMs);				// Feedback Device of Remote Talon
+    rightLeader.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0, Constants.kTimeoutMs);	// Feedback Device of Remote Talon
     rightLeader.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kTimeoutMs);	
           
     rightLeader.configSelectedFeedbackSensor(	FeedbackDevice.SensorSum, 
