@@ -9,29 +9,64 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
+import com.ctre.phoenix.motorcontrol.SensorTerm;
+import com.ctre.phoenix.motorcontrol.StatusFrame;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
+import com.ctre.phoenix.motorcontrol.FollowerType;
+import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.*;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import frc.robot.Constants;
+
 public class Drivetrain extends SubsystemBase {
 
-  public WPI_TalonSRX frontRight;
-  private WPI_TalonSRX middleRight;
-  private WPI_TalonSRX rearRight;
-  public WPI_TalonSRX frontLeft; // This is being used as the encoder
-  private WPI_TalonSRX middleLeft;
-  private WPI_TalonSRX rearLeft;
+  private final WPI_TalonSRX rightLeader;
+  private final WPI_TalonSRX rightFollower1;
+  private final WPI_TalonSRX rightFollower2;
+  private final WPI_TalonSRX leftLeader;
+  private final WPI_TalonSRX leftFollower1;
+  private final WPI_TalonSRX leftFollower2;
     
   /**
    * Creates a new Drivetrain.
    */
   public Drivetrain() {
-    frontRight = new WPI_TalonSRX(20);
-    middleRight = new WPI_TalonSRX(11);
-    rearRight = new WPI_TalonSRX(4);
-    frontLeft = new WPI_TalonSRX(6);
-    middleLeft = new WPI_TalonSRX(5);
-    rearLeft = new WPI_TalonSRX(8);
+    rightLeader = new WPI_TalonSRX(20);
+    rightFollower1 = new WPI_TalonSRX(11);
+    rightFollower2 = new WPI_TalonSRX(4);
+    leftLeader = new WPI_TalonSRX(6);
+    leftFollower1 = new WPI_TalonSRX(5);
+    leftFollower2 = new WPI_TalonSRX(8);
+
+    rightLeader.config_kP(Constants.kSlot_DistLow, Constants.lowGearkP, Constants.kTimeoutMs);
+    rightLeader.config_kI(Constants.kSlot_DistLow, Constants.lowGearkI, Constants.kTimeoutMs);
+    rightLeader.config_kD(Constants.kSlot_DistLow, Constants.lowGearkD, Constants.kTimeoutMs);
+
+    leftLeader.configSelectedFeedbackSensor(	FeedbackDevice.QuadEncoder,				// Local Feedback Source
+													Constants.PID_PRIMARY,					// PID Slot for Source [0, 1]
+                          Constants.kTimeoutMs);	
+                          
+    rightLeader.configRemoteFeedbackFilter(leftLeader.getDeviceID(),					// Device ID of Source
+                          RemoteSensorSource.TalonSRX_SelectedSensor,	// Remote Feedback Source
+                          Constants.REMOTE_0,							// Source number [0, 1]
+                          Constants.kTimeoutMs);	
+
+    rightLeader.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0, Constants.kTimeoutMs);				// Feedback Device of Remote Talon
+    rightLeader.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kTimeoutMs);	
+          
+    rightLeader.configSelectedFeedbackSensor(	FeedbackDevice.SensorSum, 
+													Constants.PID_PRIMARY,
+                          Constants.kTimeoutMs);
+                          
+    rightLeader.configSelectedFeedbackCoefficient(	0.5, 						// Coefficient
+                          Constants.PID_PRIMARY,		// PID Slot of Source 
+                          Constants.kTimeoutMs);	
   }
 
   @Override
@@ -46,12 +81,12 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void drive(double leftPower, double rightPower) {
-    frontLeft.set(ControlMode.PercentOutput, leftPower);
-    middleLeft.set(ControlMode.PercentOutput, leftPower);
-    rearLeft.set(ControlMode.PercentOutput, leftPower);
-    frontRight.set(ControlMode.PercentOutput, -rightPower);
-    middleRight.set(ControlMode.PercentOutput, -rightPower);
-    rearRight.set(ControlMode.PercentOutput, -rightPower);
+    leftLeader.set(ControlMode.PercentOutput, leftPower);
+    leftFollower1.set(ControlMode.PercentOutput, leftPower);
+    leftFollower2.set(ControlMode.PercentOutput, leftPower);
+    rightLeader.set(ControlMode.PercentOutput, -rightPower);
+    rightFollower1.set(ControlMode.PercentOutput, -rightPower);
+    rightFollower2.set(ControlMode.PercentOutput, -rightPower);
   }
 
   public void turnRight(double power) {
@@ -85,16 +120,16 @@ public class Drivetrain extends SubsystemBase {
 		drive(0.0, 0.0);
   }
 
-  public double getRawLeftEncoder() {
-    return frontLeft.getSelectedSensorPosition();
+  public double getRawEncoder() {
+    return rightLeader.getSelectedSensorPosition(Constants.PID_PRIMARY);
     //wheel diameter: 6 in
   }
   
   public void ForwardInInches(int inches){
-    frontLeft.setSelectedSensorPosition(0);
+    leftLeader.setSelectedSensorPosition(0);
     inches = (int) (-1 * inches / (6 * 3.14) * 723); //conversion: x inches / (6*PI inches) * 723 encoder units;
-    double encoderGoal = frontLeft.getSelectedSensorPosition() + inches;
-    while(frontLeft.getSelectedSensorPosition() > inches){
+    double encoderGoal = leftLeader.getSelectedSensorPosition() + inches;
+    while(leftLeader.getSelectedSensorPosition() > inches){
       drive(0.25, 0.25);
     }
     stop();
@@ -102,8 +137,8 @@ public class Drivetrain extends SubsystemBase {
 
   public void ReverseInInches(int inches){
     inches = (int) (inches / (6 * 3.14) * 723); 
-    double encoderGoal = frontLeft.getSelectedSensorPosition() + inches;
-    while(frontLeft.getSelectedSensorPosition() < encoderGoal){
+    double encoderGoal = leftLeader.getSelectedSensorPosition() + inches;
+    while(leftLeader.getSelectedSensorPosition() < encoderGoal){
       drive(-0.5, -0.5);
     }
     stop();
@@ -111,8 +146,8 @@ public class Drivetrain extends SubsystemBase {
 
   public void LeftArcTurn(){
     double inches = 29.0598;
-    inches = (int) (inches / (6 * 3.14) * 723) + frontLeft.getSelectedSensorPosition();
-    while(frontLeft.getSelectedSensorPosition() < inches){
+    inches = (int) (inches / (6 * 3.14) * 723) + leftLeader.getSelectedSensorPosition();
+    while(leftLeader.getSelectedSensorPosition() < inches){
       drive(0.22, 0.5);
     }
     stop();
@@ -120,8 +155,8 @@ public class Drivetrain extends SubsystemBase {
 
   public void RightArcTurn(){
     double inches = 29.0598;
-    inches = (int) (inches / (6 * 3.14) * 723) + frontRight.getSelectedSensorPosition();
-    while(frontRight.getSelectedSensorPosition() < inches){
+    inches = (int) (inches / (6 * 3.14) * 723) + rightLeader.getSelectedSensorPosition();
+    while(rightLeader.getSelectedSensorPosition() < inches){
       drive(0.5, 0.22);
     }
     stop();
@@ -129,8 +164,8 @@ public class Drivetrain extends SubsystemBase {
 
   public void LeftArcReverse(){
     double inches = 29.0598;
-    inches = frontLeft.getSelectedSensorPosition() - ((int) (inches / (6 * 3.14) * 723));
-    while(frontLeft.getSelectedSensorPosition() > inches){
+    inches = leftLeader.getSelectedSensorPosition() - ((int) (inches / (6 * 3.14) * 723));
+    while(leftLeader.getSelectedSensorPosition() > inches){
       drive(0.22, 0.5);
     }
     stop();
@@ -138,8 +173,8 @@ public class Drivetrain extends SubsystemBase {
 
   public void RightArcReverse(){
     double inches = 29.0598;
-    inches = frontRight.getSelectedSensorPosition() - ((int) (inches / (6 * 3.14) * 723));
-    while(frontRight.getSelectedSensorPosition() > inches){
+    inches = rightLeader.getSelectedSensorPosition() - ((int) (inches / (6 * 3.14) * 723));
+    while(rightLeader.getSelectedSensorPosition() > inches){
       drive(0.5, 0.22);
     }
     stop();
@@ -153,13 +188,13 @@ public class Drivetrain extends SubsystemBase {
   }
 
 	// public double getRightEncoderInches() {
-  //   return frontRight.getSelectedSensorPosition();
+  //   return rightLeader.getSelectedSensorPosition();
   //   //wheel diameter: 6 in
   // }
   
 	// public void resetEncoders() {
-  //   frontLeft.setSelectedSensorPosition(0);
-  //   frontRight.setSelectedSensorPosition(0);
+  //   leftLeader.setSelectedSensorPosition(0);
+  //   rightLeader.setSelectedSensorPosition(0);
   // }
 
   public float getHeading() {
@@ -174,8 +209,8 @@ public class Drivetrain extends SubsystemBase {
     
   public void outputToSmartDashboard() {
     // SmartDashboard.putNumber("Left Encoder Distance (IN)", -getLeftEncoderInches());
-    // SmartDashboard.putNumber("Left Encoder Raw", frontLeft.getSelectedSensorPosition());
+    // SmartDashboard.putNumber("Left Encoder Raw", leftLeader.getSelectedSensorPosition());
     // SmartDashboard.putNumber("Right Encoder Distance (IN)", -getRightEncoderInches());
-    // SmartDashboard.putNumber("Right Encoder Raw", -frontRight.getSelectedSensorPosition());
+    // SmartDashboard.putNumber("Right Encoder Raw", -rightLeader.getSelectedSensorPosition());
   }
 }
