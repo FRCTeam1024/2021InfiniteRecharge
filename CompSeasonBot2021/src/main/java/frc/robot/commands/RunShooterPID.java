@@ -13,6 +13,7 @@ import com.revrobotics.ControlType;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Shooter;
 
@@ -20,9 +21,9 @@ public class RunShooterPID extends CommandBase {
   private Shooter shooter;
   private double targetSpeed;
   private CANPIDController pidController;
-  public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput; // targetRPM (replaced with targetSpeed param)
+  public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM, targetRPM; // (replaced with targetSpeed param)
 
-  private ShuffleboardTab shooterTab;
+  /*private ShuffleboardTab shooterTab;
   private NetworkTableEntry pEntry;
   private NetworkTableEntry iEntry;
   private NetworkTableEntry dEntry;
@@ -32,8 +33,7 @@ public class RunShooterPID extends CommandBase {
   private NetworkTableEntry minOutputEntry;
   //private NetworkTableEntry rpmTargetEntry;
   private NetworkTableEntry targetSpeedEntry;
-  private NetworkTableEntry curVelEntry;
-
+  private NetworkTableEntry curVelEntry;*/
   
   /**
    * Creates a new RunShooterPID.
@@ -53,15 +53,15 @@ public class RunShooterPID extends CommandBase {
   @Override
   public void initialize() {
     // PID coefficients
-    kP = 6e-5; 
+    kP = 0.001; 
     kI = 0;
     kD = 0; 
     kIz = 0; 
     kFF = 0.000015; 
     kMaxOutput = 1; 
     kMinOutput = 0; // Was -1, we want between 0 and 1 (forwards)
-    // Rather than tracking RPM, we will track values between 0 and 1
-    // targetRPM = 5600; // Was 5000, 5676 is empirical max RPM
+    maxRPM = 5676;
+    targetRPM = targetSpeed * maxRPM; // Was 5000, 5676 is empirical max RPM
 
     // set PID coefficients
     pidController.setP(kP);
@@ -70,9 +70,10 @@ public class RunShooterPID extends CommandBase {
     pidController.setIZone(kIz);
     pidController.setFF(kFF);
     pidController.setOutputRange(kMinOutput, kMaxOutput);
+    pidController.setReference(targetRPM, ControlType.kVelocity);
 
     // display PID coefficients on SmartDashboard 
-    shooterTab = Shuffleboard.getTab("Shooter");
+    /*shooterTab = Shuffleboard.getTab("Shooter");
     pEntry = shooterTab.add("P Gain", kP).getEntry();
     iEntry = shooterTab.add("I Gain", kI).getEntry();
     dEntry = shooterTab.add("D Gain", kD).getEntry();
@@ -82,17 +83,25 @@ public class RunShooterPID extends CommandBase {
     minOutputEntry = shooterTab.add("Min Output", kMinOutput).getEntry();
     //rpmTargetEntry = shooterTab.add("Target RPM", targetRPM).getEntry();
     targetSpeedEntry = shooterTab.add("Target Speed", targetSpeed).getEntry();
+    curVelEntry = shooterTab.add("current Speed", 0).getEntry();*/
 
-    curVelEntry = shooterTab.add("current Speed", 0).getEntry();
+    // display PID coefficients on SmartDashboard
+    SmartDashboard.putNumber("P Gain", kP);
+    SmartDashboard.putNumber("I Gain", kI);
+    SmartDashboard.putNumber("D Gain", kD);
+    SmartDashboard.putNumber("I Zone", kIz);
+    SmartDashboard.putNumber("Feed Forward", kFF);
+    SmartDashboard.putNumber("Max Output", kMaxOutput);
+    SmartDashboard.putNumber("Min Output", kMinOutput);
 
-    pidController.setReference(targetSpeed, ControlType.kVelocity);
+    //pidController.setReference(targetSpeed, ControlType.kVelocity);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     // read PID coefficients from SmartDashboard
-    double p = pEntry.getDouble(0);
+    /*double p = pEntry.getDouble(0);
     double i = iEntry.getDouble(0);
     double d = dEntry.getDouble(0);
     double iz = izEntry.getDouble(0);
@@ -113,16 +122,44 @@ public class RunShooterPID extends CommandBase {
       pidController.setOutputRange(min, max); 
       kMinOutput = min; kMaxOutput = max; 
     }
+    curVelEntry.setDouble(shooter.getEncoder().getVelocity());
+    */
 
-    //double targetSpeed = m_stick.getY() * maxRPM; // Replaced with targetSpeed param
-    //pidController.setReference(targetRPM, ControlType.kVelocity);
-    //curVelEntry.setDouble(shooter.getEncoder().getVelocity());
+    // read PID coefficients from SmartDashboard
+    double p = SmartDashboard.getNumber("P Gain", 0);
+    double i = SmartDashboard.getNumber("I Gain", 0);
+    double d = SmartDashboard.getNumber("D Gain", 0);
+    double iz = SmartDashboard.getNumber("I Zone", 0);
+    double ff = SmartDashboard.getNumber("Feed Forward", 0);
+    double max = SmartDashboard.getNumber("Max Output", 0);
+    double min = SmartDashboard.getNumber("Min Output", 0);
+    /*double maxV = SmartDashboard.getNumber("Max Velocity", 0);
+    double minV = SmartDashboard.getNumber("Min Velocity", 0);
+    double maxA = SmartDashboard.getNumber("Max Acceleration", 0);
+    double allE = SmartDashboard.getNumber("Allowed Closed Loop Error", 0);*/
 
-    // https://www.chiefdelphi.com/t/how-to-end-spark-max-pid-control/342248/2
-    // Is this percentage?
-    pidController.setReference(targetSpeed, ControlType.kDutyCycle);
-    // @TODO: Test to see if CANSparkMax.get() returns active speed or desired speed.
-    curVelEntry.setDouble(shooter.get()); // Gets the speed value (is it current or just the input?)
+    // if PID coefficients on SmartDashboard have changed, write new values to controller
+    if((p != kP)) { pidController.setP(p); kP = p; }
+    if((i != kI)) { pidController.setI(i); kI = i; }
+    if((d != kD)) { pidController.setD(d); kD = d; }
+    if((iz != kIz)) { pidController.setIZone(iz); kIz = iz; }
+    if((ff != kFF)) { pidController.setFF(ff); kFF = ff; }
+    if((max != kMaxOutput) || (min != kMinOutput)) { 
+      pidController.setOutputRange(min, max); 
+      kMinOutput = min; kMaxOutput = max; 
+    }
+    
+    double setPoint, processVariable;
+    setPoint = SmartDashboard.getNumber("Set Velocity", 0.5 * maxRPM);
+    pidController.setReference(setPoint, ControlType.kVelocity);
+    processVariable = shooter.getEncoder().getVelocity();
+    
+    SmartDashboard.putNumber("SetPoint", setPoint);
+    SmartDashboard.putNumber("Process Variable", processVariable);
+    SmartDashboard.putNumber("Output", shooter.getOutput());
+
+    SmartDashboard.putNumber("Encoder One", shooter.getOutput());
+    SmartDashboard.putNumber("Encoder Two", shooter.getOutput());
   }
 
   // Called once the command ends or is interrupted.

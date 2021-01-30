@@ -240,7 +240,8 @@ public class RobotContainer {
     SmartDashboard.putData("Shooter Zone 4", new RunShooter(shooter, 0.40)); // hood back ?, hood forward ?
     SmartDashboard.putData("Shooter Zone 5", new RunShooter(shooter, 0.40)); // hood back ?, hood forward ?
 
-    Shuffleboard.getTab("Shooter").add("Run Shooter PID", new RunShooterPID(shooter));
+    SmartDashboard.putData("Run Shooter PID", new RunShooterPID(shooter, 0.5));
+    //Shuffleboard.getTab("Shooter").add("Run Shooter PID", new RunShooterPID(shooter, 0.1));
   }
 
 
