@@ -18,8 +18,9 @@ import frc.robot.subsystems.Shooter;
 
 public class RunShooterPID extends CommandBase {
   private Shooter shooter;
+  private double targetSpeed;
   private CANPIDController pidController;
-  public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, targetRPM;
+  public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput; // targetRPM (replaced with targetSpeed param)
 
   private ShuffleboardTab shooterTab;
   private NetworkTableEntry pEntry;
@@ -29,15 +30,19 @@ public class RunShooterPID extends CommandBase {
   private NetworkTableEntry ffEntry;
   private NetworkTableEntry maxOutputEntry;
   private NetworkTableEntry minOutputEntry;
-  private NetworkTableEntry rpmTargetEntry;
+  //private NetworkTableEntry rpmTargetEntry;
+  private NetworkTableEntry targetSpeedEntry;
   private NetworkTableEntry curVelEntry;
 
   
   /**
    * Creates a new RunShooterPID.
+   * targetSpeed equates to the target shooter speed (-1.0 to 1.0)
+   * 	For shooting forwards, keep this value between 0.0 and 1.0. Ideally this should be slightly lower than 1.0 to allow for increased speed.
    */
-  public RunShooterPID(Shooter shooter) {
-    this.shooter = shooter;
+  public RunShooterPID(Shooter shooter, double targetSpeed) {
+	this.shooter = shooter;
+	this.targetSpeed = targetSpeed;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(shooter);
 
@@ -54,8 +59,9 @@ public class RunShooterPID extends CommandBase {
     kIz = 0; 
     kFF = 0.000015; 
     kMaxOutput = 1; 
-    kMinOutput = -1;
-    targetRPM = 5000;
+	kMinOutput = 0; // Was -1, we want between 0 and 1 (forwards)
+	// Rather than tracking RPM, we will track values between 0 and 1
+    // targetRPM = 5600; // Was 5000, 5676 is empirical max RPM
 
     // set PID coefficients
     pidController.setP(kP);
@@ -74,11 +80,12 @@ public class RunShooterPID extends CommandBase {
     ffEntry = shooterTab.add("Feed Forward", kFF).getEntry();
     maxOutputEntry = shooterTab.add("Max Output", kMaxOutput).getEntry();
     minOutputEntry = shooterTab.add("Min Output", kMinOutput).getEntry();
-    rpmTargetEntry = shooterTab.add("Target RPM", targetRPM).getEntry();
+    //rpmTargetEntry = shooterTab.add("Target RPM", targetRPM).getEntry();
+	targetSpeedEntry = shooterTab.add("Target Speed", targetSpeed).getEntry();
 
-    curVelEntry = shooterTab.add("current RPM", 0).getEntry();
+    curVelEntry = shooterTab.add("current Speed", 0).getEntry();
 
-    pidController.setReference(targetRPM, ControlType.kVelocity);
+    pidController.setReference(targetSpeed, ControlType.kVelocity);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -93,7 +100,8 @@ public class RunShooterPID extends CommandBase {
     double max = maxOutputEntry.getDouble(0);
     double min = minOutputEntry.getDouble(0);
 
-    targetRPM = rpmTargetEntry.getDouble(targetRPM);
+    //targetRPM = rpmTargetEntry.getDouble(targetRPM);
+	targetSpeed = targetSpeedEntry.getDouble(targetSpeed);
 
     // if PID coefficients on SmartDashboard have changed, write new values to controller
     if((p != kP)) { pidController.setP(p); kP = p; }
@@ -106,10 +114,15 @@ public class RunShooterPID extends CommandBase {
       kMinOutput = min; kMaxOutput = max; 
     }
 
-    //double setoint = m_stick.getY() * maxRPM;
-    // pidController.setReference(targetRPM, ControlType.kVelocity);
-
-    curVelEntry.setDouble(shooter.getEncoder().getVelocity());
+    //double targetSpeed = m_stick.getY() * maxRPM; // Replaced with targetSpeed param
+	//pidController.setReference(targetRPM, ControlType.kVelocity);
+	//curVelEntry.setDouble(shooter.getEncoder().getVelocity());
+	
+	// https://www.chiefdelphi.com/t/how-to-end-spark-max-pid-control/342248/2
+	// Is this percentage?
+	pidController.setReference(targetSpeed, ControlType.kDutyCycle);
+	// @TODO: Test to see if CANSparkMax.get() returns active speed or desired speed.
+	curVelEntry.setDouble(shooter.get()); // Gets the speed value (is it current or just the input?)
   }
 
   // Called once the command ends or is interrupted.
