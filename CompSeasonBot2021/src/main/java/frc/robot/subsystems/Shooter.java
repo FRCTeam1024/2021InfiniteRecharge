@@ -41,7 +41,7 @@ public class Shooter extends SubsystemBase {
     shooterTwo.follow(shooterOne, true);
     
     shooterEncoderOne = shooterOne.getEncoder();
-    // shooterEncoderTwo = shooterTwo.getEncoder();
+    shooterEncoderTwo = shooterTwo.getEncoder();
     
     setUpShuffleboard();
   }
@@ -56,6 +56,10 @@ public class Shooter extends SubsystemBase {
 
   public CANEncoder getEncoder() {
     return shooterEncoderOne;
+  }
+
+  public CANEncoder getEncoderTwo() {
+    return shooterEncoderTwo;
   }
 
   public CANPIDController getPIDController() {
@@ -108,6 +112,16 @@ public class Shooter extends SubsystemBase {
   }
   public void retractHood(){
     hoodSolenoid.set(false);
+  }
+
+  // The motor controller's applied output duty cycle.
+  // Used for tuning the ShooterPID
+  public double getOutput() {
+    return shooterOne.getAppliedOutput();
+  }
+
+  public double getOutputTwo() {
+    return shooterTwo.getAppliedOutput();
   }
 
   @Override
