@@ -95,8 +95,7 @@ public class RobotContainer {
     
     SmartDashboard.putData("Drive", new BasicDriveCommand(drivetrain));
 
-
-    SmartDashboard.putNumber("Left Encoder Raw", drivetrain.frontLeft.getSelectedSensorPosition());
+    SmartDashboard.putNumber("Left Encoder Raw", drivetrain.getLeftRawEncoder());
   }
 
 
