@@ -10,123 +10,153 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
+import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.commands.RunShooter;
-import frc.robot.commands.RunShooterPID;
 
 public class Shooter extends SubsystemBase {
-  private CANSparkMax shooterOne; // this is leader
-  private CANSparkMax shooterTwo;
-  public CANEncoder shooterEncoderOne;
-  private CANEncoder shooterEncoderTwo;
 
-  public CANPIDController shooterPID;
+  private final CANSparkMax leadMotor; // this is leader
+  private final CANSparkMax followMotor;
+  private final CANEncoder shooterEncoder;
 
-  private final Solenoid hoodSolenoid = new Solenoid(4);
-  
+  private final CANPIDController shooterPID;
+
+  private final Solenoid hoodSolenoid = new Solenoid(4); //Lets move all device IDs to Constants.java eventually
+
+  private final double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;  //Gains, may move elsewhere.
+
+  //Used to determine if speed has stabilized
+  private final double kStableLoops = 10;
+  private final double kErrThreshold = 50; //in RPM
+  private boolean stable = true;
+  private double lastTarget;
+  private int withinLoops = 0;
+
   /**
    * Creates a new Shooter.
    */
   public Shooter() {
-    shooterOne = new CANSparkMax(39, MotorType.kBrushless);
-    shooterTwo = new CANSparkMax(47, MotorType.kBrushless);
-    shooterOne.restoreFactoryDefaults();
-    shooterTwo.restoreFactoryDefaults();
-    shooterPID = shooterOne.getPIDController();
-    shooterTwo.follow(shooterOne, true);
     
-    shooterEncoderOne = shooterOne.getEncoder();
-    shooterEncoderTwo = shooterTwo.getEncoder();
+    leadMotor = new CANSparkMax(39, MotorType.kBrushless); //Lets move all device IDs to Constants.java eventually
+    followMotor = new CANSparkMax(47, MotorType.kBrushless); //Lets move all device IDs to Constants.java eventually
     
-    setUpShuffleboard();
+    /* Restore defaults to avoid unexpected problems */
+    leadMotor.restoreFactoryDefaults();
+    followMotor.restoreFactoryDefaults();
+
+    /* Set neutral mode */
+    leadMotor.setIdleMode(IdleMode.kCoast);
+    followMotor.setIdleMode(IdleMode.kCoast);
+
+    /* Set follower to follow 
+     * Use True parameter to invert the follower
+     */
+    followMotor.follow(leadMotor, true);
+
+    /* Setup PID controller on leader */
+    shooterPID = leadMotor.getPIDController();
+    
+    /* Get access to the encoder */
+    shooterEncoder = leadMotor.getEncoder();
+
+    /*
+     * Setting Gains here, for tuning, override these using Spark MAX GUI, then hard code here
+     * once we settle on values.  Consider moving these to Constants.java eventually
+     */
+    kP = .001; //First guess
+    kI = 0;
+    kD = 0; 
+    kIz = 0; 
+    kFF = 0.000015; // From Example
+    kMaxOutput = 1; 
+    kMinOutput = 0;
+    
+    shooterPID.setP(kP);
+    shooterPID.setI(kI);
+    shooterPID.setD(kD);
+    shooterPID.setIZone(kIz);
+    shooterPID.setFF(kFF);
+    shooterPID.setOutputRange(kMinOutput, kMaxOutput);
+
   }
 
-  public boolean isAtMaxRPM() {
-    return shooterEncoderOne.getVelocity() > 5200;
+  /*
+   * Used to run the shooter under PID control
+   * 
+   * @param speed Desired speed in RPM
+   * 
+   */
+  public void runControlledShooter(double speed) {
+    lastTarget = speed;
+    shooterPID.setReference(speed, ControlType.kVelocity);
   }
 
-  public boolean isNotAtMaxRPM() {
-    return shooterEncoderOne.getVelocity() < 5000;
-  }
-
-  public CANEncoder getEncoder() {
-    return shooterEncoderOne;
-  }
-
-  public CANEncoder getEncoderTwo() {
-    return shooterEncoderTwo;
-  }
-
-  public CANPIDController getPIDController() {
-    return shooterPID;
-  }
-
-  private void setUpShuffleboard() {
-    Shuffleboard.getTab("Shooter").add("Run Shooter", new RunShooter(this, 1.0));
-    // Shuffleboard.getTab("Shooter").add("Run Shooter PID", new RunShooterPID(this));
-    // Shuffleboard.getTab("Shooter").add(this);
-  }
-
-  public void runShooterMotors(double motorSpeeds) {
-    shooterOne.set(motorSpeeds);
-  }
-
-  public void runShooterMotors(double motorOneSpeed, double motorTwoSpeed){
-    shooterOne.set(motorOneSpeed);
-    shooterTwo.set(motorTwoSpeed);
+  /* simple method to run motors at percent power 
+   * maintained for capatibility with legacy code and for troubleshooting
+   */
+  public void runShooterMotors(double power) {
+    leadMotor.set(power);
   }
   
-  public void runShooterOne(double motorOneSpeed){
-    shooterOne.set(motorOneSpeed);
-  }
-  
-  public void runShooterTwo(double motorTwoSpeed){
-    shooterTwo.set(motorTwoSpeed);
-  }
   public void stopShooterMotors(){
-    shooterOne.set(0.0);
-    shooterTwo.set(0.0);
+    lastTarget = 0;
+    leadMotor.set(0.0);
   }
 
   public double getShooterSpeed() {
-    return 0.0;
-    // return ((shooterEncoderOne.getVelocity() + shooterEncoderTwo.getVelocity()) / 2);
+    return shooterEncoder.getVelocity();
   }
 
-  public void runShooterMotorsUntil(double motorOneSpeed, double motorTwoSpeed, double encoderSetpoint){
-    if(shooterEncoderOne.getPosition() < encoderSetpoint && shooterEncoderTwo.getPosition() < encoderSetpoint){
-      shooterOne.set(motorOneSpeed);
-      shooterTwo.set(motorTwoSpeed);
-    } else if(shooterEncoderOne.getPosition() >= encoderSetpoint && shooterEncoderTwo.getPosition() >= encoderSetpoint){
-      stopShooterMotors();
-    }
-  }
-
-  public void extendHood(){
+  public void extendHood(){  //These may need their own subsystem to actuate while spinning the shooter
     hoodSolenoid.set(true);
   }
   public void retractHood(){
     hoodSolenoid.set(false);
   }
 
+  // Created for compatibilty with existing code, may want to do this differently
+  public boolean isStable(){
+    return(withinLoops > kStableLoops);
+  }
+
+  // Created for compatibility with existing code, may want to do this differently
+  public boolean isNotStable(){
+    return !isStable();
+  }
+
   // The motor controller's applied output duty cycle.
   // Used for tuning the ShooterPID
   public double getOutput() {
-    return shooterOne.getAppliedOutput();
+    return leadMotor.getAppliedOutput();
   }
 
   public double getOutputTwo() {
-    return shooterTwo.getAppliedOutput();
+    return followMotor.getAppliedOutput();
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Velocity", shooterEncoderOne.getVelocity());
+
+    //Keep track of if the speed is stable and for how long it has been
+    if (getShooterSpeed() - lastTarget < +kErrThreshold &&
+        getShooterSpeed() - lastTarget > -kErrThreshold) {
+        
+          ++withinLoops;
+    }
+    else {
+      withinLoops = 0;
+    }
+
+    //Put some debug info to the dashboard
+    SmartDashboard.putNumber("Shooter Velocity", shooterEncoder.getVelocity());
+    SmartDashboard.putBoolean("Shooter Stable", isStable());
+    SmartDashboard.putNumber("Shooter Power One", getOutput());
+    SmartDashboard.putNumber("Shooter Power Two", getOutputTwo());
   }
 }

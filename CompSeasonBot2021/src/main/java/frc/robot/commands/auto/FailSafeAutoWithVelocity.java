@@ -36,10 +36,10 @@ public class FailSafeAutoWithVelocity extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(shooter.isAtMaxRPM() == false){
+    if(shooter.isStable() == false){
       shooter.runShooterMotors(shooterMotorSpeed);
     }
-    else if(shooter.isAtMaxRPM() == true){
+    else if(shooter.isStable() == true){
       ballFeed.runBallFeedMotor(ballFeedSpeed);
       ballFeed.runShooterFeedMotor(shooterFeedSpeed);
       shooter.runShooterMotors(shooterMotorSpeed);

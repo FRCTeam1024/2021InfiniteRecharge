@@ -197,13 +197,13 @@ public class RobotContainer {
     SmartDashboard.putNumber("Ballfeed Speed", ballFeed.getBallFedVelocity());
     //runShooterAndBallFeed.whenActive(new RunShooterFeed(ballFeed, 0.25), new RunBallFeed(ballFeed, 0.25));
     
-    // Shooter Info
-    SmartDashboard.putNumber("Desired Shooter Speed", 1.0);
-    SmartDashboard.putData("Set Shooters to Desired Speed", new AdjustShooterSpeed(shooter));
+    // Shooter Info - Ignoring this for now
+    //SmartDashboard.putNumber("Desired Shooter Speed", 1.0);
+    //SmartDashboard.putData("Set Shooters to Desired Speed", new AdjustShooterSpeed(shooter));
     // SmartDashboard.putNumber("Shooter Speed", shooter.getShooterSpeed());
 
     // Shooter Hood
-    SmartDashboard.putData("Extend hood", new ExtendHood(shooter));
+    SmartDashboard.putData("Extend hood", new ExtendHood(shooter));  // I think the hood needs its own subsystem so it can be changed while running the shooter
     SmartDashboard.putData("Retract hood", new RetractHood(shooter));
    
     SmartDashboard.putData(drivetrain);
@@ -234,13 +234,17 @@ public class RobotContainer {
     SmartDashboard.putNumber("Gyro Angle", drivetrain.ahrs.getAngle());
 
     // Interstellar Accuracy Challenge Speed Buttons
+    /* Ignore this for now
     SmartDashboard.putData("Shooter Zone 1", new RunShooter(shooter, 0.40));
     SmartDashboard.putData("Shooter Zone 2", new RunShooter(shooter, 0.48)); // hood back 0.34, hood forward 0.48
     SmartDashboard.putData("Shooter Zone 3", new RunShooter(shooter, 0.43)); // hood back 0.43, hood forward ?
     SmartDashboard.putData("Shooter Zone 4", new RunShooter(shooter, 0.40)); // hood back ?, hood forward ?
     SmartDashboard.putData("Shooter Zone 5", new RunShooter(shooter, 0.40)); // hood back ?, hood forward ?
+    */
 
-    SmartDashboard.putData("Run Shooter PID", new RunShooterPID(shooter, 0.5));
+    // I think this will allow a speed value to be provided and the shooter to be run at that speed
+    double speed = SmartDashboard.getNumber("Shooter RPM", 0);
+    SmartDashboard.putData("Run Shooter PID", new RunShooterPID(shooter, speed));
     //Shuffleboard.getTab("Shooter").add("Run Shooter PID", new RunShooterPID(shooter, 0.1));
   }
 

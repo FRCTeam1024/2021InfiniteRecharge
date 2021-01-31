@@ -33,13 +33,13 @@ public class AdjustShooterSpeed extends CommandBase {
       this.shooterSpeed = 1.0;
     }
     SmartDashboard.putNumber("Direct Shooter Speed", this.shooterSpeed);
-    shooter.runShooterMotors(shooterSpeed, shooterSpeed);
+    shooter.runShooterMotors(shooterSpeed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    shooter.runShooterMotors(0.0, 0.0);
+    shooter.runShooterMotors(0.0);
   }
 
   // Returns true when the command should end.
