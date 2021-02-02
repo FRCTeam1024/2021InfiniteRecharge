@@ -37,6 +37,13 @@ public class Drivetrain extends SubsystemBase {
     
   private final Solenoid m_Shift = new Solenoid(DriveConstants.kDrivePCMID, DriveConstants.kDriveSolenoidPort);
 
+  private final double maxVLo;
+  private final double maxVHi;
+  private final double maxALo;
+  private final double maxAHi;
+  private final int sLo;
+  private final int sHi;
+
   /**
    * Creates a new Drivetrain.
    */
@@ -169,12 +176,16 @@ public class Drivetrain extends SubsystemBase {
 		m_RightLeader.configPeakOutputForward(+1.0, Constants.kTimeoutMs);
     m_RightLeader.configPeakOutputReverse(-1.0, Constants.kTimeoutMs);
     
-    /* Motion Magic Configurations - Move to a constants class eventually
-       May want different values for high and low gear*/
-    m_RightLeader.configMotionCruiseVelocity(420, Constants.kTimeoutMs);  //raw/100ms, I think about 5ft/s on our robot, we may be able to go faster
-    m_RightLeader.configMotionAcceleration(210, Constants.kTimeoutMs);    //raw/100ms/s, this seems like a good value
-    m_RightLeader.configMotionSCurveStrength(2);                          // Can be 1-8, higher for greater smoothing, 2 seems good
+    /* Motion profile parameters for low gear */
+    maxVLo = 420;  // raw/100ms I think about 5 ft/s could probably be faster but works
+    maxALo = 210;  // raw/100ms/s Seems good
+    sLo = 2;       // Can be 1-8, higher = more smoothing, 2 seems good so far
 
+    /* Motion profile parameters for hi gear */
+    maxVHi = 840;  // raw/100ms I think about 10 ft/s could probably be faster, need to test
+    maxAHi = 210;  // raw/100ms/s Seems good for lo, we'll see for hi
+    sHi = 5;       // Can be 1-8, higher = more smoothing, just a guess so far
+    
     /* FPID Gains for Distance PID when in low gear -  Move these to a constants or gains class eventually*/
     m_RightLeader.config_kP(DriveConstants.kSlot_DistLow, 0.5, Constants.kTimeoutMs);
     m_RightLeader.config_kI(DriveConstants.kSlot_DistLow, 0, Constants.kTimeoutMs);
@@ -303,14 +314,17 @@ public class Drivetrain extends SubsystemBase {
     
     System.out.println("This is Motion Magic with the Auxiliary PID using the difference between two encoders.\n");
 
-    /* Assign parameter slots to PID channels and shift */
+    /* Assign parameter slots to PID channels, set Motion Profile Params and shift */
     if (gear) {
       m_RightLeader.selectProfileSlot(DriveConstants.kSlot_DistHi, DriveConstants.PID_PRIMARY);
       m_RightLeader.selectProfileSlot(DriveConstants.kSlot_TurnHi, DriveConstants.PID_TURN);
+      setProfile(maxVHi, maxAHi, sHi);
       shiftHi();
+
     } else {
       m_RightLeader.selectProfileSlot(DriveConstants.kSlot_DistLow, DriveConstants.PID_PRIMARY);
       m_RightLeader.selectProfileSlot(DriveConstants.kSlot_TurnLow, DriveConstants.PID_TURN);
+      setProfile(maxVLo, maxALo, sLo);
       shiftLow();
     }
 
@@ -340,14 +354,16 @@ public class Drivetrain extends SubsystemBase {
     
     System.out.println("This is Motion Magic with the Auxiliary PID using the difference between two encoders.\n");
 
-    /* Assign parameter slots to PID channels and shift */
+    /* Assign parameter slots to PID channels, set Motion profile params and shift */
     if (gear) {
       m_RightLeader.selectProfileSlot(DriveConstants.kSlot_DistHi, DriveConstants.PID_PRIMARY);
       m_RightLeader.selectProfileSlot(DriveConstants.kSlot_TurnHi, DriveConstants.PID_TURN);
+      setProfile(maxVHi, maxAHi, sHi);
       shiftHi();
     } else {
       m_RightLeader.selectProfileSlot(DriveConstants.kSlot_DistLow, DriveConstants.PID_PRIMARY);
       m_RightLeader.selectProfileSlot(DriveConstants.kSlot_TurnLow, DriveConstants.PID_TURN);
+      setProfile(maxVLo, maxALo, sLo);
       shiftLow();
     }
 
@@ -410,6 +426,20 @@ public class Drivetrain extends SubsystemBase {
     return m_RightLeader.getSensorCollection().getQuadraturePosition();
   }
 
+  /*
+   * Sets up motion magic constants for generating trapezoid/S-curve profile
+   * @param maxV Maximum Velocity (420/210)
+   * @param maxA Maximum acceleration/deceleration (ramp rate)
+   * @param s S curve smoothing factor (1-8)
+   * 
+   */
+  private void setProfile(double maxV, double maxA, int s) {
+
+  m_RightLeader.configMotionCruiseVelocity(maxV, Constants.kTimeoutMs);  
+  m_RightLeader.configMotionAcceleration(maxA, Constants.kTimeoutMs); 
+  m_RightLeader.configMotionSCurveStrength(s);     
+
+  }
 
 	/* Zero all sensors used */
 	public void zeroSensors() {
