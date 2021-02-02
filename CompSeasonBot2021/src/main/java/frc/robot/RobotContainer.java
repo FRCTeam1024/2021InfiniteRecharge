@@ -243,8 +243,8 @@ public class RobotContainer {
     */
 
     // I think this will allow a speed value to be provided and the shooter to be run at that speed
-    double speed = SmartDashboard.getNumber("Shooter RPM", 0);
-    SmartDashboard.putData("Run Shooter PID", new RunShooterPID(shooter, speed));
+    SmartDashboard.putNumber("Shooter RPM", 100);
+    SmartDashboard.putData("Run Shooter PID", new RunShooterPID(shooter, SmartDashboard.getNumber("Shooter RPM", 0)));
     //Shuffleboard.getTab("Shooter").add("Run Shooter PID", new RunShooterPID(shooter, 0.1));
   }
 
