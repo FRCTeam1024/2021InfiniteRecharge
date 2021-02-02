@@ -21,7 +21,6 @@ import com.ctre.phoenix.motorcontrol.SensorTerm;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 
-import com.ctre.phoenix.motorcontrol.can.*;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -170,7 +169,8 @@ public class Drivetrain extends SubsystemBase {
 		m_RightLeader.configPeakOutputForward(+1.0, Constants.kTimeoutMs);
     m_RightLeader.configPeakOutputReverse(-1.0, Constants.kTimeoutMs);
     
-    /* Motion Magic Configurations - Move to a constants class eventually*/
+    /* Motion Magic Configurations - Move to a constants class eventually
+       May want different values for high and low gear*/
     m_RightLeader.configMotionCruiseVelocity(420, Constants.kTimeoutMs);  //raw/100ms, I think about 5ft/s on our robot, we may be able to go faster
     m_RightLeader.configMotionAcceleration(210, Constants.kTimeoutMs);    //raw/100ms/s, this seems like a good value
     m_RightLeader.configMotionSCurveStrength(2);                          // Can be 1-8, higher for greater smoothing, 2 seems good
