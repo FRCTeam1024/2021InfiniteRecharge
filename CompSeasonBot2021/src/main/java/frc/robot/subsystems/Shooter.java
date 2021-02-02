@@ -32,7 +32,7 @@ public class Shooter extends SubsystemBase {
 
   //Used to determine if speed has stabilized
   private final double kStableLoops = 10;
-  private final double kErrThreshold = 50; //in RPM
+  private final double kErrThreshold = 25; //in RPM
   private boolean stable = true;
   private double lastTarget;
   private int withinLoops = 0;
@@ -72,7 +72,7 @@ public class Shooter extends SubsystemBase {
     kI = 0;
     kD = 0; 
     kIz = 0; 
-    kFF = 0.000015; // From Example
+    kFF = 0.000015; // From Example, I think 1/max rpm might be what we want but thats an order bigger.
     kMaxOutput = 1; 
     kMinOutput = 0;
     

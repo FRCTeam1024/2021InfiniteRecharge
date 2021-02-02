@@ -7,9 +7,6 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Shooter;
@@ -21,8 +18,8 @@ public class RunShooterPID extends CommandBase {
  
   /**
    * Creates a new RunShooterPID.
-   * targetSpeed equates to the target shooter speed in RPM
-   * 	For shooting forwards, keep this value between 0.0 and 1.0. Ideally this should be slightly lower than 1.0 to allow for increased speed.
+   * @param targetSpeed The target shooter speed in RPM
+   * 	
    */
   public RunShooterPID(Shooter subsystem, double rpm) {
     m_Shooter = subsystem;

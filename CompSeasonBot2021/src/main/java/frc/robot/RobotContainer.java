@@ -209,7 +209,7 @@ public class RobotContainer {
     SmartDashboard.putData(drivetrain);
     SmartDashboard.putData("Run Intake", new RunIntake(intake, 0.35));
 
-    SmartDashboard.putData("Run Shooter", new RunShooter(shooter, 1.0));
+    // SmartDashboard.putData("Run Shooter", new RunShooter(shooter, 1.0));
     // SmartDashboard.putNumber("Velocity", shooter.shooterEncoderOne.getVelocity());
 
     SmartDashboard.putData("Run Climber One", new RunClimberLeft(climber, 0.35));
