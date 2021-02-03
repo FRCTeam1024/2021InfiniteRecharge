@@ -207,10 +207,10 @@ public class RobotContainer {
     SmartDashboard.putData("Extend hood", new ExtendHood(shooter));  // I think the hood needs its own subsystem so it can be changed while running the shooter
     SmartDashboard.putData("Retract hood", new RetractHood(shooter));
    
-    SmartDashboard.putData(drivetrain);
+    SmartDashboard.putData(drivetrain);  
     SmartDashboard.putData("Run Intake", new RunIntake(intake, 0.35));
 
-    // Don't neet these, have this elsewhere now
+    // Don't need these, have this elsewhere now
     // SmartDashboard.putData("Run Shooter", new RunShooter(shooter, 1.0));
     // SmartDashboard.putNumber("Velocity", shooter.shooterEncoderOne.getVelocity());
 
