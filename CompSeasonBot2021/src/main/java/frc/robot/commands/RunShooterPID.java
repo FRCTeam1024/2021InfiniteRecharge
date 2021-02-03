@@ -35,7 +35,6 @@ public class RunShooterPID extends CommandBase {
 
     /* Run the Shooter */
     m_Shooter.runControlledShooter(targetSpeed);
-    m_Shooter.extendHood(); // Need to get this on a button with its own subsystem eventually
   }
 
   // Called every time the scheduler runs while the command is scheduled.

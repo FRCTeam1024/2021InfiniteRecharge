@@ -14,7 +14,6 @@ import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMax.IdleMode;
 
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -25,8 +24,6 @@ public class Shooter extends SubsystemBase {
   private final CANEncoder shooterEncoder;
 
   private final CANPIDController shooterPID;
-
-  private final Solenoid hoodSolenoid = new Solenoid(4); //Lets move all device IDs to Constants.java eventually
 
   private final double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;  //Gains, may move elsewhere.
 
@@ -111,13 +108,6 @@ public class Shooter extends SubsystemBase {
 
   public double getShooterSpeed() {
     return shooterEncoder.getVelocity();
-  }
-
-  public void extendHood(){  //These may need their own subsystem to actuate while spinning the shooter
-    hoodSolenoid.set(true);
-  }
-  public void retractHood(){
-    hoodSolenoid.set(false);
   }
 
   // Created for compatibilty with existing code, may want to do this differently

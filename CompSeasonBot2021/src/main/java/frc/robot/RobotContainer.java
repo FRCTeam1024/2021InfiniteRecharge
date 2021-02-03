@@ -59,6 +59,7 @@ public class RobotContainer {
   private final BallFeed ballFeed  = new BallFeed();
   private final Limelight limelight = new Limelight();
   private final Pixy2 pixy = new Pixy2();
+  private final Hood hood = new Hood();
 
 
   public Joystick leftJoystick = new Joystick(1);
@@ -204,8 +205,8 @@ public class RobotContainer {
     // SmartDashboard.putNumber("Shooter Speed", shooter.getShooterSpeed());
 
     // Shooter Hood
-    SmartDashboard.putData("Extend hood", new ExtendHood(shooter));  // I think the hood needs its own subsystem so it can be changed while running the shooter
-    SmartDashboard.putData("Retract hood", new RetractHood(shooter));
+    SmartDashboard.putData("Extend hood", new ExtendHood(hood));  // I think the hood needs its own subsystem so it can be changed while running the shooter
+    SmartDashboard.putData("Retract hood", new RetractHood(hood));
    
     SmartDashboard.putData(drivetrain);  
     SmartDashboard.putData("Run Intake", new RunIntake(intake, 0.35));
@@ -246,6 +247,7 @@ public class RobotContainer {
 
     // I think this will allow a speed value to be provided and the shooter to be run at that speed
     SmartDashboard.putNumber("Shooter RPM", 3400);
+    SmartDashboard.putData("Run Shooter PID", new RunShooterPID(shooter, 3400));
     //Shuffleboard.getTab("Shooter").add("Run Shooter PID", new RunShooterPID(shooter, 0.1));
   }
 

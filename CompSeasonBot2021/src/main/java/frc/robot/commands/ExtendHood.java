@@ -8,13 +8,14 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.*;
 
 public class ExtendHood extends CommandBase {
-  Shooter shooter;
+  Hood m_Hood;
   Boolean isFinished;
   /** Creates a new ToggleHood. */
-  public ExtendHood(Shooter shooter) {
-    this.shooter = shooter;
+  public ExtendHood(Hood subsystem) {
+    m_Hood = subsystem;
     isFinished = false;
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(m_Hood);
   }
 
   // Called when the command is initially scheduled.
@@ -24,7 +25,7 @@ public class ExtendHood extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooter.extendHood();
+    m_Hood.extendHood();
     System.out.println("extending hood");
     isFinished = true;
   }
