@@ -35,6 +35,7 @@ public class RunShooterPID extends CommandBase {
 
     /* Run the Shooter */
     m_Shooter.runControlledShooter(targetSpeed);
+    m_Shooter.extendHood();
 
   }
 

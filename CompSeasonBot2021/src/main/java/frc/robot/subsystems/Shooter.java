@@ -72,7 +72,7 @@ public class Shooter extends SubsystemBase {
     kI = 0;
     kD = 0; 
     kIz = 0; 
-    kFF = 0.000015; // From Example, I think 1/max rpm might be what we want but thats an order bigger.
+    kFF = 0.00015; // From Example, I think 1/max rpm might be what we want but thats an order bigger.
     kMaxOutput = 1; 
     kMinOutput = 0;
     

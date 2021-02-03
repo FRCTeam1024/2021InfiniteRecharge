@@ -146,7 +146,8 @@ public class RobotContainer {
 
     xboxButtonA.whileHeld(new RunClimberHook(climber, -0.25));
     xboxButtonX.whileHeld(new RunClimberHook(climber, 0.50));
-    xboxButtonY.toggleWhenActive(new RunShooter(shooter, .82));
+    //xboxButtonY.toggleWhenActive(new RunShooter(shooter, 1));
+    xboxButtonY.toggleWhenActive(new RunShooterPID(shooter, 1000));
     xboxButtonB.whileHeld(new RunBothWinches(climber, 1.0, 1.0));
 
     shiftHighJoystick.toggleWhenPressed(new ShiftHigh(drivetrain));
