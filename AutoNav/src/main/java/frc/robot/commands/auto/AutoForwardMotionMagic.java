@@ -11,7 +11,7 @@ public class AutoForwardMotionMagic extends CommandBase {
   /** Creates a new AutoForwardMotionMagic. */
   Drivetrain drivetrain;
   double dist;
-  double distTraveled;
+  int MSstayed = 0;
   public AutoForwardMotionMagic(Drivetrain drive, double inches) {
     // Use addRequirements() here to declare subsystem dependencies.
     drivetrain = drive;
@@ -32,13 +32,20 @@ public class AutoForwardMotionMagic extends CommandBase {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    drivetrain.stop();
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     if(drivetrain.getDistance() > (dist * 0.95) && drivetrain.getDistance() < (dist * 1.05)){
-      return true;
+      MSstayed+=20; //every time that the isFinished is run, it has been another 20ms.
+      if(MSstayed > 1000){ //Currently just asking if robot has stayed in the same spot for 1 sec, can just be lowered later if it's slowing us down too much.
+        return true;
+      }else{
+        return false;
+      }
     }else{
       return false;
     }
