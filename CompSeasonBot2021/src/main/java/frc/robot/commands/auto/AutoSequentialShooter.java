@@ -8,7 +8,7 @@
 package frc.robot.commands.auto;
 
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import frc.robot.commands.RunShooter;
+import frc.robot.commands.RunShooterPID;
 import frc.robot.subsystems.BallFeed;
 import frc.robot.subsystems.Shooter;
 
@@ -22,6 +22,6 @@ public class AutoSequentialShooter extends ParallelRaceGroup {
   public AutoSequentialShooter(Shooter shooter, BallFeed ballFeed) {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());super();
-    super(new RunShooter(shooter, 1.0), new SequentialShooter(shooter, ballFeed));
+    super(new RunShooterPID(shooter, 4900), new SequentialShooter(shooter, ballFeed));
   }
 }

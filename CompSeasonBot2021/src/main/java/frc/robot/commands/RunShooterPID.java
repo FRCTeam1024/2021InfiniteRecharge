@@ -18,7 +18,7 @@ public class RunShooterPID extends CommandBase {
  
   /**
    * Creates a new RunShooterPID.
-   * @param targetSpeed The target shooter speed in RPM
+   * @param rpm The target shooter speed in RPM
    * 	
    */
   public RunShooterPID(Shooter subsystem, double rpm) {
@@ -35,8 +35,7 @@ public class RunShooterPID extends CommandBase {
 
     /* Run the Shooter */
     m_Shooter.runControlledShooter(targetSpeed);
-    m_Shooter.extendHood();
-
+    m_Shooter.extendHood(); // Need to get this on a button with its own subsystem eventually
   }
 
   // Called every time the scheduler runs while the command is scheduled.

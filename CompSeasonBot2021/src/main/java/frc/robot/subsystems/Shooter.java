@@ -32,7 +32,7 @@ public class Shooter extends SubsystemBase {
 
   //Used to determine if speed has stabilized
   private final double kStableLoops = 10;
-  private final double kErrThreshold = 25; //in RPM
+  private final double kErrThreshold = 100; //in RPM leaving this large until we determine it is needed
   private boolean stable = true;
   private double lastTarget;
   private int withinLoops = 0;
@@ -68,11 +68,11 @@ public class Shooter extends SubsystemBase {
      * Setting Gains here, for tuning, override these using Spark MAX GUI, then hard code here
      * once we settle on values.  Consider moving these to Constants.java eventually
      */
-    kP = .001; //First guess
+    kP = .0012;       // .0012 test value is working well, may need to get higher to reduce droop
     kI = 0;
-    kD = 0; 
+    kD = 0.07;        // 0.07 test value is working well 
     kIz = 0; 
-    kFF = 0.00015; // From Example, I think 1/max rpm might be what we want but thats an order bigger.
+    kFF = 0.0002;     // 1/4900 (tested max rpm)
     kMaxOutput = 1; 
     kMinOutput = 0;
     
@@ -98,6 +98,7 @@ public class Shooter extends SubsystemBase {
 
   /* simple method to run motors at percent power 
    * maintained for capatibility with legacy code and for troubleshooting
+   * Do not use for new code
    */
   public void runShooterMotors(double power) {
     leadMotor.set(power);
@@ -154,7 +155,7 @@ public class Shooter extends SubsystemBase {
     }
 
     //Put some debug info to the dashboard
-    SmartDashboard.putNumber("Shooter Velocity", shooterEncoder.getVelocity());
+    SmartDashboard.putNumber("Shooter Velocity", getShooterSpeed());
     SmartDashboard.putBoolean("Shooter Stable", isStable());
     SmartDashboard.putNumber("Shooter Power One", getOutput());
     SmartDashboard.putNumber("Shooter Power Two", getOutputTwo());

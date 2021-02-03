@@ -24,7 +24,7 @@ public class FailSafeAutoWithVelocity extends CommandBase {
     // Use addRequirements() here to declare subsystem dependencies.
     this.shooter = shooter;
     this.ballFeed = ballFeed;
-    this.shooterMotorSpeed = shooterMotorSpeed;
+    this.shooterMotorSpeed = shooterMotorSpeed; //in RPM
     this.ballFeedSpeed = ballFeedSpeed;
   }
 
@@ -37,12 +37,12 @@ public class FailSafeAutoWithVelocity extends CommandBase {
   @Override
   public void execute() {
     if(shooter.isStable() == false){
-      shooter.runShooterMotors(shooterMotorSpeed);
+      shooter.runControlledShooter(shooterMotorSpeed);
     }
     else if(shooter.isStable() == true){
       ballFeed.runBallFeedMotor(ballFeedSpeed);
       ballFeed.runShooterFeedMotor(shooterFeedSpeed);
-      shooter.runShooterMotors(shooterMotorSpeed);
+      shooter.runControlledShooter(shooterMotorSpeed);
       
     }
     
@@ -54,7 +54,7 @@ public class FailSafeAutoWithVelocity extends CommandBase {
     
     ballFeed.runBallFeedMotor(0.0);
     ballFeed.runShooterFeedMotor(0.0);
-    shooter.runShooterMotors(0.0);
+    shooter.stopShooterMotors();;
   }
 
   // Returns true when the command should end.

@@ -146,8 +146,8 @@ public class RobotContainer {
 
     xboxButtonA.whileHeld(new RunClimberHook(climber, -0.25));
     xboxButtonX.whileHeld(new RunClimberHook(climber, 0.50));
-    //xboxButtonY.toggleWhenActive(new RunShooter(shooter, 1));
-    xboxButtonY.toggleWhenActive(new RunShooterPID(shooter, 1000));
+    //xboxButtonY.toggleWhenActive(new RunShooter(shooter, 1)); //Removed in favor of PID control below
+    xboxButtonY.toggleWhenActive(new RunShooterPID(shooter, 3400));
     xboxButtonB.whileHeld(new RunBothWinches(climber, 1.0, 1.0));
 
     shiftHighJoystick.toggleWhenPressed(new ShiftHigh(drivetrain));
@@ -187,7 +187,7 @@ public class RobotContainer {
   
     // xboxDPadLeft.whileActiveContinuous(new RunColorWheel(colorWheel, 0.5));
     // xboxDPadRight.whileActiveContinuous(new RunColorWheel(colorWheel, -0.5));
-    xboxRightBumper.toggleWhenPressed(new RunShooter(shooter, 1.0));
+    xboxRightBumper.toggleWhenPressed(new RunShooterPID(shooter, 4900)); //run at max speed
     xboxRightTrigger.whileHeld(new RunShooterFeed(ballFeed, -1.0));
 
     xboxStartButton.whileHeld(new RunBallFeed(ballFeed, 0.75));
@@ -210,6 +210,7 @@ public class RobotContainer {
     SmartDashboard.putData(drivetrain);
     SmartDashboard.putData("Run Intake", new RunIntake(intake, 0.35));
 
+    // Don't neet these, have this elsewhere now
     // SmartDashboard.putData("Run Shooter", new RunShooter(shooter, 1.0));
     // SmartDashboard.putNumber("Velocity", shooter.shooterEncoderOne.getVelocity());
 
@@ -244,8 +245,7 @@ public class RobotContainer {
     */
 
     // I think this will allow a speed value to be provided and the shooter to be run at that speed
-    SmartDashboard.putNumber("Shooter RPM", 100);
-    SmartDashboard.putData("Run Shooter PID", new RunShooterPID(shooter, SmartDashboard.getNumber("Shooter RPM", 0)));
+    SmartDashboard.putNumber("Shooter RPM", 3400);
     //Shuffleboard.getTab("Shooter").add("Run Shooter PID", new RunShooterPID(shooter, 0.1));
   }
 
