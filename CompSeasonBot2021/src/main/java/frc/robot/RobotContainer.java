@@ -59,6 +59,7 @@ public class RobotContainer {
   private final BallFeed ballFeed  = new BallFeed();
   private final Limelight limelight = new Limelight();
   private final Pixy2 pixy = new Pixy2();
+  private final Hood hood = new Hood();
 
 
   public Joystick leftJoystick = new Joystick(1);
@@ -146,7 +147,8 @@ public class RobotContainer {
 
     xboxButtonA.whileHeld(new RunClimberHook(climber, -0.25));
     xboxButtonX.whileHeld(new RunClimberHook(climber, 0.50));
-    xboxButtonY.toggleWhenActive(new RunShooter(shooter, .82));
+    //xboxButtonY.toggleWhenActive(new RunShooter(shooter, 1)); //Removed in favor of PID control below
+    xboxButtonY.toggleWhenActive(new RunShooterPID(shooter, 3400));
     xboxButtonB.whileHeld(new RunBothWinches(climber, 1.0, 1.0));
 
     shiftHighJoystick.toggleWhenPressed(new ShiftHigh(drivetrain));
@@ -186,7 +188,7 @@ public class RobotContainer {
   
     // xboxDPadLeft.whileActiveContinuous(new RunColorWheel(colorWheel, 0.5));
     // xboxDPadRight.whileActiveContinuous(new RunColorWheel(colorWheel, -0.5));
-    xboxRightBumper.toggleWhenPressed(new RunShooter(shooter, 1.0));
+    xboxRightBumper.toggleWhenPressed(new RunShooterPID(shooter, 4900)); //run at max speed
     xboxRightTrigger.whileHeld(new RunShooterFeed(ballFeed, -1.0));
 
     xboxStartButton.whileHeld(new RunBallFeed(ballFeed, 0.75));
@@ -197,19 +199,20 @@ public class RobotContainer {
     SmartDashboard.putNumber("Ballfeed Speed", ballFeed.getBallFedVelocity());
     //runShooterAndBallFeed.whenActive(new RunShooterFeed(ballFeed, 0.25), new RunBallFeed(ballFeed, 0.25));
     
-    // Shooter Info
-    SmartDashboard.putNumber("Desired Shooter Speed", 1.0);
-    SmartDashboard.putData("Set Shooters to Desired Speed", new AdjustShooterSpeed(shooter));
+    // Shooter Info - Ignoring this for now
+    //SmartDashboard.putNumber("Desired Shooter Speed", 1.0);
+    //SmartDashboard.putData("Set Shooters to Desired Speed", new AdjustShooterSpeed(shooter));
     // SmartDashboard.putNumber("Shooter Speed", shooter.getShooterSpeed());
 
     // Shooter Hood
-    SmartDashboard.putData("Extend hood", new ExtendHood(shooter));
-    SmartDashboard.putData("Retract hood", new RetractHood(shooter));
+    SmartDashboard.putData("Extend hood", new ExtendHood(hood));  // I think the hood needs its own subsystem so it can be changed while running the shooter
+    SmartDashboard.putData("Retract hood", new RetractHood(hood));
    
-    SmartDashboard.putData(drivetrain);
+    SmartDashboard.putData(drivetrain);  
     SmartDashboard.putData("Run Intake", new RunIntake(intake, 0.35));
 
-    SmartDashboard.putData("Run Shooter", new RunShooter(shooter, 1.0));
+    // Don't need these, have this elsewhere now
+    // SmartDashboard.putData("Run Shooter", new RunShooter(shooter, 1.0));
     // SmartDashboard.putNumber("Velocity", shooter.shooterEncoderOne.getVelocity());
 
     SmartDashboard.putData("Run Climber One", new RunClimberLeft(climber, 0.35));
@@ -234,13 +237,17 @@ public class RobotContainer {
     SmartDashboard.putNumber("Gyro Angle", drivetrain.ahrs.getAngle());
 
     // Interstellar Accuracy Challenge Speed Buttons
+    /* Ignore this for now
     SmartDashboard.putData("Shooter Zone 1", new RunShooter(shooter, 0.40));
     SmartDashboard.putData("Shooter Zone 2", new RunShooter(shooter, 0.48)); // hood back 0.34, hood forward 0.48
     SmartDashboard.putData("Shooter Zone 3", new RunShooter(shooter, 0.43)); // hood back 0.43, hood forward ?
     SmartDashboard.putData("Shooter Zone 4", new RunShooter(shooter, 0.40)); // hood back ?, hood forward ?
     SmartDashboard.putData("Shooter Zone 5", new RunShooter(shooter, 0.40)); // hood back ?, hood forward ?
+    */
 
-    SmartDashboard.putData("Run Shooter PID", new RunShooterPID(shooter, 0.5));
+    // I think this will allow a speed value to be provided and the shooter to be run at that speed
+    SmartDashboard.putNumber("Shooter RPM", 3400);
+    SmartDashboard.putData("Run Shooter PID", new RunShooterPID(shooter, 3400));
     //Shuffleboard.getTab("Shooter").add("Run Shooter PID", new RunShooterPID(shooter, 0.1));
   }
 

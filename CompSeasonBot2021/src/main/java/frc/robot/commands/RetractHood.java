@@ -7,12 +7,12 @@ import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class RetractHood extends CommandBase {
-  Shooter shooter;
+  Hood m_Hood;
   Boolean isFinished;
 
   /** Creates a new RetractHood. */
-  public RetractHood(Shooter shooter) {
-    this.shooter = shooter;
+  public RetractHood(Hood subsystem ) {
+    m_Hood = subsystem;
     isFinished = false;
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -24,7 +24,7 @@ public class RetractHood extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooter.retractHood();
+    m_Hood.retractHood();
     System.out.println("retract hood");
     isFinished = true;
   }

@@ -17,7 +17,7 @@ public class ShootPowerCell extends ParallelCommandGroup {
   
 
   public ShootPowerCell(Intake intake, BallFeed ballFeed, Drivetrain drivetrain, Shooter shooter) {
-    super(new RunIntake(intake, 1.0), new RunShooterFeed(ballFeed, 1.0), new RunBallFeed(ballFeed, -0.50), new RunShooter(shooter, 1.0));
+    super(new RunIntake(intake, 1.0), new RunShooterFeed(ballFeed, 1.0), new RunBallFeed(ballFeed, -0.50), new RunShooterPID(shooter, 4900));
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());super();
     
