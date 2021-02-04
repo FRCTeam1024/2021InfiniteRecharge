@@ -21,10 +21,10 @@ import com.ctre.phoenix.motorcontrol.SensorTerm;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Timer;
 
 public class Drivetrain extends SubsystemBase {
 
@@ -194,6 +194,7 @@ public class Drivetrain extends SubsystemBase {
     m_RightLeader.config_IntegralZone(DriveConstants.kSlot_DistLow, 100, Constants.kTimeoutMs);
     m_RightLeader.configClosedLoopPeakOutput(DriveConstants.kSlot_DistLow, 1, Constants.kTimeoutMs);
     m_RightLeader.configAllowableClosedloopError(DriveConstants.kSlot_DistLow, 0, Constants.kTimeoutMs);
+    //m_RightLeader.configClosedloopRamp(secondsFromNeutralToFull, timeoutMs)
 
     /* FPID Gains for Distance PID when in hi gear -  Move these to a constants or gains class eventually*/
     m_RightLeader.config_kP(DriveConstants.kSlot_DistHi, 0.5, Constants.kTimeoutMs);
@@ -205,13 +206,14 @@ public class Drivetrain extends SubsystemBase {
     m_RightLeader.configAllowableClosedloopError(DriveConstants.kSlot_DistHi, 0, Constants.kTimeoutMs);
       
     /* FPID Gains for Turn PID when in low gear-  Move these to a constants or gains class eventually*/
-    m_RightLeader.config_kP(DriveConstants.kSlot_TurnLow, 0.5, Constants.kTimeoutMs);
-    m_RightLeader.config_kI(DriveConstants.kSlot_TurnLow, 0, Constants.kTimeoutMs);
-    m_RightLeader.config_kD(DriveConstants.kSlot_TurnLow, 4, Constants.kTimeoutMs);
+    m_RightLeader.config_kP(DriveConstants.kSlot_TurnLow, 1, Constants.kTimeoutMs);
+    m_RightLeader.config_kI(DriveConstants.kSlot_TurnLow, 0.003, Constants.kTimeoutMs);
+    m_RightLeader.config_kD(DriveConstants.kSlot_TurnLow, 15, Constants.kTimeoutMs);
     m_RightLeader.config_kF(DriveConstants.kSlot_TurnLow, 0, Constants.kTimeoutMs);
     m_RightLeader.config_IntegralZone(DriveConstants.kSlot_TurnLow, 200, Constants.kTimeoutMs);
     m_RightLeader.configClosedLoopPeakOutput(DriveConstants.kSlot_TurnLow, 1, Constants.kTimeoutMs);
     m_RightLeader.configAllowableClosedloopError(DriveConstants.kSlot_TurnLow, 0, Constants.kTimeoutMs);
+    m_RightLeader.configMotionAcceleration(210);
 
     /* FPID Gains for Turn PID when in hi gear-  Move these to a constants or gains class eventually*/
     m_RightLeader.config_kP(DriveConstants.kSlot_TurnHi, 0.5, Constants.kTimeoutMs);
@@ -237,6 +239,9 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Angle", getHeading());
+    SmartDashboard.putNumber("RightSidePower", getRightSidePower());
+    SmartDashboard.putNumber("LeftSidePower", getLeftSidePower());
   }
 
 
@@ -365,6 +370,7 @@ public class Drivetrain extends SubsystemBase {
       m_RightLeader.selectProfileSlot(DriveConstants.kSlot_TurnLow, DriveConstants.PID_TURN);
       setProfile(maxVLo, maxALo, sLo);
       shiftLow();
+      Timer.delay(0.5);
     }
 
     /* Calculate targets */
@@ -426,6 +432,14 @@ public class Drivetrain extends SubsystemBase {
     return m_RightLeader.getSensorCollection().getQuadraturePosition();
   }
 
+  public double getRightSidePower(){ //should be giving us the right side's power maybe??? none of its working right so idk
+    return m_RightLeader.getMotorOutputPercent();
+  }
+
+  public double getLeftSidePower(){
+    return m_LeftLeader.getMotorOutputPercent();
+  }
+
   /*
    * Sets up motion magic constants for generating trapezoid/S-curve profile
    * @param maxV Maximum Velocity (420/210)
@@ -450,7 +464,6 @@ public class Drivetrain extends SubsystemBase {
 
   /* 
   All of this is handled in driveStraight or will be handled in the command that calls driveStraight
-
   public void ForwardInInches(int inches) {
     leftLeader.setSelectedSensorPosition(0);
     inches = (int) (-1 * inches / (6 * 3.14) * 723); //conversion: x inches / (6*PI inches) * 723 encoder units;
@@ -460,7 +473,6 @@ public class Drivetrain extends SubsystemBase {
     }
     stop();
   }
-
   public void ReverseInInches(int inches){
     inches = (int) (inches / (6 * 3.14) * 723); 
     double encoderGoal = leftLeader.getSelectedSensorPosition() + inches;
