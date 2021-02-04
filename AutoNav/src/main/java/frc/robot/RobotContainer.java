@@ -94,8 +94,8 @@ public class RobotContainer {
     // NetworkTableEntry xOffset = limelight.getEntry("tx");
     
     SmartDashboard.putData("Drive", new BasicDriveCommand(drivetrain));
-
-    SmartDashboard.putNumber("Left Encoder Raw", drivetrain.getLeftRawEncoder());
+    SmartDashboard.putData("MotionMagicDrive", new AutoForwardMotionMagic(drivetrain, 30.0));
+    SmartDashboard.putData("MotionMagicTurn", new AutoTurnMotionMagic(drivetrain, 90.0));
   }
 
 
@@ -111,11 +111,9 @@ public class RobotContainer {
   }
 
   public void periodic() {
-    outputToSmartDashboard();
+    SmartDashboard.updateValues();
   }
 
   public void outputToSmartDashboard() {
-
-    
   }
 }
