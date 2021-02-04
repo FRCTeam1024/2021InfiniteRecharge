@@ -52,8 +52,6 @@ public class Drivetrain extends SubsystemBase {
     drive(-power, -power);    
   }
 
-  
-
   public void drive(double leftPower, double rightPower) {
     frontLeft.set(ControlMode.PercentOutput, leftPower);
     middleLeft.set(ControlMode.PercentOutput, leftPower);
@@ -77,12 +75,10 @@ public class Drivetrain extends SubsystemBase {
   
   public void pivotTurnRight(double leftPower, double rightPower){
     drive(leftPower, -rightPower);
-
   }
   
   public void pivotTurnLeft(double leftPower, double rightPower){
     drive(-leftPower, rightPower);
-
   }
 
   public void turnLeft(double power) {
@@ -93,6 +89,7 @@ public class Drivetrain extends SubsystemBase {
   public void stop() {
 		drive(0.0, 0.0);
   }
+  
   public void shiftLow(){
     shifter.set(true);
   }
