@@ -31,6 +31,7 @@ public class LimelightAutoAim extends PIDCommand {
         () -> 0.0, // Setpoint is 0.0 degree xOffset, which is centered
         // This uses the output        
         output -> {
+          SmartDashboard.putNumber("xOffset", limelightInstance.getXOffset());
           double adjustedOutput = MathUtil.clamp(output, -1.0, 1.0);
           drivetrainInstance.drive(-adjustedOutput, adjustedOutput);
         } //drivetrainInstance.drive(output, -output)
