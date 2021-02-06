@@ -136,11 +136,9 @@ public class RobotContainer {
     
     // autoCenter.whileHeld(m_autoCommand);
     
-    NetworkTable limelight = NetworkTableInstance.getDefault().getTable("limelight");
-    NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(1);
-     
-    // NetworkTableEntry xOffset = limelight.getEntry("tx");
-
+    //NetworkTable limelight = NetworkTableInstance.getDefault().getTable("limelight");
+    //NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(1);
+    
     // below done with Marc
     UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(0);
 		//camera.setResolution(144, 144);
@@ -154,8 +152,8 @@ public class RobotContainer {
     shiftHighJoystick.toggleWhenPressed(new ShiftHigh(drivetrain));
     shiftLowJoystick.toggleWhenPressed(new ShiftLow(drivetrain));
 
-    leftTrigger.whenPressed(new LimelightCenter(drivetrain));
-    rightTrigger.whenPressed(new LimelightShooter(drivetrain, shooter, ballFeed));
+    leftTrigger.whenPressed(new LimelightCenter(limelight, drivetrain));
+    rightTrigger.whenPressed(new LimelightShooter(limelight, drivetrain, shooter, ballFeed));
 
     //DEAD BAND FOR LOGITECH JOYSTICK CONTROLLERS
     if(xboxController.getLeftStickY() > 0.2 || xboxController.getLeftStickY() < 0.2){
@@ -226,8 +224,8 @@ public class RobotContainer {
     SmartDashboard.putData("Extend Intake", new ExtendIntake(intake));
     SmartDashboard.putData("Retract Intake", new RetractIntake(intake));
     SmartDashboard.putData("Run BallFeed", new RunBallFeed(ballFeed, -0.50));
-    SmartDashboard.putData("Limelight Aim and Shoot", new LimelightShooter(drivetrain, shooter, ballFeed));
-    SmartDashboard.putData("Limelight Aim", new LimelightCenter(drivetrain));
+    SmartDashboard.putData("Limelight Aim and Shoot", new LimelightShooter(limelight, drivetrain, shooter, ballFeed));
+    SmartDashboard.putData("Limelight Aim", new LimelightCenter(limelight, drivetrain));
     SmartDashboard.putData("Run ShooterFeed", new RunShooterFeed(ballFeed, 1.0));
     SmartDashboard.putData("Drive", new BasicDriveCommand(drivetrain));
     SmartDashboard.putData("Sequential Shooter", new SequentialShooter(shooter, ballFeed));
@@ -235,6 +233,9 @@ public class RobotContainer {
     SmartDashboard.putData("PID Gyro Aim", new PIDGyroAim(drivetrain, 65));
     SmartDashboard.putData("Reset Gyro Senser", new ResetGyro(drivetrain));
     SmartDashboard.putNumber("Gyro Angle", drivetrain.ahrs.getAngle());
+
+    SmartDashboard.putData("Limelight PID", new LimelightAutoAim(limelight, drivetrain));
+    //SmartDashboard.putNumber("LkFF", limelight.getPIDController().getP());
 
     // Interstellar Accuracy Challenge Speed Buttons
     /* Ignore this for now

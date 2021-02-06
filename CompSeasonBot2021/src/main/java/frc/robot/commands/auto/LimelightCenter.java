@@ -13,6 +13,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Limelight;
 
 public class LimelightCenter extends CommandBase {
 
@@ -20,18 +21,21 @@ public class LimelightCenter extends CommandBase {
   private int sequences = 0;
   public double drivetrainSpeed = .4;
 
-  NetworkTable limelight = NetworkTableInstance.getDefault().getTable("limelight");
+  /*NetworkTable limelight = NetworkTableInstance.getDefault().getTable("limelight");
   NetworkTableEntry xOffset = limelight.getEntry("tx");
   NetworkTableEntry yOffset = limelight.getEntry("ty");
-  NetworkTableEntry targetArea = limelight.getEntry("ta");
+  NetworkTableEntry targetArea = limelight.getEntry("ta");*/
+
+  private final Limelight limelight;
   
   /**
    * Creates a new LimelightCenter.
    */
-  public LimelightCenter(Drivetrain drivetrain) {
+  public LimelightCenter(Limelight limelight, Drivetrain drivetrain) {
     this.drivetrain = drivetrain;
+    this.limelight = limelight;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(drivetrain);
+    addRequirements(limelight, drivetrain);
   }
 
   // Called when the command is initially scheduled.
@@ -50,12 +54,12 @@ public class LimelightCenter extends CommandBase {
     double tolerance = SmartDashboard.getNumber("Tolerance", 1.5);
     
     //Slows the robot when gets close to target
-    if(Math.abs(xOffset.getDouble(0.0)) < 7.5){
+    if(Math.abs(limelight.getXOffset()) < 7.5){
       drivetrainSpeed = 0.225;
     }
 
-    if(Math.abs( xOffset.getDouble(0.0) ) < tolerance ) {
-      if(Math.abs( xOffset.getDouble(0.0) ) > 0.5) {
+    if(Math.abs(limelight.getXOffset()) < tolerance ) {
+      if(Math.abs(limelight.getXOffset()) > 0.5) {
         // slow even more when very close, between 1.5 and 0.5
         drivetrainSpeed = minimumSpeed;
       } else {
@@ -71,13 +75,13 @@ public class LimelightCenter extends CommandBase {
     }
     
     SmartDashboard.putNumber("Speed", drivetrainSpeed);
-    SmartDashboard.putNumber("X Offset", xOffset.getDouble(0.0));
+    SmartDashboard.putNumber("X Offset", limelight.getXOffset());
     //Checks offsets of center of target and moves robot to center 
 
-    if(xOffset.getDouble(0.0) > tolerance) {
+    if(limelight.getXOffset() > tolerance) {
         // Turn right
       drivetrain.drive(drivetrainSpeed, -drivetrainSpeed);
-    } else if(xOffset.getDouble(0.0) < -tolerance) {
+    } else if(limelight.getXOffset() < -tolerance) {
         // Turn left
         drivetrain.drive(-drivetrainSpeed, drivetrainSpeed);
     } 

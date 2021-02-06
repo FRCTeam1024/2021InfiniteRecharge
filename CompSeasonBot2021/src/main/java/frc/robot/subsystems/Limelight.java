@@ -5,22 +5,49 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.networktables.*;
+import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Limelight extends SubsystemBase {
   private NetworkTable limelight;
-  private NetworkTableEntry xOffset;
-  private NetworkTableEntry yOffset;
-  private NetworkTableEntry targetArea;
-  private NetworkTableEntry ledMode;
+  private NetworkTableEntry targetEntry;
+  private NetworkTableEntry xOffsetEntry;
+  private NetworkTableEntry yOffsetEntry;
+  private NetworkTableEntry targetAreaEntry;
+  private NetworkTableEntry ledModeEntry;
+
+  private final PIDController limelightPID;
+  private final double kP, kI, kD, kMaxOutput, kMinOutput;  //Gains, may move elsewhere.
+  //private final double kIz, kFF;
 
   /** Creates a new Limelight. */
   public Limelight() {
     this.limelight = NetworkTableInstance.getDefault().getTable("limelight");
-    this.xOffset = limelight.getEntry("tx");
-    this.yOffset = limelight.getEntry("ty");
-    this.targetArea = limelight.getEntry("ta");
-    this.ledMode = limelight.getEntry("ledMode");
+    this.limelight.getEntry("camMode").setNumber(1);
+
+    this.targetEntry = limelight.getEntry("tv");
+    this.xOffsetEntry = limelight.getEntry("tx");
+    this.yOffsetEntry = limelight.getEntry("ty");
+    this.targetAreaEntry = limelight.getEntry("ta");
+    this.ledModeEntry = limelight.getEntry("ledMode");
+    
+    kP = 0.03;
+    kI = 0;
+    kD = 0; 
+    //kIz = 0;  // Not used for PIDController class
+    //kFF = 0.1;  // Not used for PIDController class
+    this.kMaxOutput = 1.0;
+    this.kMinOutput = -1.0;
+
+    this.limelightPID = new PIDController(kP, kI, kD);
+
+    SmartDashboard.putNumber("LkP", this.limelightPID.getP());
+    SmartDashboard.putNumber("LkI", this.limelightPID.getI());
+    SmartDashboard.putNumber("LkD", this.limelightPID.getD());
   }
 
   @Override
@@ -28,17 +55,45 @@ public class Limelight extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  public double getXOffSet() {
-    return this.xOffset.getDouble(0.0);
+  public PIDController getPIDController() {
+    this.limelightPID.setP(SmartDashboard.getNumber("LkP", 0));
+    this.limelightPID.setI(SmartDashboard.getNumber("LkI", 0));
+    this.limelightPID.setD(SmartDashboard.getNumber("LkD", 0));
+    return this.limelightPID;
   }
 
-  public NetworkTableEntry getYOffSet() {
+  public double getMinOutput() {
+    return this.kMinOutput;
+  }
+
+  public double getMaxOutput() {
+    return this.kMaxOutput;
+  }
+
+  public double getXOffset() {
+    return this.xOffsetEntry.getDouble(0.0);
+  }
+
+  public double getYOffset() {
+    return this.yOffsetEntry.getDouble(0.0);
+  }
+
+  public double getTargetArea() {
+    return this.targetAreaEntry.getDouble(0.0);
+  }
+
+  public boolean hasTarget() {
+    // defaults to false to negate false-positives
+    return this.targetEntry.getBoolean(false);
+  }
+
+  /*public NetworkTableEntry getYOffset() {
     return this.yOffset;
   }
 
   public NetworkTableEntry getTargetArea() {
     return this.targetArea;
-  }
+  }*/
 
   /**
    * Toggles the LED of the limelight.
@@ -46,9 +101,9 @@ public class Limelight extends SubsystemBase {
    */
   public void toggleLimelightLED(int state) {
     if (state == 0) {
-      this.ledMode.setNumber(1);
+      this.ledModeEntry.setNumber(1);
     } else if (state == 1) {
-      this.ledMode.setNumber(3);
+      this.ledModeEntry.setNumber(3);
     } else {
       return;
     }
