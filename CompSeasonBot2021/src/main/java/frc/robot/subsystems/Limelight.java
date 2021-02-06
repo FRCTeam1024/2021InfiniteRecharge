@@ -87,19 +87,24 @@ public class Limelight extends SubsystemBase {
     return this.targetEntry.getBoolean(false);
   }
 
-  /*public NetworkTableEntry getYOffset() {
-    return this.yOffset;
+  public void enableLEDs() {
+    this.ledModeEntry.setNumber(3);
   }
 
-  public NetworkTableEntry getTargetArea() {
-    return this.targetArea;
+  public void disableLEDs() {
+    this.ledModeEntry.setNumber(1);
+  }
+
+  // Toggle LEDs based on current state
+  /*public void toggleLEDs() {
+
   }*/
 
   /**
    * Toggles the LED of the limelight.
    * @param state - 0 for off and 1 for on
    */
-  public void toggleLimelightLED(int state) {
+  public void toggleLEDs(int state) {
     if (state == 0) {
       this.ledModeEntry.setNumber(1);
     } else if (state == 1) {
