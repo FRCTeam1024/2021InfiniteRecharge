@@ -31,19 +31,20 @@ public class LimelightAutoAim extends PIDCommand {
         () -> 0.0, // Setpoint is 0.0 degree xOffset, which is centered
         // This uses the output        
         output -> {
+          double adjustedOutput = MathUtil.clamp(output, limelightInstance.getMinOutput(), limelightInstance.getMinOutput());
           SmartDashboard.putNumber("xOffset", limelightInstance.getXOffset());
-          double adjustedOutput = MathUtil.clamp(output, -1.0, 1.0);
+          SmartDashboard.putNumber("Output", output);
+          SmartDashboard.putNumber("Final Output", adjustedOutput);
           drivetrainInstance.drive(-adjustedOutput, adjustedOutput);
         } //drivetrainInstance.drive(output, -output)
         // Require driveSubsystem?
     );
-
     // Use addRequirements() here to declare subsystem dependencies.
     limelight = limelightInstance;
     drivetrain = drivetrainInstance;
     addRequirements(limelight);
     // Configure additional PID options by calling `getController` here.
-    limelight.getPIDController().setTolerance(1); // 1 degree for now // limelight.getPIDController().enableContinuousInput(-29.8, 29.8); // min and max degrees on the limelight
+    limelight.getPIDController().setTolerance(1); // 1 degree for now
   }
 
   // Returns true when the command should end.

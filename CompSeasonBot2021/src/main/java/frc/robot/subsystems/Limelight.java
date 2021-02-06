@@ -21,7 +21,8 @@ public class Limelight extends SubsystemBase {
   private NetworkTableEntry ledModeEntry;
 
   private final PIDController limelightPID;
-  private final double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;  //Gains, may move elsewhere.
+  private final double kP, kI, kD, kMaxOutput, kMinOutput;  //Gains, may move elsewhere.
+  //private final double kIz, kFF;
 
   /** Creates a new Limelight. */
   public Limelight() {
@@ -34,13 +35,13 @@ public class Limelight extends SubsystemBase {
     this.targetAreaEntry = limelight.getEntry("ta");
     this.ledModeEntry = limelight.getEntry("ledMode");
     
-    kP = 0.1;
+    kP = 0.03;
     kI = 0;
     kD = 0; 
-    kIz = 0; 
-    kFF = 0.1;
-    kMaxOutput = 1; 
-    kMinOutput = -1;
+    //kIz = 0;  // Not used for PIDController class
+    //kFF = 0.1;  // Not used for PIDController class
+    this.kMaxOutput = 1.0;
+    this.kMinOutput = -1.0;
 
     this.limelightPID = new PIDController(kP, kI, kD);
 
@@ -59,6 +60,14 @@ public class Limelight extends SubsystemBase {
     this.limelightPID.setI(SmartDashboard.getNumber("LkI", 0));
     this.limelightPID.setD(SmartDashboard.getNumber("LkD", 0));
     return this.limelightPID;
+  }
+
+  public double getMinOutput() {
+    return this.kMinOutput;
+  }
+
+  public double getMaxOutput() {
+    return this.kMaxOutput;
   }
 
   public double getXOffset() {
