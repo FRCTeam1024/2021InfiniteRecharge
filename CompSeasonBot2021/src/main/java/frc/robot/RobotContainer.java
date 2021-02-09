@@ -192,6 +192,7 @@ public class RobotContainer {
     xboxStartButton.whileHeld(new RunBallFeed(ballFeed, 0.75));
     xBoxBackButton.whileHeld(new RunBallFeed(ballFeed, -0.75));
 
+    new LimelightLED(limelight, 0); // Disable Limelight LEDs
     
     SmartDashboard.putData("Score Power Cell", new ShootPowerCell(intake, ballFeed, drivetrain, shooter));
     SmartDashboard.putNumber("Ballfeed Speed", ballFeed.getBallFedVelocity());
