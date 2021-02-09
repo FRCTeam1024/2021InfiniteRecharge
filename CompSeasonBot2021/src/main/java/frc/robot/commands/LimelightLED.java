@@ -8,11 +8,13 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.*;
 
 public class LimelightLED extends CommandBase {
+  private final Limelight limelight;
+  private final int state;
+  private boolean finished;
 
-  Limelight limelight;
-  int state;
   /** Creates a new LimelightLED. */
   public LimelightLED(Limelight limelight, int state) {
+    this.finished = false;
     this.limelight = limelight;
     this.state = state;
     // Use addRequirements() here to declare subsystem dependencies.
@@ -22,7 +24,8 @@ public class LimelightLED extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    limelight.toggleLEDs(state);
+    limelight.toggleLEDs(this.state);
+    this.finished = true;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -36,6 +39,6 @@ public class LimelightLED extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    return this.finished;
   }
 }
