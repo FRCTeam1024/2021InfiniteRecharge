@@ -23,6 +23,7 @@ public class AutoForwardMotionMagic extends CommandBase {
   @Override
   public void initialize() {
     drivetrain.driveStraight(dist, false);
+    //drivetrain.driveStraight(dist, true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -39,7 +40,8 @@ public class AutoForwardMotionMagic extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(drivetrain.getDistance() > (dist * 0.95) && drivetrain.getDistance() < (dist * 1.05)){
+    if(drivetrain.getDistance() > (dist -.5) && drivetrain.getDistance() < (dist +.5)){  //changed to use a set distance threshold rather than percentage, 
+                                                                                          // would like to get smaller but may not be possible with gear lash.
       MSstayed+=20; //every time that the isFinished is run, it has been another 20ms.
       if(MSstayed > 1000){ //Currently just asking if robot has stayed in the same spot for 1 sec, can just be lowered later if it's slowing us down too much.
         return true;
