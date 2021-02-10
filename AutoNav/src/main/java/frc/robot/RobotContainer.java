@@ -96,6 +96,8 @@ public class RobotContainer {
     SmartDashboard.putData("Drive", new BasicDriveCommand(drivetrain));
     SmartDashboard.putData("MotionMagicDrive", new AutoForwardMotionMagic(drivetrain, 30.0));
     SmartDashboard.putData("MotionMagicTurn", new AutoTurnMotionMagic(drivetrain, 90.0));
+    SmartDashboard.putData("RectanglePath", new RectanglePath(drivetrain));
+    SmartDashboard.putData("SlalomPath", new SlalomPath(drivetrain));
   }
 
 
