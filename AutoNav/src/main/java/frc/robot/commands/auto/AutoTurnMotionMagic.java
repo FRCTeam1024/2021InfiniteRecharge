@@ -22,7 +22,8 @@ public class AutoTurnMotionMagic extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    drivetrain.pivotTurn(angle, false);
+    drivetrain.pivotTurn(angle, false); // low gear turn
+    //drivetrain.pivotTurn(angle, true); // high gear turn
   }
 
   // Called every time the scheduler runs while the command is scheduled.
