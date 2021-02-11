@@ -208,12 +208,12 @@ public class Drivetrain extends SubsystemBase {
     m_RightLeader.configAllowableClosedloopError(DriveConstants.kSlot_DistHi, 0, Constants.kTimeoutMs);
       
     /* FPID Gains for Turn PID when in low gear-  Move these to a constants or gains class eventually*/
-    m_RightLeader.config_kP(DriveConstants.kSlot_TurnLow, 0.95, Constants.kTimeoutMs);//was.85 this seems a little better after lowering peak output
+    m_RightLeader.config_kP(DriveConstants.kSlot_TurnLow, 1, Constants.kTimeoutMs);//was.85 this seems a little better after lowering peak output
     m_RightLeader.config_kI(DriveConstants.kSlot_TurnLow, 0.0036, Constants.kTimeoutMs);
-    m_RightLeader.config_kD(DriveConstants.kSlot_TurnLow, 7.5, Constants.kTimeoutMs);
+    m_RightLeader.config_kD(DriveConstants.kSlot_TurnLow, 5, Constants.kTimeoutMs);
     m_RightLeader.config_kF(DriveConstants.kSlot_TurnLow, 0, Constants.kTimeoutMs);
     m_RightLeader.config_IntegralZone(DriveConstants.kSlot_TurnLow, 200, Constants.kTimeoutMs);
-    m_RightLeader.configClosedLoopPeakOutput(DriveConstants.kSlot_TurnLow, .5, Constants.kTimeoutMs); //was .75, lowered to remove jerk during pivot turn
+    m_RightLeader.configClosedLoopPeakOutput(DriveConstants.kSlot_TurnLow, .75, Constants.kTimeoutMs); //was .75, lowered to remove jerk during pivot turn
     m_RightLeader.configAllowableClosedloopError(DriveConstants.kSlot_TurnLow, 0, Constants.kTimeoutMs);
 
     /* FPID Gains for Turn PID when in hi gear-  Move these to a constants or gains class eventually*/
@@ -378,7 +378,7 @@ public class Drivetrain extends SubsystemBase {
       m_RightLeader.selectProfileSlot(DriveConstants.kSlot_TurnLow, DriveConstants.PID_TURN);
       setProfile(maxVLo, maxALoTurn, sLo);
       shiftLow();
-      Timer.delay(0.5);
+    //  Timer.delay(0.5);
     }
 
     /* Calculate targets */
