@@ -16,29 +16,32 @@ public class SlalomPath extends SequentialCommandGroup {
   /** Creates a new SlalomPath. */
   Drivetrain drivetrain;
 
+
   public SlalomPath(Drivetrain drive) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     drivetrain = drive;
-    addCommands(//new AutoForwardMotionMagic(drivetrain, 45), 
-                new AutoTurnMotionMagic(drivetrain, -90)/*,
-                new AutoForwardMotionMagic(drivetrain, 30), 
+    addCommands(new AutoForwardMotionMagic(drivetrain, 45), 
+                new AutoTurnMotionMagic(drivetrain, -90),
+                new AutoForwardMotionMagic(drivetrain, 85), 
                 new AutoTurnMotionMagic(drivetrain, 90),
                 new AutoForwardMotionMagic(drivetrain, 180), 
                 new AutoTurnMotionMagic(drivetrain, 90),
-                new AutoForwardMotionMagic(drivetrain, 30), 
+                new AutoForwardMotionMagic(drivetrain, 95), 
                 new AutoTurnMotionMagic(drivetrain, -90),
-                new AutoForwardMotionMagic(drivetrain, 30),
+                new AutoForwardMotionMagic(drivetrain, 60),
                 new AutoTurnMotionMagic(drivetrain, -90),
-                new AutoForwardMotionMagic(drivetrain, 30),
+                new AutoForwardMotionMagic(drivetrain, 120),
                 new AutoTurnMotionMagic(drivetrain, -90),
-                new AutoForwardMotionMagic(drivetrain, 30),
+                new AutoForwardMotionMagic(drivetrain, 60),
+                new AutoTurnMotionMagic(drivetrain, -90),
+                new AutoForwardMotionMagic(drivetrain, 100),
                 new AutoTurnMotionMagic(drivetrain, 90),
-                new AutoForwardMotionMagic(drivetrain, 180),
-                new AutoTurnMotionMagic(drivetrain, 90),
-                new AutoForwardMotionMagic(drivetrain, 30),
-                new AutoTurnMotionMagic(drivetrain, -90), 
-                new AutoForwardMotionMagic(drivetrain, 30)*/);
+                new AutoForwardMotionMagic(drivetrain, 170),
+                new AutoTurnMotionMagic(drivetrain, 90), 
+                new AutoForwardMotionMagic(drivetrain, 75),
+                new AutoTurnMotionMagic(drivetrain, -90),
+                new AutoForwardMotionMagic(drivetrain, 30));
 
     addCommands();
   }

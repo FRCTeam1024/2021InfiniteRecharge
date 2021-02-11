@@ -39,7 +39,7 @@ public class AutoTurnMotionMagic extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(drivetrain.getHeading() > (angle * 0.99) && drivetrain.getHeading() < (angle * 1.01)){
+    if(drivetrain.getHeading() > (angle - 0.9) && drivetrain.getHeading() < (angle + .9)){
       MSstayed += 20;
       if(MSstayed > 1000){
         return true;
