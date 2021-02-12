@@ -21,7 +21,7 @@ public class Limelight extends SubsystemBase {
   private NetworkTableEntry ledModeEntry;
 
   private final PIDController limelightPID;
-  private final double kP, kI, kD, kMaxOutput, kMinOutput;  //Gains, may move elsewhere.
+  private final double kP, kI, kD, kMaxOutput, kMinOutput, kThreshold;  //Gains, may move elsewhere.
   //private final double kIz, kFF;
 
   /** Creates a new Limelight. */
@@ -42,6 +42,7 @@ public class Limelight extends SubsystemBase {
     //kFF = 0.1;  // Not used for PIDController class
     this.kMaxOutput = 1.0;
     this.kMinOutput = -1.0;
+    this.kThreshold = 1.0;
 
     this.limelightPID = new PIDController(kP, kI, kD);
 
@@ -53,6 +54,7 @@ public class Limelight extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Limelight Distance", this.getDistance());
   }
 
   public PIDController getPIDController() {
@@ -70,6 +72,10 @@ public class Limelight extends SubsystemBase {
     return this.kMaxOutput;
   }
 
+  public double getThreshold() {
+    return this.kThreshold;
+  }
+
   public double getXOffset() {
     return this.xOffsetEntry.getDouble(0.0);
   }
@@ -84,7 +90,7 @@ public class Limelight extends SubsystemBase {
 
   public boolean hasTarget() {
     // defaults to false to negate false-positives
-    return this.targetEntry.getBoolean(false);
+    return this.targetEntry.getDouble(0.0) == 1.0;
   }
 
   public void enableLEDs() {
@@ -93,6 +99,17 @@ public class Limelight extends SubsystemBase {
 
   public void disableLEDs() {
     this.ledModeEntry.setNumber(1);
+  }
+
+  public double getDistance() {
+    double h1, h2, a1, a2, distance;
+    h1 = 42; // Height of the camera from the ground
+    h2 = 92; // Height of power port (goal): 122.25
+    a1 = Math.toRadians(23.5); // Camera offset in degrees
+    a2 = Math.toRadians(this.getYOffset()); // Limelight ty
+    SmartDashboard.putNumber("a2", a2);
+    distance = (h2 - h1) / Math.tan(a1 + a2);
+    return distance;
   }
 
   // Toggle LEDs based on current state

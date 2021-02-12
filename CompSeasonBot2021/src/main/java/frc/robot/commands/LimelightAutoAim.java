@@ -39,13 +39,15 @@ public class LimelightAutoAim extends PIDCommand {
         } //drivetrainInstance.drive(output, -output)
         // Require driveSubsystem?
     );
-    limelightInstance.toggleLEDs(1);
     // Use addRequirements() here to declare subsystem dependencies.
     this.limelight = limelightInstance;
     this.drivetrain = drivetrainInstance;
     addRequirements(limelight);
+    
+    this.limelight.toggleLEDs(1);
+    
     // Configure additional PID options by calling `getController` here.
-    limelight.getPIDController().setTolerance(1); // 1 degree for now
+    limelight.getPIDController().setTolerance(this.limelight.getThreshold()); // 1 degree for now
   }
 
   // Called once the command ends or is interrupted.

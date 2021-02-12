@@ -254,6 +254,8 @@ public class RobotContainer {
   
     SmartDashboard.putData("Enable LEDs", new LimelightLED(limelight, 1));
     SmartDashboard.putData("Disable LEDs", new LimelightLED(limelight, 0));
+
+    SmartDashboard.putData("Run Auto PID Shooter", new AutoPIDShoot(hood, limelight, ballFeed, drivetrain, shooter));
   }
 
 
@@ -274,7 +276,7 @@ public class RobotContainer {
   }
 
   public void outputToSmartDashboard() {
-    SmartDashboard.putNumber("Yaw", sensors.getHeading());
-    SmartDashboard.putData("Reset Gyro", new InstantCommand(sensors::resetGyro));
+    //SmartDashboard.putNumber("Yaw", sensors.getHeading());
+    //SmartDashboard.putData("Reset Gyro", new InstantCommand(sensors::resetGyro));
   }
 }
