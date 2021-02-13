@@ -39,9 +39,9 @@ public class SlalomPath extends SequentialCommandGroup {
                 new AutoTurnMotionMagic(drivetrain, 90),
                 new AutoForwardMotionMagic(drivetrain, 170),
                 new AutoTurnMotionMagic(drivetrain, 90), 
-                new AutoForwardMotionMagic(drivetrain, 55),
+                new AutoForwardMotionMagic(drivetrain, 60),
                 new AutoTurnMotionMagic(drivetrain, -90),
-                new AutoForwardMotionMagic(drivetrain, 30));
+                new AutoForwardMotionMagic(drivetrain, 40));
 
     addCommands();
   }

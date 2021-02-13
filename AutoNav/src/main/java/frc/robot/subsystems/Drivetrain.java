@@ -42,6 +42,7 @@ public class Drivetrain extends SubsystemBase {
   private final double maxALo;
   private final double maxALoTurn;
   private final double maxAHi;
+  private final double maxAHiTurn;
   private final int sLo;
   private final int sHi;
 
@@ -185,12 +186,13 @@ public class Drivetrain extends SubsystemBase {
 
     /* Motion profile parameters for hi gear */
     maxVHi = 560;  // raw/100ms I think about 10 ft/s could probably be faster, need to test
-    maxAHi = 210;  // raw/100ms/s Seems good for lo, we'll see for hi
+    maxAHi = 350;
+    maxAHiTurn = 350;  // raw/100ms/s Seems good for lo, we'll see for hi
     sHi = 5;       // Can be 1-8, higher = more smoothing, just a guess so far
     
     /* FPID Gains for Distance PID when in low gear -  Move these to a constants or gains class eventually*/
     m_RightLeader.config_kP(DriveConstants.kSlot_DistLow, 1, Constants.kTimeoutMs);//Increased from 0.6 to 1 to get within 0.5inches
-    m_RightLeader.config_kI(DriveConstants.kSlot_DistLow, .0036, Constants.kTimeoutMs);//was 0 increased to .0036 to nudge us within 0.5 inch quicker
+    m_RightLeader.config_kI(DriveConstants.kSlot_DistLow, 0, Constants.kTimeoutMs);//was 0 increased to .0036 to nudge us within 0.5 inch quicker
     m_RightLeader.config_kD(DriveConstants.kSlot_DistLow, 0, Constants.kTimeoutMs);
     m_RightLeader.config_kF(DriveConstants.kSlot_DistLow, 0, Constants.kTimeoutMs);
     m_RightLeader.config_IntegralZone(DriveConstants.kSlot_DistLow, 100, Constants.kTimeoutMs);
@@ -199,29 +201,30 @@ public class Drivetrain extends SubsystemBase {
     //m_RightLeader.configClosedloopRamp(secondsFromNeutralToFull, timeoutMs)
 
     /* FPID Gains for Distance PID when in hi gear -  Move these to a constants or gains class eventually*/
-    m_RightLeader.config_kP(DriveConstants.kSlot_DistHi, 1, Constants.kTimeoutMs);
-    m_RightLeader.config_kI(DriveConstants.kSlot_DistHi, 0.0036, Constants.kTimeoutMs);
+    m_RightLeader.config_kP(DriveConstants.kSlot_DistHi, 1.15, Constants.kTimeoutMs);
+    m_RightLeader.config_kI(DriveConstants.kSlot_DistHi, 0, Constants.kTimeoutMs);
     m_RightLeader.config_kD(DriveConstants.kSlot_DistHi, 0, Constants.kTimeoutMs);
-    m_RightLeader.config_kF(DriveConstants.kSlot_DistHi, 0, Constants.kTimeoutMs);
+    m_RightLeader.config_kF(DriveConstants.kSlot_DistHi, 0.001, Constants.kTimeoutMs);
     m_RightLeader.config_IntegralZone(DriveConstants.kSlot_DistHi, 100, Constants.kTimeoutMs);
     m_RightLeader.configClosedLoopPeakOutput(DriveConstants.kSlot_DistHi, 1, Constants.kTimeoutMs);
     m_RightLeader.configAllowableClosedloopError(DriveConstants.kSlot_DistHi, 0, Constants.kTimeoutMs);
       
     /* FPID Gains for Turn PID when in low gear-  Move these to a constants or gains class eventually*/
-    m_RightLeader.config_kP(DriveConstants.kSlot_TurnLow, 1, Constants.kTimeoutMs);//was.85 this seems a little better after lowering peak output
-    m_RightLeader.config_kI(DriveConstants.kSlot_TurnLow, 0.0036, Constants.kTimeoutMs);
+    m_RightLeader.config_kP(DriveConstants.kSlot_TurnLow, 1.5, Constants.kTimeoutMs);//was.85 this seems a little better after lowering peak output
+    m_RightLeader.config_kI(DriveConstants.kSlot_TurnLow, 0.011, Constants.kTimeoutMs);
     m_RightLeader.config_kD(DriveConstants.kSlot_TurnLow, 5, Constants.kTimeoutMs);
     m_RightLeader.config_kF(DriveConstants.kSlot_TurnLow, 0, Constants.kTimeoutMs);
-    m_RightLeader.config_IntegralZone(DriveConstants.kSlot_TurnLow, 200, Constants.kTimeoutMs);
+    m_RightLeader.config_IntegralZone(DriveConstants.kSlot_TurnLow, 80, Constants.kTimeoutMs);
     m_RightLeader.configClosedLoopPeakOutput(DriveConstants.kSlot_TurnLow, .75, Constants.kTimeoutMs); //was .75, lowered to remove jerk during pivot turn
     m_RightLeader.configAllowableClosedloopError(DriveConstants.kSlot_TurnLow, 0, Constants.kTimeoutMs);
-
+   // m_RightLeader.configClosedloopRamp( 1, Constants.kTimeoutMs);
+    //m_LeftLeader.configClosedloopRamp( 1, Constants.kTimeoutMs);
     /* FPID Gains for Turn PID when in hi gear-  Move these to a constants or gains class eventually*/
-    m_RightLeader.config_kP(DriveConstants.kSlot_TurnHi, 0.5, Constants.kTimeoutMs);
-    m_RightLeader.config_kI(DriveConstants.kSlot_TurnHi, 0.0036, Constants.kTimeoutMs);
-    m_RightLeader.config_kD(DriveConstants.kSlot_TurnHi, 12, Constants.kTimeoutMs);
+    m_RightLeader.config_kP(DriveConstants.kSlot_TurnHi, 3, Constants.kTimeoutMs);
+    m_RightLeader.config_kI(DriveConstants.kSlot_TurnHi, 0.012, Constants.kTimeoutMs);
+    m_RightLeader.config_kD(DriveConstants.kSlot_TurnHi, 0, Constants.kTimeoutMs);
     m_RightLeader.config_kF(DriveConstants.kSlot_TurnHi, 0, Constants.kTimeoutMs);
-    m_RightLeader.config_IntegralZone(DriveConstants.kSlot_TurnHi, 200, Constants.kTimeoutMs);
+    m_RightLeader.config_IntegralZone(DriveConstants.kSlot_TurnHi, 80, Constants.kTimeoutMs);
     m_RightLeader.configClosedLoopPeakOutput(DriveConstants.kSlot_TurnHi, 1, Constants.kTimeoutMs);
     m_RightLeader.configAllowableClosedloopError(DriveConstants.kSlot_TurnHi, 0, Constants.kTimeoutMs);
 
@@ -370,8 +373,9 @@ public class Drivetrain extends SubsystemBase {
     /* Assign parameter slots to PID channels, set Motion profile params and shift */
     if (gear) {
       m_RightLeader.selectProfileSlot(DriveConstants.kSlot_DistHi, DriveConstants.PID_PRIMARY);
+      setProfile(maxVHi, maxAHiTurn, sHi);
       m_RightLeader.selectProfileSlot(DriveConstants.kSlot_TurnHi, DriveConstants.PID_TURN);
-      setProfile(maxVHi, maxAHi, sHi);
+      setProfile(maxVHi, maxAHiTurn, sHi);
       shiftHi();
     } else {
       m_RightLeader.selectProfileSlot(DriveConstants.kSlot_DistLow, DriveConstants.PID_PRIMARY);
