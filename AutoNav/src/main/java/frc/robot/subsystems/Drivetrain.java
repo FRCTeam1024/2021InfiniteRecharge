@@ -23,8 +23,11 @@ import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.SPI;
+
+import com.kauailabs.navx.frc.AHRS;
 
 public class Drivetrain extends SubsystemBase {
 
@@ -37,19 +40,40 @@ public class Drivetrain extends SubsystemBase {
     
   private final Solenoid m_Shift = new Solenoid(DriveConstants.kDrivePCMID, DriveConstants.kDriveSolenoidPort);
 
+  private final AHRS navX;
+
   private final double maxVLo;
+  private final double maxVLoTurn;
   private final double maxVHi;
+  private final double maxVHiTurn;
   private final double maxALo;
   private final double maxALoTurn;
   private final double maxAHi;
   private final double maxAHiTurn;
-  private final int sLo;
-  private final int sHi;
+  private final int s_Lo;
+  private final int s_LoTurn;
+  private final int s_Hi;
+  private final int s_HiTurn;
 
   /**
    * Creates a new Drivetrain.
    */
   public Drivetrain() {
+
+    /**
+     * Configure AHRS (navX)
+     */
+    AHRS a = null;
+    try{
+      a = new AHRS(SPI.Port.kMXP);
+    } catch (RuntimeException ex) {
+      DriverStation.reportError("Error instantiating navX MXP: " + ex.getMessage(), true);
+    }
+    navX = a;
+
+    /**
+     * Configure Speed Controllers (Talon SRX x6)
+     */
 
     /* Set defaults to avoid unexpected behavior */
     m_LeftLeader.configFactoryDefault();
@@ -148,7 +172,7 @@ public class Drivetrain extends SubsystemBase {
                                                       DriveConstants.PID_TURN, 											                                        // PID Slot of Source
                                                       Constants.kTimeoutMs);														                                    // Configuration Timeout
 
-		/* Set status frame periods, copied form example, gernerally faster than default I think */  
+		/* Set status frame periods, copied form example, generally faster than default I think */  
     m_RightLeader.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Constants.kTimeoutMs);
     m_RightLeader.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeoutMs);
     m_RightLeader.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, Constants.kTimeoutMs);
@@ -181,14 +205,22 @@ public class Drivetrain extends SubsystemBase {
     /* Motion profile parameters for low gear */
     maxVLo = 420;  // raw/100ms I think about 420 is about 5 ft/s could probably be faster but works, not sure what max in low gear is.
     maxALo = 210;  // raw/100ms/s 210 Seems good, 
-    maxALoTurn = 210;
-    sLo = 2;       // Can be 1-8, higher = more smoothing, 2 seems good so far (testing 3 for now)
+    s_Lo = 2;       // Can be 1-8, higher = more smoothing, 2 seems good so far (testing 3 for now)
+
+    //These may need to be much lower becuase turn units are different (10 per degree)
+    maxVLoTurn = 420; 
+    maxALoTurn = 210; 
+    s_LoTurn = 2;
 
     /* Motion profile parameters for hi gear */
     maxVHi = 560;  // raw/100ms I think about 10 ft/s could probably be faster, need to test
     maxAHi = 350;
+    s_Hi = 5;       // Can be 1-8, higher = more smoothing, just a guess so far
+
+    //These may need to be much lower becuase turn units are different (10 per degree)
+    maxVHiTurn = 560;
     maxAHiTurn = 350;  // raw/100ms/s Seems good for lo, we'll see for hi
-    sHi = 5;       // Can be 1-8, higher = more smoothing, just a guess so far
+    s_HiTurn = 5;
     
     /* FPID Gains for Distance PID when in low gear -  Move these to a constants or gains class eventually*/
     m_RightLeader.config_kP(DriveConstants.kSlot_DistLow, 1, Constants.kTimeoutMs);//Increased from 0.6 to 1 to get within 0.5inches
@@ -198,7 +230,6 @@ public class Drivetrain extends SubsystemBase {
     m_RightLeader.config_IntegralZone(DriveConstants.kSlot_DistLow, 100, Constants.kTimeoutMs);
     m_RightLeader.configClosedLoopPeakOutput(DriveConstants.kSlot_DistLow, 1, Constants.kTimeoutMs);
     m_RightLeader.configAllowableClosedloopError(DriveConstants.kSlot_DistLow, 0, Constants.kTimeoutMs);
-    //m_RightLeader.configClosedloopRamp(secondsFromNeutralToFull, timeoutMs)
 
     /* FPID Gains for Distance PID when in hi gear -  Move these to a constants or gains class eventually*/
     m_RightLeader.config_kP(DriveConstants.kSlot_DistHi, 1.15, Constants.kTimeoutMs);
@@ -217,8 +248,7 @@ public class Drivetrain extends SubsystemBase {
     m_RightLeader.config_IntegralZone(DriveConstants.kSlot_TurnLow, 80, Constants.kTimeoutMs);
     m_RightLeader.configClosedLoopPeakOutput(DriveConstants.kSlot_TurnLow, .75, Constants.kTimeoutMs); //was .75, lowered to remove jerk during pivot turn
     m_RightLeader.configAllowableClosedloopError(DriveConstants.kSlot_TurnLow, 0, Constants.kTimeoutMs);
-   // m_RightLeader.configClosedloopRamp( 1, Constants.kTimeoutMs);
-    //m_LeftLeader.configClosedloopRamp( 1, Constants.kTimeoutMs);
+ 
     /* FPID Gains for Turn PID when in hi gear-  Move these to a constants or gains class eventually*/
     m_RightLeader.config_kP(DriveConstants.kSlot_TurnHi, 3, Constants.kTimeoutMs);
     m_RightLeader.config_kI(DriveConstants.kSlot_TurnHi, 0.012, Constants.kTimeoutMs);
@@ -244,6 +274,7 @@ public class Drivetrain extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Angle", getHeading());
+    SmartDashboard.putNumber("GyroAngle",getGyroHeading());
     SmartDashboard.putNumber("RightSidePower", getRightSidePower());
     SmartDashboard.putNumber("LeftSidePower", getLeftSidePower());
     SmartDashboard.putNumber("Distance", getDistance());
@@ -331,22 +362,18 @@ public class Drivetrain extends SubsystemBase {
     if (gear) {
       m_RightLeader.selectProfileSlot(DriveConstants.kSlot_DistHi, DriveConstants.PID_PRIMARY);
       m_RightLeader.selectProfileSlot(DriveConstants.kSlot_TurnHi, DriveConstants.PID_TURN);
-      setProfile(maxVHi, maxAHi, sHi);
+      setProfile(maxVHi, maxAHi, s_Hi);
       shiftHi();
-      target_Distance = distance * DriveConstants.kSensorUnitsPerRotation / DriveConstants.kInchesPerRotation;
-      target_Heading = 0;
-
     } else {
       m_RightLeader.selectProfileSlot(DriveConstants.kSlot_DistLow, DriveConstants.PID_PRIMARY);
       m_RightLeader.selectProfileSlot(DriveConstants.kSlot_TurnLow, DriveConstants.PID_TURN);
-      setProfile(maxVLo, maxALo, sLo);
+      setProfile(maxVLo, maxALo, s_Lo);
       shiftLow();
-      target_Distance = distance * DriveConstants.kSensorUnitsPerRotation / DriveConstants.kInchesPerRotation;
-      target_Heading = 0;
     }
 
     /* Calculate targets */
-    
+    target_Distance = distance * DriveConstants.kSensorUnitsPerRotation / DriveConstants.kInchesPerRotation;
+    target_Heading = 0;
     
     zeroSensors();
 
@@ -373,16 +400,14 @@ public class Drivetrain extends SubsystemBase {
     /* Assign parameter slots to PID channels, set Motion profile params and shift */
     if (gear) {
       m_RightLeader.selectProfileSlot(DriveConstants.kSlot_DistHi, DriveConstants.PID_PRIMARY);
-      setProfile(maxVHi, maxAHiTurn, sHi);
       m_RightLeader.selectProfileSlot(DriveConstants.kSlot_TurnHi, DriveConstants.PID_TURN);
-      setProfile(maxVHi, maxAHiTurn, sHi);
+      setProfile(maxVHiTurn, maxAHiTurn, s_HiTurn);
       shiftHi();
     } else {
       m_RightLeader.selectProfileSlot(DriveConstants.kSlot_DistLow, DriveConstants.PID_PRIMARY);
       m_RightLeader.selectProfileSlot(DriveConstants.kSlot_TurnLow, DriveConstants.PID_TURN);
-      setProfile(maxVLo, maxALoTurn, sLo);
+      setProfile(maxVLoTurn, maxALoTurn, s_LoTurn);
       shiftLow();
-    //  Timer.delay(0.5);
     }
 
     /* Calculate targets */
@@ -409,6 +434,15 @@ public class Drivetrain extends SubsystemBase {
   public void shiftLow() {
     m_Shift.set(true);
     System.out.println("The drivetrain is in Low Gear\n");
+  }
+
+  /**
+   * Returns the robot heading in degrees 
+   * relative to wherever it was last zeroed.
+   * Based on gyro
+   */
+  public double getGyroHeading() {
+    return navX.getYaw();
   }
 
   /* Returns robot heading in degrees 
@@ -471,30 +505,10 @@ public class Drivetrain extends SubsystemBase {
 	public void zeroSensors() {
 		m_LeftLeader.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
 		m_RightLeader.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
-		System.out.println("[Quadrature Encoders] All sensors are zeroed.\n");
+    System.out.println("[Quadrature Encoders] All sensors are zeroed.\n");
+    navX.reset();
+    System.out.println("[AHRS] Sensor reset.\n");
 	}
-
-  /* 
-  All of this is handled in driveStraight or will be handled in the command that calls driveStraight
-  public void ForwardInInches(int inches) {
-    leftLeader.setSelectedSensorPosition(0);
-    inches = (int) (-1 * inches / (6 * 3.14) * 723); //conversion: x inches / (6*PI inches) * 723 encoder units;
-    double encoderGoal = leftLeader.getSelectedSensorPosition() + inches;
-    while(leftLeader.getSelectedSensorPosition() > inches){
-      drive(0.25, 0.25);
-    }
-    stop();
-  }
-  public void ReverseInInches(int inches){
-    inches = (int) (inches / (6 * 3.14) * 723); 
-    double encoderGoal = leftLeader.getSelectedSensorPosition() + inches;
-    while(leftLeader.getSelectedSensorPosition() < encoderGoal){
-      drive(-0.5, -0.5);
-    }
-    stop();
-  }
-  */
-
 
   public void LeftArcTurn(){
     double inches = 29.0598;
