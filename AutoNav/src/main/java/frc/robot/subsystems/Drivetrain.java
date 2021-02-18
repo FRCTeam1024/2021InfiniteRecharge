@@ -217,7 +217,7 @@ public class Drivetrain extends SubsystemBase {
     maxAHi = 350;
     s_Hi = 5;       // Can be 1-8, higher = more smoothing, just a guess so far
 
-    //These may need to be much lower becuase turn units are different (10 per degree)
+    //Made the lower becuase turn units are different (10 per degree) seems like there is some interaction with the PID0 loop that makes this more complicated.
     maxVHiTurn = 45;
     maxAHiTurn = 40;  // raw/100ms/s Seems good for lo, we'll see for hi
     s_HiTurn = 5;
