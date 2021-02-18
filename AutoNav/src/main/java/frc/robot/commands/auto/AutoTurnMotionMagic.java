@@ -36,10 +36,10 @@ public class AutoTurnMotionMagic extends CommandBase {
     drivetrain.stop();
   }
 
-  // Returns true when the command should end.
+  // Returns true when the command should end. +/- 1.5 degrees is about the best we can do with encoders because of lash in the gears
   @Override
   public boolean isFinished() {
-    if(drivetrain.getHeading() > (angle - 0.9) && drivetrain.getHeading() < (angle + .9)){
+    if(drivetrain.getHeading() > (angle - 1.5) && drivetrain.getHeading() < (angle + 1.5)){
       MSstayed += 20;
       if(MSstayed > 500){
         return true;

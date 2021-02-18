@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Notifier;
 
 public class MustangController extends Joystick {
- 
+  
     private Notifier rumbler;
     private boolean isRumbling;
     private long targetRumbleTime;

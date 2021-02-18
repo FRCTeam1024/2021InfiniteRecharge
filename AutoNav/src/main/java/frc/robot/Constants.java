@@ -25,7 +25,7 @@ public final class Constants {
 
     public static final class DriveConstants {
 
-        /* CAN IDs */
+        /* CAN IDs   */
         public static final int kLeftRearMotorPort = 8;
         public static final int kLeftMidMotorPort = 5;
         public static final int kLeftFrontMotorPort = 6;

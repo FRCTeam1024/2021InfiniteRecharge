@@ -218,8 +218,8 @@ public class Drivetrain extends SubsystemBase {
     s_Hi = 5;       // Can be 1-8, higher = more smoothing, just a guess so far
 
     //These may need to be much lower becuase turn units are different (10 per degree)
-    maxVHiTurn = 560;
-    maxAHiTurn = 350;  // raw/100ms/s Seems good for lo, we'll see for hi
+    maxVHiTurn = 45;
+    maxAHiTurn = 40;  // raw/100ms/s Seems good for lo, we'll see for hi
     s_HiTurn = 5;
     
     /* FPID Gains for Distance PID when in low gear -  Move these to a constants or gains class eventually*/
@@ -235,7 +235,7 @@ public class Drivetrain extends SubsystemBase {
     m_RightLeader.config_kP(DriveConstants.kSlot_DistHi, 1.15, Constants.kTimeoutMs);
     m_RightLeader.config_kI(DriveConstants.kSlot_DistHi, 0, Constants.kTimeoutMs);
     m_RightLeader.config_kD(DriveConstants.kSlot_DistHi, 0, Constants.kTimeoutMs);
-    m_RightLeader.config_kF(DriveConstants.kSlot_DistHi, 0.001, Constants.kTimeoutMs);
+    m_RightLeader.config_kF(DriveConstants.kSlot_DistHi, 0, Constants.kTimeoutMs);
     m_RightLeader.config_IntegralZone(DriveConstants.kSlot_DistHi, 100, Constants.kTimeoutMs);
     m_RightLeader.configClosedLoopPeakOutput(DriveConstants.kSlot_DistHi, 1, Constants.kTimeoutMs);
     m_RightLeader.configAllowableClosedloopError(DriveConstants.kSlot_DistHi, 0, Constants.kTimeoutMs);
@@ -251,7 +251,7 @@ public class Drivetrain extends SubsystemBase {
  
     /* FPID Gains for Turn PID when in hi gear-  Move these to a constants or gains class eventually*/
     m_RightLeader.config_kP(DriveConstants.kSlot_TurnHi, 3, Constants.kTimeoutMs);
-    m_RightLeader.config_kI(DriveConstants.kSlot_TurnHi, 0.012, Constants.kTimeoutMs);
+    m_RightLeader.config_kI(DriveConstants.kSlot_TurnHi, 0.012, Constants.kTimeoutMs);//.012
     m_RightLeader.config_kD(DriveConstants.kSlot_TurnHi, 0, Constants.kTimeoutMs);
     m_RightLeader.config_kF(DriveConstants.kSlot_TurnHi, 0, Constants.kTimeoutMs);
     m_RightLeader.config_IntegralZone(DriveConstants.kSlot_TurnHi, 80, Constants.kTimeoutMs);
@@ -411,7 +411,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     /* Calculate targets */
-    double target_Distance = 0;
+    double target_Distance = 0.1 * DriveConstants.kSensorUnitsPerRotation / DriveConstants.kInchesPerRotation; //some small amount of forward motion seems to trick motionmagic
     double target_Heading = angle * DriveConstants.kTurnTravelUnitsPerRotation/360;
     
     zeroSensors();
