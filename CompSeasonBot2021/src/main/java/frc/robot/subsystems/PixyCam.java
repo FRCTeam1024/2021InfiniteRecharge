@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import java.util.ArrayList;
 
+import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -17,7 +18,10 @@ import io.github.pseudoresonance.pixy2api.links.SPILink;
 
 public class PixyCam extends SubsystemBase {
   private final Pixy2 pixy;
+  private final PIDController PID;
   boolean isLampEnabled;
+
+  private final double kP, kI, kD;
 
   /** Creates a new Pixy2. */
   public PixyCam() {
@@ -26,6 +30,12 @@ public class PixyCam extends SubsystemBase {
     pixy.setLamp((byte) 0, (byte) 0);
     this.isLampEnabled = false;
     pixy.setLED(0, 255, 0);
+
+    kP = 0.01;
+    kI = 0.0;
+    kD = 0.0;
+
+    this.PID = new PIDController(kP, kI, kD);
   }
 
   public int getBlockCount() {
@@ -41,6 +51,7 @@ public class PixyCam extends SubsystemBase {
     if(blockCount <= 0) {
       return null;
     }
+    //return pixy.getCCC().getBlockCache().get(0);
     ArrayList<Block> blocks = pixy.getCCC().getBlockCache();
     Block largestBlock = null;
     for (Block block : blocks) {
@@ -54,6 +65,18 @@ public class PixyCam extends SubsystemBase {
     return largestBlock;
   }
 
+  public PIDController getPIDController() {
+    return this.PID;
+  }
+
+  public double getXOffset() {
+    return this.getLargestBlock().getX();
+  }
+
+  public double getYOffset() {
+    return this.getLargestBlock().getY();
+  }
+
   public void setLamp(int state) {
     pixy.setLamp((byte) state, (byte) state);
     this.isLampEnabled = (state == 1);
@@ -63,10 +86,13 @@ public class PixyCam extends SubsystemBase {
   public void periodic() {
     //SmartDashboard.putNumber("Total blocks", this.getBlockCount());
     // This method will be called once per scheduler run
-    /*Block currentBlock = this.getFirstBlock();
-    SmartDashboard.putNumber("Block x", currentBlock.getX());
-    SmartDashboard.putNumber("Block y", currentBlock.getY());
-    SmartDashboard.putNumber("Block width", currentBlock.getWidth());
-    SmartDashboard.putNumber("Block height", currentBlock.getHeight());*/
+    Block currentBlock = this.getLargestBlock();
+    if (currentBlock != null)
+    {
+      SmartDashboard.putNumber("Block x", currentBlock.getX());
+      SmartDashboard.putNumber("Block y", currentBlock.getY());
+      SmartDashboard.putNumber("Block width", currentBlock.getWidth());
+      SmartDashboard.putNumber("Block height", currentBlock.getHeight());
+    }
   }
 }
