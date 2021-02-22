@@ -38,7 +38,6 @@ public class StopClimber extends CommandBase {
   public void end(boolean interrupted) {
     climber.climberMotorLeft.set(0.0);
     climber.climberMotorRight.set(0.0);
-
   }
 
   // Returns true when the command should end.
