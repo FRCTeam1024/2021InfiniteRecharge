@@ -44,7 +44,7 @@ public class LimelightAutoAim extends PIDCommand {
     this.drivetrain = drivetrainInstance;
     addRequirements(limelight);
     
-    this.limelight.toggleLEDs(1);
+    this.limelight.setLEDState(1);
     
     // Configure additional PID options by calling `getController` here.
     limelight.getPIDController().setTolerance(this.limelight.getThreshold()); // 1 degree for now
@@ -53,7 +53,7 @@ public class LimelightAutoAim extends PIDCommand {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    this.limelight.toggleLEDs(0);
+    this.limelight.setLEDState(0);
   }
 
   // Returns true when the command should end.

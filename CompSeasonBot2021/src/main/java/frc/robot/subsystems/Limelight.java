@@ -20,6 +20,8 @@ public class Limelight extends SubsystemBase {
   private NetworkTableEntry targetAreaEntry;
   private NetworkTableEntry ledModeEntry;
 
+  private boolean LEDsEnabled = false;
+
   private final PIDController limelightPID;
   private final double kP, kI, kD, kMaxOutput, kMinOutput, kThreshold;  //Gains, may move elsewhere.
   //private final double kIz, kFF;
@@ -34,6 +36,9 @@ public class Limelight extends SubsystemBase {
     this.yOffsetEntry = limelight.getEntry("ty");
     this.targetAreaEntry = limelight.getEntry("ta");
     this.ledModeEntry = limelight.getEntry("ledMode");
+
+    this.setLEDState(0);
+    this.LEDsEnabled = false;
     
     kP = 0.03;
     kI = 0;
@@ -118,14 +123,31 @@ public class Limelight extends SubsystemBase {
   }*/
 
   /**
-   * Toggles the LED of the limelight.
-   * @param state - 0 for off and 1 for on
+   * Sets the state of the Limelight LEDs.
+   * @param state - 0 is off and 1 is on.
    */
-  public void toggleLEDs(int state) {
+  public void setLEDState(int state) {
     if (state == 0) {
-      this.ledModeEntry.setNumber(1);
+      this.ledModeEntry.setNumber(1); // 1 is off.
+      this.LEDsEnabled = true;
     } else if (state == 1) {
-      this.ledModeEntry.setNumber(3);
+      this.ledModeEntry.setNumber(3); // 3 is on.
+      this.LEDsEnabled = false;
+    } else {
+      return;
+    }
+  }
+
+  /**
+   * Toggles the Limelight LEDs.
+   */
+  public void toggleLEDs() {
+    if (this.LEDsEnabled == false) {
+      this.ledModeEntry.setNumber(3); // 1 is on.
+      this.LEDsEnabled = true;
+    } else if (this.LEDsEnabled == true) {
+      this.ledModeEntry.setNumber(1); // 3 is off.
+      this.LEDsEnabled = false;
     } else {
       return;
     }
