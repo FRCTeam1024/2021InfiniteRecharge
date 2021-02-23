@@ -191,8 +191,6 @@ public class RobotContainer {
 
     xboxStartButton.whileHeld(new RunBallFeed(ballFeed, 0.75));
     xBoxBackButton.whileHeld(new RunBallFeed(ballFeed, -0.75));
-
-    new LimelightLED(limelight, 0); // Disable Limelight LEDs
     
     SmartDashboard.putData("Score Power Cell", new ShootPowerCell(intake, ballFeed, drivetrain, shooter));
     SmartDashboard.putNumber("Ballfeed Speed", ballFeed.getBallFedVelocity());
@@ -236,7 +234,6 @@ public class RobotContainer {
     SmartDashboard.putNumber("Gyro Angle", drivetrain.ahrs.getAngle());
 
     SmartDashboard.putData("Limelight PID", new LimelightAutoAim(limelight, drivetrain));
-    //SmartDashboard.putNumber("LkFF", limelight.getPIDController().getP());
 
     // Interstellar Accuracy Challenge Speed Buttons
     /* Ignore this for now

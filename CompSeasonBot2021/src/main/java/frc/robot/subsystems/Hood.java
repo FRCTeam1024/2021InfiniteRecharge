@@ -7,8 +7,8 @@
 
 package frc.robot.subsystems;
 
-
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -21,8 +21,8 @@ public class Hood extends SubsystemBase {
    * Creates a new Hood
    */
   public Hood() {
-    
-
+    Timer.delay(10);
+    this.extendHood();
   }
 
   public void extendHood(){  //These may need their own subsystem to actuate while spinning the shooter

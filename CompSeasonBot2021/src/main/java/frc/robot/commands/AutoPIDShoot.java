@@ -36,7 +36,7 @@ public class AutoPIDShoot extends CommandBase {
   @Override
   public void initialize() {
     new ExtendHood(this.hood);
-    this.limelight.toggleLEDs(1);
+    this.limelight.setLEDState(1);
     new RunBothFeeders(this.ballfeed);
     new RunShooterPID(this.shooter, 2500);
     new WaitCommand(2.0);
@@ -59,7 +59,7 @@ public class AutoPIDShoot extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    this.limelight.toggleLEDs(0);
+    this.limelight.setLEDState(0);
   }
 
   // Returns true when the command should end.

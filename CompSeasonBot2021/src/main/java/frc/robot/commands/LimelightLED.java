@@ -24,7 +24,7 @@ public class LimelightLED extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    limelight.toggleLEDs(this.state);
+    limelight.setLEDState(this.state);
     this.finished = true;
   }
 
