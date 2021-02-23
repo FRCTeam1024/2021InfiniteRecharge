@@ -19,6 +19,7 @@ import io.github.pseudoresonance.pixy2api.links.SPILink;
 public class PixyCam extends SubsystemBase {
   private final Pixy2 pixy;
   private final PIDController PID;
+  private int tilt;
   boolean isLampEnabled;
 
   private final double kP, kI, kD;
@@ -30,6 +31,8 @@ public class PixyCam extends SubsystemBase {
     pixy.setLamp((byte) 0, (byte) 0);
     this.isLampEnabled = false;
     pixy.setLED(0, 255, 0);
+    this.tilt = 0;
+    this.setTilt(this.tilt);
 
     kP = 0.01;
     kI = 0.0;
@@ -80,6 +83,12 @@ public class PixyCam extends SubsystemBase {
   public void setLamp(int state) {
     pixy.setLamp((byte) state, (byte) state);
     this.isLampEnabled = (state == 1);
+  }
+
+  // Doesn't seem to work. May need some tinkering...
+  public void setTilt(int tilt) {
+    pixy.setServos(0, tilt);
+    this.tilt = tilt;
   }
 
   @Override

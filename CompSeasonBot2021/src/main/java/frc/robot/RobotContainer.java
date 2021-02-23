@@ -139,7 +139,7 @@ public class RobotContainer {
     //NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(1);
     
     // below done with Marc
-    UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(0);
+    //UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(0);
 		//camera.setResolution(144, 144);
 
     xboxButtonA.whileHeld(new RunClimberHook(climber, -0.25));
@@ -249,6 +249,8 @@ public class RobotContainer {
     SmartDashboard.putNumber("Shooter RPM", 3400);
     SmartDashboard.putData("Run Shooter PID", new RunShooterPID(shooter, 3400));
     //Shuffleboard.getTab("Shooter").add("Run Shooter PID", new RunShooterPID(shooter, 0.1));
+ 
+    SmartDashboard.putNumber("Servo tilt", 180);
   }
 
 
@@ -269,7 +271,9 @@ public class RobotContainer {
   }
 
   public void outputToSmartDashboard() {
-    SmartDashboard.putNumber("Yaw", sensors.getHeading());
-    SmartDashboard.putData("Reset Gyro", new InstantCommand(sensors::resetGyro));
+    //SmartDashboard.putNumber("Yaw", sensors.getHeading());
+    //SmartDashboard.putData("Reset Gyro", new InstantCommand(sensors::resetGyro));
+    int tilt_input = (int) SmartDashboard.getNumber("Servo tilt", 0);
+    SmartDashboard.putData("Tilt servo", new SetServoTilt(pixy, tilt_input));
   }
 }

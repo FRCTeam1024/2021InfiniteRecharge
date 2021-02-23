@@ -3,17 +3,23 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.commands;
+
 import frc.robot.subsystems.*;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class RetractHood extends CommandBase {
-  Hood m_Hood;
+public class SetServoTilt extends CommandBase {
+  /** Creates a new SetServoTilt. */
+  PixyCam pixy;
+  int tilt;
   Boolean isFinished;
 
-  /** Creates a new RetractHood. */
-  public RetractHood(Hood subsystem) {
-    m_Hood = subsystem;
+  public SetServoTilt(PixyCam subsystem, int position) {
+    pixy = subsystem;
+    tilt = position;
+
     isFinished = false;
+    //addRequirements(pixy);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -24,8 +30,7 @@ public class RetractHood extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_Hood.retractHood();
-    System.out.println("retract hood");
+    pixy.setTilt(tilt);
     isFinished = true;
   }
 
