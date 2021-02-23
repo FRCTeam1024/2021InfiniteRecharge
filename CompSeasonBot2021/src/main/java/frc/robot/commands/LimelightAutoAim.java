@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
@@ -41,10 +42,10 @@ public class LimelightAutoAim extends PIDCommand {
     );
     // Use addRequirements() here to declare subsystem dependencies.
     this.limelight = limelightInstance;
+    this.limelight.setLEDState(1);
+    //Timer.delay(1);
     this.drivetrain = drivetrainInstance;
     addRequirements(limelight);
-    
-    this.limelight.setLEDState(1);
     
     // Configure additional PID options by calling `getController` here.
     limelight.getPIDController().setTolerance(this.limelight.getThreshold()); // 1 degree for now

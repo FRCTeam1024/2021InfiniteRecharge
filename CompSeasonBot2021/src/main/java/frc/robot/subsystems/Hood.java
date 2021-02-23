@@ -21,8 +21,8 @@ public class Hood extends SubsystemBase {
    * Creates a new Hood
    */
   public Hood() {
-    Timer.delay(10);
-    this.extendHood();
+    /*Timer.delay(10); // For testing purposes, start hood extended.
+    this.extendHood();*/
   }
 
   public void extendHood(){  //These may need their own subsystem to actuate while spinning the shooter

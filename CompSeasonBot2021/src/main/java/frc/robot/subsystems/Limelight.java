@@ -36,9 +36,6 @@ public class Limelight extends SubsystemBase {
     this.yOffsetEntry = limelight.getEntry("ty");
     this.targetAreaEntry = limelight.getEntry("ta");
     this.ledModeEntry = limelight.getEntry("ledMode");
-
-    this.setLEDState(0);
-    this.LEDsEnabled = false;
     
     kP = 0.03;
     kI = 0;
@@ -129,13 +126,15 @@ public class Limelight extends SubsystemBase {
   public void setLEDState(int state) {
     if (state == 0) {
       this.ledModeEntry.setNumber(1); // 1 is off.
-      this.LEDsEnabled = true;
+      this.LEDsEnabled = false;
     } else if (state == 1) {
       this.ledModeEntry.setNumber(3); // 3 is on.
-      this.LEDsEnabled = false;
+      this.LEDsEnabled = true;
     } else {
       return;
     }
+
+    SmartDashboard.putBoolean("Are LEDs on?", this.LEDsEnabled);
   }
 
   /**

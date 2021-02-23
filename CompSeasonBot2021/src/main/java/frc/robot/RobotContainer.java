@@ -249,6 +249,7 @@ public class RobotContainer {
     SmartDashboard.putData("Run Shooter PID", new RunShooterPID(shooter, 3400));
     //Shuffleboard.getTab("Shooter").add("Run Shooter PID", new RunShooterPID(shooter, 0.1));
   
+    new LimelightLED(limelight, 0);
     SmartDashboard.putData("Enable LEDs", new LimelightLED(limelight, 1));
     SmartDashboard.putData("Disable LEDs", new LimelightLED(limelight, 0));
 
