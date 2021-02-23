@@ -34,6 +34,7 @@ public class LimelightCenter extends CommandBase {
   public LimelightCenter(Limelight limelight, Drivetrain drivetrain) {
     this.drivetrain = drivetrain;
     this.limelight = limelight;
+    this.limelight.toggleLEDs(1);
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(limelight, drivetrain);
   }
@@ -91,6 +92,7 @@ public class LimelightCenter extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    this.limelight.toggleLEDs(0);
   }
 
   // Returns true when the command should end.

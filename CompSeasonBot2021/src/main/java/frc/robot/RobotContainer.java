@@ -192,6 +192,7 @@ public class RobotContainer {
     xboxStartButton.whileHeld(new RunBallFeed(ballFeed, 0.75));
     xBoxBackButton.whileHeld(new RunBallFeed(ballFeed, -0.75));
 
+    new LimelightLED(limelight, 0); // Disable Limelight LEDs
     
     SmartDashboard.putData("Score Power Cell", new ShootPowerCell(intake, ballFeed, drivetrain, shooter));
     SmartDashboard.putNumber("Ballfeed Speed", ballFeed.getBallFedVelocity());
@@ -250,6 +251,11 @@ public class RobotContainer {
     SmartDashboard.putNumber("Shooter RPM", 3400);
     SmartDashboard.putData("Run Shooter PID", new RunShooterPID(shooter, 3400));
     //Shuffleboard.getTab("Shooter").add("Run Shooter PID", new RunShooterPID(shooter, 0.1));
+  
+    SmartDashboard.putData("Enable LEDs", new LimelightLED(limelight, 1));
+    SmartDashboard.putData("Disable LEDs", new LimelightLED(limelight, 0));
+
+    SmartDashboard.putData("Run Auto PID Shooter", new AutoPIDShoot(hood, limelight, ballFeed, drivetrain, shooter));
   }
 
 
@@ -270,7 +276,7 @@ public class RobotContainer {
   }
 
   public void outputToSmartDashboard() {
-    SmartDashboard.putNumber("Yaw", sensors.getHeading());
-    SmartDashboard.putData("Reset Gyro", new InstantCommand(sensors::resetGyro));
+    //SmartDashboard.putNumber("Yaw", sensors.getHeading());
+    //SmartDashboard.putData("Reset Gyro", new InstantCommand(sensors::resetGyro));
   }
 }
