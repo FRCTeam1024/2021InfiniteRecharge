@@ -28,11 +28,9 @@ public class PixyCam extends SubsystemBase {
   public PixyCam() {
     pixy = Pixy2.createInstance(new SPILink());
     pixy.init(0); // Defaults to CS0, inputting 0 it just in case.
-    pixy.setLamp((byte) 0, (byte) 0);
-    this.isLampEnabled = false;
+    this.setLamp(0);
     pixy.setLED(0, 255, 0);
-    this.tilt = 0;
-    this.setTilt(this.tilt);
+    this.setTilt(0);
 
     kP = 0.01;
     kI = 0.0;
@@ -81,13 +79,13 @@ public class PixyCam extends SubsystemBase {
   }
 
   public void setLamp(int state) {
-    pixy.setLamp((byte) state, (byte) state);
+    this.pixy.setLamp((byte) state, (byte) state);
     this.isLampEnabled = (state == 1);
   }
 
   // Doesn't seem to work. May need some tinkering...
   public void setTilt(int tilt) {
-    pixy.setServos(0, tilt);
+    this.pixy.setServos(0, tilt);
     this.tilt = tilt;
   }
 

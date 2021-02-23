@@ -267,7 +267,6 @@ public class RobotContainer {
 
   public void periodic() {
     outputToSmartDashboard();
-
   }
 
   public void outputToSmartDashboard() {
