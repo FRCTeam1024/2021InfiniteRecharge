@@ -71,6 +71,10 @@ public class Drivetrain extends SubsystemBase {
     }
     navX = a;
 
+    while(navX.isCalibrating()){
+      System.out.println("NavX Calibrating");
+    }
+
     /**
      * Configure Speed Controllers (Talon SRX x6)
      */
@@ -375,7 +379,7 @@ public class Drivetrain extends SubsystemBase {
     target_Distance = distance * DriveConstants.kSensorUnitsPerRotation / DriveConstants.kInchesPerRotation;
     target_Heading = 0;
     
-    zeroSensors();
+    zeroEncoders();
 
     System.out.println("My Distance Target Is: " + target_Distance +"\n");
     System.out.println("My Heading Target Is: " + target_Heading+"\n");
@@ -418,7 +422,7 @@ public class Drivetrain extends SubsystemBase {
     target_Distance = arcLength * DriveConstants.kSensorUnitsPerRotation / DriveConstants.kInchesPerRotation;
     target_Heading = angle;
     
-    zeroSensors();
+    zeroEncoders();
 
     System.out.println("My Distance Target Is: " + target_Distance +"\n");
     System.out.println("My Heading Target Is: " + target_Heading+"\n");
@@ -457,7 +461,7 @@ public class Drivetrain extends SubsystemBase {
     double target_Distance = 0.1 * DriveConstants.kSensorUnitsPerRotation / DriveConstants.kInchesPerRotation; //some small amount of forward motion seems to trick motionmagic
     double target_Heading = angle * DriveConstants.kTurnTravelUnitsPerRotation/360;
     
-    zeroSensors();
+    zeroEncoders();
 
     System.out.println("My Distance Target Is: " + target_Distance +"\n");
     System.out.println("My Heading Target Is: " + target_Heading+"\n");
