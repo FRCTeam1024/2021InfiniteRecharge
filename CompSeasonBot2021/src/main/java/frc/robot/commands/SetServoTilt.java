@@ -10,15 +10,14 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class SetServoTilt extends CommandBase {
   /** Creates a new SetServoTilt. */
-  PixyCam pixy;
+  final PixyCam pixy;
   int tilt;
   Boolean isFinished;
 
   public SetServoTilt(PixyCam subsystem, int position) {
-    pixy = subsystem;
-    tilt = position;
-
-    isFinished = false;
+    this.pixy = subsystem;
+    this.tilt = position;
+    this.isFinished = false;
     //addRequirements(pixy);
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -30,8 +29,8 @@ public class SetServoTilt extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    pixy.setTilt(tilt);
-    isFinished = true;
+    this.pixy.setTilt(tilt);
+    this.isFinished = true;
   }
 
   // Called once the command ends or is interrupted.
@@ -41,6 +40,6 @@ public class SetServoTilt extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return isFinished;
+    return this.isFinished;
   }
 }

@@ -272,7 +272,7 @@ public class RobotContainer {
   public void outputToSmartDashboard() {
     //SmartDashboard.putNumber("Yaw", sensors.getHeading());
     //SmartDashboard.putData("Reset Gyro", new InstantCommand(sensors::resetGyro));
-    int tilt_input = (int) SmartDashboard.getNumber("Servo tilt", 0);
-    SmartDashboard.putData("Tilt servo", new SetServoTilt(pixy, tilt_input));
+    //int tilt_input = (int) SmartDashboard.getNumber("Servo tilt", 0);
+    //SmartDashboard.putData("Tilt servo", new SetServoTilt(pixy, tilt_input));
   }
 }

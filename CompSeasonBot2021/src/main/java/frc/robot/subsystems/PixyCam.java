@@ -19,7 +19,7 @@ import io.github.pseudoresonance.pixy2api.links.SPILink;
 public class PixyCam extends SubsystemBase {
   private final Pixy2 pixy;
   private final PIDController PID;
-  private int tilt;
+  private int pan, tilt;
   boolean isLampEnabled;
 
   private final double kP, kI, kD;
@@ -30,7 +30,10 @@ public class PixyCam extends SubsystemBase {
     pixy.init(0); // Defaults to CS0, inputting 0 it just in case.
     this.setLamp(0);
     pixy.setLED(0, 255, 0);
-    this.setTilt(0);
+    
+    this.pan = 0;
+    this.tilt = 0;
+    pixy.setServos(this.pan, this.tilt);
 
     kP = 0.01;
     kI = 0.0;
@@ -83,15 +86,18 @@ public class PixyCam extends SubsystemBase {
     this.isLampEnabled = (state == 1);
   }
 
-  // Doesn't seem to work. May need some tinkering...
+  public void setPan(int pan) {
+    this.pixy.setServos(pan, this.tilt);
+    this.pan = pan;
+  }
+
   public void setTilt(int tilt) {
-    this.pixy.setServos(0, tilt);
+    this.pixy.setServos(this.pan, tilt);
     this.tilt = tilt;
   }
 
   @Override
   public void periodic() {
-    //SmartDashboard.putNumber("Total blocks", this.getBlockCount());
     // This method will be called once per scheduler run
     Block currentBlock = this.getLargestBlock();
     if (currentBlock != null)
@@ -101,5 +107,7 @@ public class PixyCam extends SubsystemBase {
       SmartDashboard.putNumber("Block width", currentBlock.getWidth());
       SmartDashboard.putNumber("Block height", currentBlock.getHeight());
     }
+
+    this.setTilt((int) SmartDashboard.getNumber("Servo tilt", 180));
   }
 }
