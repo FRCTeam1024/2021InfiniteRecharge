@@ -385,6 +385,49 @@ public class Drivetrain extends SubsystemBase {
 		m_LeftLeader.follow(m_RightLeader, FollowerType.AuxOutput1);
   }
 
+  /**
+   *  Drive in a circular Arc Using Motion Magic within Talon SRX
+   * 
+   *  @param radius Desired radius of arc
+   *  @param angle Desired angle of arc
+   *  @param gear True if high, false if low
+   * 
+   * */
+  public void driveArc(double radius, double angle, boolean gear) {
+    
+    System.out.println("This is Motion Magic with the Auxiliary PID using the difference between two encoders.\n");
+    
+    double target_Distance;
+    double target_Heading;
+    /* Assign parameter slots to PID channels, set Motion Profile Params and shift */
+    if (gear) {
+      m_RightLeader.selectProfileSlot(DriveConstants.kSlot_DistHi, DriveConstants.PID_PRIMARY);
+      m_RightLeader.selectProfileSlot(DriveConstants.kSlot_TurnHi, DriveConstants.PID_TURN);
+      setProfile(maxVHi, maxAHi, s_Hi);
+      shiftHi();
+    } else {
+      m_RightLeader.selectProfileSlot(DriveConstants.kSlot_DistLow, DriveConstants.PID_PRIMARY);
+      m_RightLeader.selectProfileSlot(DriveConstants.kSlot_TurnLow, DriveConstants.PID_TURN);
+      setProfile(maxVLo, maxALo, s_Lo);
+      shiftLow();
+    }
+
+    /* Calculate targets */
+    double arcLength = 2*3.14159*radius*(angle/360);
+
+    target_Distance = arcLength * DriveConstants.kSensorUnitsPerRotation / DriveConstants.kInchesPerRotation;
+    target_Heading = angle;
+    
+    zeroSensors();
+
+    System.out.println("My Distance Target Is: " + target_Distance +"\n");
+    System.out.println("My Heading Target Is: " + target_Heading+"\n");
+
+    /* Configure for MotionMagic on Quad Encoders' Sum and Auxiliary PID on Quad Encoders' Difference */
+		m_RightLeader.set(ControlMode.MotionMagic, target_Distance, DemandType.AuxPID, target_Heading);
+		m_LeftLeader.follow(m_RightLeader, FollowerType.AuxOutput1);
+  }
+
     /**
    *  Turn in Place - Needs improvement, PID needs tuned.  Eventually will want
    *  to use gyro yaw values rather than encoder difference
@@ -503,12 +546,33 @@ public class Drivetrain extends SubsystemBase {
 
 	/* Zero all sensors used */
 	public void zeroSensors() {
+    zeroEncoders();
+    navX.reset();
+    System.out.println("[AHRS] Sensor reset.\n");
+  }
+
+  /* Zero all encoders */
+  public void zeroEncoders() {
 		m_LeftLeader.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
 		m_RightLeader.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
     System.out.println("[Quadrature Encoders] All sensors are zeroed.\n");
-    navX.reset();
-    System.out.println("[AHRS] Sensor reset.\n");
-	}
+  }
+
+  /* Zero all encoders but preset to match navX heading - needs testing
+   * @param targetAngle the heading that we should be at (-180 to 180)
+   */
+  public void syncHeading(double targetAngle) {
+
+    double h = getGyroHeading() - targetAngle;
+
+    double s =  0.5 * h * DriveConstants.kEncoderUnitsPerRotation / 360;
+    int setDiff = (int)s;
+
+    m_LeftLeader.getSensorCollection().setQuadraturePosition(setDiff, Constants.kTimeoutMs);
+    m_RightLeader.getSensorCollection().setQuadraturePosition(setDiff, Constants.kTimeoutMs);
+    System.out.println("[Quadrature Encoders] Sensors synched to Gyro.\n");
+  }
+  
 
   public void LeftArcTurn(){
     double inches = 29.0598;
