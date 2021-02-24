@@ -71,10 +71,6 @@ public class Drivetrain extends SubsystemBase {
     }
     navX = a;
 
-    while(navX.isCalibrating()){
-      System.out.println("NavX Calibrating");
-    }
-
     /**
      * Configure Speed Controllers (Talon SRX x6)
      */
@@ -282,7 +278,6 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("RightSidePower", getRightSidePower());
     SmartDashboard.putNumber("LeftSidePower", getLeftSidePower());
     SmartDashboard.putNumber("Distance", getDistance());
-
   }
 
 
@@ -562,21 +557,15 @@ public class Drivetrain extends SubsystemBase {
     System.out.println("[Quadrature Encoders] All sensors are zeroed.\n");
   }
 
-  /* Zero all encoders but preset to match navX heading - needs testing
-   * @param targetAngle the heading that we should be at (-180 to 180)
-   */
-  public void syncHeading(double targetAngle) {
-
-    double h = getGyroHeading() - targetAngle;
-
-    double s =  0.5 * h * DriveConstants.kEncoderUnitsPerRotation / 360;
-    int setDiff = (int)s;
-
-    m_LeftLeader.getSensorCollection().setQuadraturePosition(setDiff, Constants.kTimeoutMs);
-    m_RightLeader.getSensorCollection().setQuadraturePosition(setDiff, Constants.kTimeoutMs);
-    System.out.println("[Quadrature Encoders] Sensors synched to Gyro.\n");
+  /* Run navX field calibration*/
+  public void calibrateGyro() {
+    navX.calibrate();
   }
   
+  /* Check if navX is ready */
+  public boolean gyroReady() {
+    return !navX.isCalibrating() && navX.isConnected();
+  }
 
   public void LeftArcTurn(){
     double inches = 29.0598;
@@ -619,15 +608,5 @@ public class Drivetrain extends SubsystemBase {
   public void DiagonalBouncePath(){
     
   }
-
-	// public double getRightEncoderInches() {
-  //   return rightLeader.getSelectedSensorPosition();
-  //   //wheel diameter: 6 in
-  // }
-  
-	// public void resetEncoders() {
-  //   leftLeader.setSelectedSensorPosition(0);
-  //   rightLeader.setSelectedSensorPosition(0);
-  // }
   
 }

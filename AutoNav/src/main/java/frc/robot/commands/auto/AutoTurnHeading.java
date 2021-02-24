@@ -7,33 +7,37 @@ package frc.robot.commands.auto;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.*;
 
-public class AutoTurnGlobal extends CommandBase {
-  /** Creates a new AutoTurnMotionMagic. */
-  Drivetrain drivetrain;
-  double turnAngle;
-  int MSstayed = 0; //don't know if this is as necessary for turning, but I'll go ahead and put it in anyways
-  public AutoTurnGlobal(Drivetrain drive, double heading) {
+public class AutoTurnHeading extends CommandBase {
+  /** Creates a new AutoTurnHeading. */
+  private final Drivetrain drivetrain;
+  private final double heading;
+  private double turnAngle;
+  private int MSstayed = 0; //don't know if this is as necessary for turning, but I'll go ahead and put it in anyways
+
+  public AutoTurnHeading(Drivetrain drive, double h) {
     // Use addRequirements() here to declare subsystem dependencies.
     drivetrain = drive;
+    heading = h;
     addRequirements(drivetrain);
-    turnAngle = heading;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
 
-    turnAngle = turnAngle - drivetrain.getGyroHeading();
-    System.out.println(drivetrain.getGyroHeading());
-    System.out.println("I am turning to "+turnAngle);
+    while(!drivetrain.gyroReady()) {
+      System.out.println("Waiting for the gyro");
+    }
+
+    turnAngle = heading - drivetrain.getGyroHeading();
+
     if(turnAngle > 180) {
-      turnAngle = 360-turnAngle;
+      turnAngle = -(360-turnAngle);
     }
     else if (turnAngle < -180) {
       turnAngle = 360+turnAngle;
     }
-
-  //drivetrain.pivotTurn(angle, false); // low gear turn
+    
     drivetrain.pivotTurn(turnAngle, true); // high gear turn
   }
 
