@@ -30,11 +30,9 @@ import frc.robot.oi.CONSTANTS_OI;
 import frc.robot.oi.Logitech;
 import edu.wpi.first.wpilibj2.command.Command;
 
-
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.HttpCamera;
 import edu.wpi.cscore.VideoMode;
-
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -65,9 +63,7 @@ public class RobotContainer {
   public Joystick rightJoystick = new Joystick(2);
   public Logitech xboxController = new Logitech(0);
 
-  
   // public JoystickButton runShooterAndBallFeed = new JoystickButton(leftJoystick, 6);
-
   
   // below this done with Marc
   public JoystickButton xboxLeftTrigger = new JoystickButton(xboxController, CONSTANTS_OI.XBOX_LEFT_TRIGGER);
@@ -97,8 +93,6 @@ public class RobotContainer {
 
   public JoystickButton leftTrigger = new JoystickButton(leftJoystick, 1);
   public JoystickButton rightTrigger = new JoystickButton(rightJoystick, 1);
-
- 
 
   public JoystickButton switchCamModeDefault = new JoystickButton(leftJoystick, 2);
   public JoystickButton switchCamModeCamera = new JoystickButton(rightJoystick, 2);
@@ -245,12 +239,15 @@ public class RobotContainer {
     SmartDashboard.putData("Shooter Zone 5", new RunShooter(shooter, 0.40)); // hood back ?, hood forward ?
     */
 
-    // I think this will allow a speed value to be provided and the shooter to be run at that speed
     SmartDashboard.putNumber("Shooter RPM", 3400);
     SmartDashboard.putData("Run Shooter PID", new RunShooterPID(shooter, 3400));
-    //Shuffleboard.getTab("Shooter").add("Run Shooter PID", new RunShooterPID(shooter, 0.1));
  
-    SmartDashboard.putNumber("Servo tilt", 180);
+    SmartDashboard.putNumber("Servo tilt", 0);
+    SmartDashboard.putNumber("Servo pan", 0);
+    SmartDashboard.putData("Angle Pixy", new AnglePixy(pixy, (int) SmartDashboard.getNumber("Servo tilt", 180), (int) SmartDashboard.getNumber("Servo pan", 180)));
+  
+    SmartDashboard.putData("Simply seek powercell", new SimpleSeekPowercell(pixy, drivetrain));
+    SmartDashboard.putData("Seek powercell w/ PID", new SeekPowercell(pixy, drivetrain));
   }
 
 
@@ -272,7 +269,5 @@ public class RobotContainer {
   public void outputToSmartDashboard() {
     //SmartDashboard.putNumber("Yaw", sensors.getHeading());
     //SmartDashboard.putData("Reset Gyro", new InstantCommand(sensors::resetGyro));
-    //int tilt_input = (int) SmartDashboard.getNumber("Servo tilt", 0);
-    //SmartDashboard.putData("Tilt servo", new SetServoTilt(pixy, tilt_input));
   }
 }

@@ -13,8 +13,9 @@ public class ExtendIntake extends CommandBase {
   /**
    * Creates a new ExtendIntake.
    */
+  private final Intake intake;
   Boolean isFinished;
-  Intake intake;
+
   public ExtendIntake(Intake intake) {
     this.intake = intake;
     isFinished = false;
@@ -30,7 +31,6 @@ public class ExtendIntake extends CommandBase {
   @Override
   public void execute() {
     intake.extendIntake();
-    System.out.println("extending intake");
     isFinished = true;
   }
 

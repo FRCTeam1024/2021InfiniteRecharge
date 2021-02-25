@@ -9,11 +9,10 @@ import java.util.ArrayList;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.AnglePixy;
 import io.github.pseudoresonance.pixy2api.Pixy2;
 import io.github.pseudoresonance.pixy2api.Pixy2CCC;
 import io.github.pseudoresonance.pixy2api.Pixy2CCC.Block;
-import io.github.pseudoresonance.pixy2api.links.Link;
 import io.github.pseudoresonance.pixy2api.links.SPILink;
 
 public class PixyCam extends SubsystemBase {
@@ -74,7 +73,12 @@ public class PixyCam extends SubsystemBase {
   }
 
   public double getXOffset() {
-    return this.getLargestBlock().getX();
+    Block largestBlock = this.getLargestBlock();
+    if(largestBlock != null) {
+      return this.getLargestBlock().getX();
+    } else {
+      return 180.0;
+    }
   }
 
   public double getYOffset() {
@@ -96,6 +100,14 @@ public class PixyCam extends SubsystemBase {
     this.tilt = tilt;
   }
 
+  public int getPan() {
+    return this.pan;
+  }
+
+  public int getTilt() {
+    return this.tilt;
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -107,7 +119,7 @@ public class PixyCam extends SubsystemBase {
       SmartDashboard.putNumber("Block width", currentBlock.getWidth());
       SmartDashboard.putNumber("Block height", currentBlock.getHeight());
     }
-
-    this.setTilt((int) SmartDashboard.getNumber("Servo tilt", 180));
+    //this.setTilt((int) SmartDashboard.getNumber("Servo tilt", 180));
+    //this.setPan((int) SmartDashboard.getNumber("Servo pan", 180));
   }
 }

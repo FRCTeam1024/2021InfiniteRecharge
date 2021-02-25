@@ -4,22 +4,26 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.*;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.PixyCam;
 
-public class SetServoTilt extends CommandBase {
-  /** Creates a new SetServoTilt. */
-  final PixyCam pixy;
-  int tilt;
-  Boolean isFinished;
+public class AnglePixy extends CommandBase {
+  private final PixyCam pixy;
+  private int tilt, pan;
+  boolean isFinished;
 
-  public SetServoTilt(PixyCam subsystem, int position) {
-    this.pixy = subsystem;
-    this.tilt = position;
+  /** Creates a new AnglePixy. 
+   * @param tiltValue integer defining the pixy tilt. -1 denotes current tilt.
+   * @param panValue integer defining the pixy pan. -1 denotes current pan.
+  */
+  public AnglePixy(PixyCam pixySubsystem, int tiltValue, int panValue) {
     this.isFinished = false;
-    //addRequirements(pixy);
-    // Use addRequirements() here to declare subsystem dependencies.
+    this.pixy = pixySubsystem;
+
+    this.tilt = (tiltValue != -1) ? tiltValue : this.pixy.getTilt();
+    this.pan = (panValue != -1) ? panValue : this.pixy.getPan();
+
+    addRequirements(pixySubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -29,7 +33,8 @@ public class SetServoTilt extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    this.pixy.setTilt(tilt);
+    this.pixy.setTilt(this.tilt);
+    this.pixy.setPan(this.pan);
     this.isFinished = true;
   }
 

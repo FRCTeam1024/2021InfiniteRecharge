@@ -13,31 +13,31 @@ import edu.wpi.first.wpiutil.math.MathUtil;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class AimPixyPowercell extends PIDCommand {
+public class SeekPowercell extends PIDCommand {
   private final PixyCam pixy;
-  private final Drivetrain driveTrain;
+  private final Drivetrain drivetrain;
 
   /** Creates a new aimPixyPowercell. */
-  public AimPixyPowercell(PixyCam pixy, Drivetrain driveTrain) {
+  public SeekPowercell(PixyCam pixySubsystem, Drivetrain drivetrainSubsystem) {
     super(
         // The controller that the command will use
-        pixy.getPIDController(),
+        pixySubsystem.getPIDController(),
         //new PIDController(0, 0, 0),
         // This should return the measurement
-        () -> pixy.getXOffset(),
+        () -> pixySubsystem.getXOffset(),
         // This should return the setpoint (can also be a constant)
         () -> 180.0,
         // This uses the output
         output -> {
           // Use the output here
           double adjustedOutput = MathUtil.clamp(output, -1.0, 1.0);
-          driveTrain.drive(adjustedOutput, -adjustedOutput);
+          drivetrainSubsystem.drive(adjustedOutput, -adjustedOutput);
         });
     // Use addRequirements() here to declare subsystem dependencies.
     // Configure additional PID options by calling `getController` here.
-    this.pixy = pixy;
-    this.driveTrain = driveTrain;
-    addRequirements(pixy, driveTrain);
+    addRequirements(pixySubsystem, drivetrainSubsystem);
+    this.pixy = pixySubsystem;
+    this.drivetrain = drivetrainSubsystem;
   }
 
   // Returns true when the command should end.
