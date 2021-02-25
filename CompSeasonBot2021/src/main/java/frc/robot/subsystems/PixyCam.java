@@ -72,6 +72,9 @@ public class PixyCam extends SubsystemBase {
     return this.PID;
   }
 
+  // @TODO: Fix this command.
+  // Throws a nullPointerException half of the time,
+  // likely because no Block is detected by the Pixy.
   public double getXOffset() {
     Block largestBlock = this.getLargestBlock();
     if(largestBlock != null) {
