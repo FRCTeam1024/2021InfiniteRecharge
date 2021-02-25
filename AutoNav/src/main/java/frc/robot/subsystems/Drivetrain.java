@@ -412,10 +412,11 @@ public class Drivetrain extends SubsystemBase {
     }
 
     /* Calculate targets */
-    double arcLength = 2*3.14159*radius*(angle/360);
+    double absAngle = Math.abs(angle);
+    double arcLength = 2*3.14159*radius*(absAngle/360);
 
     target_Distance = arcLength * DriveConstants.kSensorUnitsPerRotation / DriveConstants.kInchesPerRotation;
-    target_Heading = angle;
+    target_Heading = angle * DriveConstants.kTurnTravelUnitsPerRotation / 360;
     
     zeroEncoders();
 
