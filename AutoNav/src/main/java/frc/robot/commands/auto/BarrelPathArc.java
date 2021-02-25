@@ -22,11 +22,11 @@ public class BarrelPathArc extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     drivetrain = drive;
     addCommands(new AutoForwardMotionMagic(drivetrain, 120),
-                new AutoArcMotionMagic(drivetrain, 30, 360),
+                new AutoArcMotionMagic(drivetrain, 33, 360),
                 new AutoForwardMotionMagic(drivetrain, 90),
-                new AutoArcMotionMagic(drivetrain, 30, -270),
+                new AutoArcMotionMagic(drivetrain, 34, -270),
                 new AutoForwardMotionMagic(drivetrain, 60),
-                new AutoArcMotionMagic(drivetrain, 30, -90),
+                new AutoArcMotionMagic(drivetrain, 31, -90),
                 new AutoForwardMotionMagic(drivetrain, 60),
                 new AutoArcMotionMagic(drivetrain, 30, -180),
                 new AutoForwardMotionMagic(drivetrain, 240)); 

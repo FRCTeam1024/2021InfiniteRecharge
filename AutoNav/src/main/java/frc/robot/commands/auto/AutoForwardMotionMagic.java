@@ -40,7 +40,7 @@ public class AutoForwardMotionMagic extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(drivetrain.getDistance() > (dist -1) && drivetrain.getDistance() < (dist +1)){  //changed to use a set distance threshold rather than percentage, 
+    if(drivetrain.getDistance() > (dist -1 ) && drivetrain.getDistance() < (dist +1)){  //changed to use a set distance threshold rather than percentage, 
                              
       // would like to get smaller but may not be possible with gear lash.
       MSstayed+=20; //every time that the isFinished is run, it has been another 20ms.

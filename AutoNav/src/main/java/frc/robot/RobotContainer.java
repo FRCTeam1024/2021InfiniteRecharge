@@ -99,6 +99,8 @@ public class RobotContainer {
     SmartDashboard.putData("RectanglePath", new RectanglePath(drivetrain));
     SmartDashboard.putData("SlalomPath", new SlalomPath(drivetrain));
     SmartDashboard.putData("SlalomPathArc", new SlalomPathArc(drivetrain));
+    SmartDashboard.putData("BarrelPathArc", new BarrelPathArc(drivetrain));
+    SmartDashboard.putData("BouncePathArc", new BouncePathArc(drivetrain));
     SmartDashboard.putData("AutoArc", new AutoArcMotionMagic(drivetrain, 30.0, -90.0));
   }
 
