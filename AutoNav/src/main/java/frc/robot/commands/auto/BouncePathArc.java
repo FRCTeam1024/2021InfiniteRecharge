@@ -21,18 +21,18 @@ public class BouncePathArc extends SequentialCommandGroup {
       new AutoForwardMotionMagic(drivetrain, 30),
       new AutoArcMotionMagic(drivetrain, 30, -90),
       new AutoForwardMotionMagic(drivetrain, 10),
-      new AutoForwardMotionMagic(drivetrain, -40),
-      new AutoArcMotionMagic(drivetrain, -120, -25),
+      //new AutoForwardMotionMagic(drivetrain, -40),
+      new AutoArcMotionMagic(drivetrain, -250, -20),
       //new AutoForwardMotionMagic(drivetrain, -45),
       new AutoArcMotionMagic(drivetrain, -30, -150),
-      new AutoForwardMotionMagic(drivetrain, -75),
+      new AutoForwardMotionMagic(drivetrain, -80),
       new AutoForwardMotionMagic(drivetrain, 80),
       new AutoArcMotionMagic(drivetrain, 30, -90),
       new AutoForwardMotionMagic(drivetrain, 35),
       new AutoArcMotionMagic(drivetrain, 30, -90),
       new AutoForwardMotionMagic(drivetrain, 80),
-      new AutoForwardMotionMagic(drivetrain, -40),
-      new AutoArcMotionMagic(drivetrain,-30, -90)
+      new AutoForwardMotionMagic(drivetrain, -25),
+      new AutoArcMotionMagic(drivetrain,-30, -60)
    
       
       );
