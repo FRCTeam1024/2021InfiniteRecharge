@@ -18,11 +18,16 @@ import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.SPI;
+
+import com.kauailabs.navx.frc.AHRS;
 
 public class Drivetrain extends SubsystemBase {
 
@@ -55,19 +60,73 @@ public class Drivetrain extends SubsystemBase {
       new Encoder(Constants.QuadEncoderPortA, Constants.QuadEncoderPortB,
                   Constants.kRightEncoderReversed);
 
+  private final AHRS navX;  
+
+  private final DifferentialDriveOdometry m_odometry;
 
   /**
    * Creates a new Drivetrain.
    */
   public Drivetrain() {
 
-    
+    AHRS a = null;
+    try{
+      a = new AHRS(SPI.Port.kMXP);
+    } catch (RuntimeException ex) {
+      DriverStation.reportError("Error instantiating navX MXP: " + ex.getMessage(), true);
+    }
+    navX = a;
+
+    m_leftEncoder.setDistancePerPulse(Constants.DriveConstants.kEncoderDistancePerPulse);
+    m_rightEncoder.setDistancePerPulse(Constants.DriveConstants.kEncoderDistancePerPulse);
+    m_odometry = new DifferentialDriveOdometry(new Rotation2d(navX.getRotation2d().getDegrees()));
+  }
+
+  /**
+   * Returns the current wheel speeds of the robot.
+   *
+   * @return The current wheel speeds.
+   */
+  public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+    return new DifferentialDriveWheelSpeeds(m_leftEncoder.getRate(), m_rightEncoder.getRate());
+  }
+
+  /**
+   * Returns the heading of the robot.
+   *
+   * @return the robot's heading in degrees, from -180 to 180
+   */
+  public double getHeading() {
+    return navX.getRotation2d().getDegrees();
+  }
+
+  /**
+   * Returns the currently-estimated pose of the robot.
+   *
+   * @return The pose.
+   */
+  public Pose2d getPose() {
+    return m_odometry.getPoseMeters();
+  }
+
+  /**
+   * Controls the left and right sides of the drive directly with voltages.
+   *
+   * @param leftVolts  the commanded left output
+   * @param rightVolts the commanded right output
+   */
+  public void tankDriveVolts(double leftVolts, double rightVolts) {
+    m_leftMotors.setVoltage(leftVolts);
+    m_rightMotors.setVoltage(-rightVolts);
+    m_drive.feed();
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     outputToSmartDashboard();
+    m_odometry.update(navX.getRotation2d(), m_leftEncoder.getDistance(),
+    m_rightEncoder.getDistance());
   }
 
   public void driveForward(double power) {
@@ -113,32 +172,6 @@ public class Drivetrain extends SubsystemBase {
   public double getRawLeftEncoder() {
     return m_leftEncoder.getRaw();
     //wheel diameter: 6 in
-  }
-  
-  //specific path that is used in part of the Bounce Path.
-  //currently empty as it is an optimization that requires turning to an angle.
-  public void DiagonalBouncePath(){
-    
-  }
-
-	// public double getRightEncoderInches() {
-  //   return frontRight.getSelectedSensorPosition();
-  //   //wheel diameter: 6 in
-  // }
-  
-	// public void resetEncoders() {
-  //   frontLeft.setSelectedSensorPosition(0);
-  //   frontRight.setSelectedSensorPosition(0);
-  // }
-
-  public float getHeading() {
-      // put it behind a method for now because we're not sure if we're using yaw, if the
-      // navx is vertical, or compassHeading, if the navx is flat/horizontal
-
-      // if it's yaw, may have to do some calculations, if yaw is in range of -180 to 180, 
-      // instead of 0 - 360
-      // return ahrs.getYaw();
-      return 0;
   }
     
   public void outputToSmartDashboard() {

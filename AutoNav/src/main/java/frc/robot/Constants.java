@@ -7,13 +7,17 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
+
 /**
- * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
- * constants.  This class should not be used for any other purpose.  All constants should be
- * declared globally (i.e. public static).  Do not put anything functional in this class.
+ * The Constants class provides a convenient place for teams to hold robot-wide
+ * numerical or boolean constants. This class should not be used for any other
+ * purpose. All constants should be declared globally (i.e. public static). Do
+ * not put anything functional in this class.
  *
- * <p>It is advised to statically import this class (or one of its inner classes) wherever the
- * constants are needed, to reduce verbosity.
+ * <p>
+ * It is advised to statically import this class (or one of its inner classes)
+ * wherever the constants are needed, to reduce verbosity.
  */
 public final class Constants {
 
@@ -23,7 +27,28 @@ public final class Constants {
      */
     public static final int kTimeoutMs = 60;    //example was 30 made larger because was timing out, may be able to go back
 
+    public static final int QuadEncoderPortA = 7; //encoder ports found at the TalonSRX encoder users manual
+    public static final int QuadEncoderPortB = 5;
+    public static final boolean kLeftEncoderReversed = true; //assumed bc our drive function is reversed
+    public static final boolean kRightEncoderReversed = true;
+    
+   
+
     public static final class DriveConstants {
+        public static final double ksVolts = 1.31; // foudn in our characterization data in google drive
+        public static final double kvVoltSecondsPerMeter = 1.95; //we may have to rerun the characterization routine, so these numbers may change
+        public static final double kaVoltSecondsSquaredPerMeter = 0.765;
+        public static final double kPDriveVel = 2.91;
+
+        public static final double kTrackwidthMeters = 1.32;
+        public static final DifferentialDriveKinematics kDriveKinematics =
+            new DifferentialDriveKinematics(kTrackwidthMeters);
+
+        public static final double kMaxSpeedMetersPerSecond = 3; //these may have to be changed
+        public static final double kMaxAccelerationMetersPerSecondSquared = 3;
+
+        public static final double kRamseteB = 2; //may need to be tuned
+        public static final double kRamseteZeta = 0.7;
 
         /* CAN IDs   */
         public static final int kLeftRearMotorPort = 8;
@@ -52,6 +77,10 @@ public final class Constants {
 
         /* Inches per wheel rotation */
         public static final double kInchesPerRotation = 19.0805; //Tested and confirmed this value for 2021 compbot
+        
+        
+        /* Distance per rotation of encoder in meters */
+        public static final double kEncoderDistancePerPulse = 1.436; // 3 rotations of wheel in meters - not quite sure if math is corect, may need to fix later
 
         /**
 	    * Motor neutral dead-band, set to the minimum 0.1%.

@@ -7,20 +7,34 @@
 
 package frc.robot;
 
+import java.util.List;
+
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.controller.RamseteController;
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import frc.robot.subsystems.*;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.*;
 import frc.robot.commands.auto.*;
 import frc.robot.oi.MustangController;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -94,10 +108,6 @@ public class RobotContainer {
     // NetworkTableEntry xOffset = limelight.getEntry("tx");
     
     SmartDashboard.putData("Drive", new BasicDriveCommand(drivetrain));
-    SmartDashboard.putData("MotionMagicDrive", new AutoForwardMotionMagic(drivetrain, 30.0));
-    SmartDashboard.putData("MotionMagicTurn", new AutoTurnMotionMagic(drivetrain, 90.0));
-    SmartDashboard.putData("RectanglePath", new RectanglePath(drivetrain));
-    SmartDashboard.putData("SlalomPath", new SlalomPath(drivetrain));
   }
 
 
@@ -108,8 +118,57 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return m_autoCommand;
     // return limelightCenterPID;
+    var autoVoltageConstraint =
+        new DifferentialDriveVoltageConstraint(
+            new SimpleMotorFeedforward(DriveConstants.ksVolts,
+                                       DriveConstants.kvVoltSecondsPerMeter,
+                                       DriveConstants.kaVoltSecondsSquaredPerMeter),
+            DriveConstants.kDriveKinematics,
+            10);
+
+    TrajectoryConfig config =
+      new TrajectoryConfig(DriveConstants.kMaxSpeedMetersPerSecond,
+                          DriveConstants.kMaxAccelerationMetersPerSecondSquared)
+                // Add kinematics to ensure max speed is actually obeyed
+                .setKinematics(DriveConstants.kDriveKinematics)
+                // Apply the voltage constraint
+                .addConstraint(autoVoltageConstraint);
+
+    Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+                  // Start at the origin facing the +X direction
+                  new Pose2d(0, 0, new Rotation2d(0)),
+                  // Pass through these two interior waypoints, making an 's' curve path
+                  List.of(
+                      new Translation2d(1, 1),
+                      new Translation2d(2, -1)
+                  ),
+                  // End 3 meters straight ahead of where we started, facing forward
+                  new Pose2d(3, 0, new Rotation2d(0)),
+                  // Pass config
+                  config
+    );
+
+    // Reset odometry to the starting pose of the trajectory.
+    m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());  //idk what m_robotDrive is, need to look at that some next time
+
+    RamseteCommand ramseteCommand = new RamseteCommand(
+      exampleTrajectory,
+      m_robotDrive::getPose,
+      new RamseteController(DriveConstants.kRamseteB, DriveConstants.kRamseteZeta),
+      new SimpleMotorFeedforward(DriveConstants.ksVolts,
+                                 DriveConstants.kvVoltSecondsPerMeter,
+                                 DriveConstants.kaVoltSecondsSquaredPerMeter),
+      DriveConstants.kDriveKinematics,
+      m_robotDrive::getWheelSpeeds,
+      new PIDController(DriveConstants.kPDriveVel, 0, 0),
+      new PIDController(DriveConstants.kPDriveVel, 0, 0),
+      // RamseteCommand passes volts to the callback
+      m_robotDrive::tankDriveVolts,
+      m_robotDrive
+  );
+
+    return m_autoCommand;
   }
 
   public void periodic() {
