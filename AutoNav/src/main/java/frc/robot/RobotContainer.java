@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
 import frc.robot.commands.auto.*;
@@ -67,8 +68,14 @@ public class RobotContainer {
 
   public Trigger shooterTrigger = new Trigger( () -> xboxController.getLeftTriggerAxis() > 0.50 );
 
+  //Define various autos to select from
+  private final Command m_SlalomAuto = new SlalomPathArc(drivetrain);
+  private final Command m_BarrelAuto = new BarrelPathArc(drivetrain);
+  private final Command m_BounceAuto = new BouncePathArc(drivetrain);
 
-  private final Command m_autoCommand = new LimelightCenter(drivetrain);
+  //Create a chooser for auto
+  SendableChooser<Command> m_AutoChooser = new SendableChooser<>();
+
   private final DriveWithJoysticks driveWithJoysticks = new DriveWithJoysticks(drivetrain, leftJoystick, rightJoystick);
 
   /**
@@ -76,8 +83,17 @@ public class RobotContainer {
    */
   public RobotContainer() {
     // Configure the button bindings
-    configureButtonBindings();
+  
     drivetrain.setDefaultCommand(driveWithJoysticks);
+
+    //Add commands to auto chooser, set default to null to avoid surprise operation
+    m_AutoChooser.setDefaultOption("None", null);
+    m_AutoChooser.addOption("Slalom", m_SlalomAuto);
+    m_AutoChooser.addOption("Barrel", m_BarrelAuto);
+    m_AutoChooser.addOption("Bounce", m_BounceAuto);
+
+    // Configure the button bindings
+    configureButtonBindings();
   }
 
   /**
@@ -97,11 +113,10 @@ public class RobotContainer {
     SmartDashboard.putData("MotionMagicDrive", new AutoForwardMotionMagic(drivetrain, 30.0));
     SmartDashboard.putData("MotionMagicTurn", new AutoTurnMotionMagic(drivetrain, 90.0));
     SmartDashboard.putData("RectanglePath", new RectanglePath(drivetrain));
-    SmartDashboard.putData("SlalomPath", new SlalomPath(drivetrain));
-    SmartDashboard.putData("SlalomPathArc", new SlalomPathArc(drivetrain));
-    SmartDashboard.putData("BarrelPathArc", new BarrelPathArc(drivetrain));
-    SmartDashboard.putData("BouncePathArc", new BouncePathArc(drivetrain));
     SmartDashboard.putData("AutoArc", new AutoArcMotionMagic(drivetrain, 30.0, -90.0));
+
+    //Put the autp chooser on the dashboard
+    SmartDashboard.putData(m_AutoChooser);
   }
 
 
@@ -111,9 +126,9 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
-    return m_autoCommand;
-    // return limelightCenterPID;
+
+    return m_AutoChooser.getSelected();
+
   }
 
   public void periodic() {
