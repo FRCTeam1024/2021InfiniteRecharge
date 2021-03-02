@@ -18,13 +18,23 @@ public class RectanglePath extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     drivetrain = drive;
     //Increased the size of the box from 30 to 120 to give more visibility to turn errors
-    addCommands(new AutoForwardMotionMagic(drivetrain, 120), 
+    /*addCommands(new AutoForwardMotionMagic(drivetrain, 120), 
                 new AutoTurnMotionMagic(drivetrain, 90),
                 new AutoForwardMotionMagic(drivetrain, 120), 
                 new AutoTurnMotionMagic(drivetrain, 90),
                 new AutoForwardMotionMagic(drivetrain, 120), 
                 new AutoTurnMotionMagic(drivetrain, 90),
                 new AutoForwardMotionMagic(drivetrain, 120), 
-                new AutoTurnMotionMagic(drivetrain, 90));
+                new AutoTurnMotionMagic(drivetrain, 90)); */
+
+    addCommands(new Calibrate(drivetrain),
+                new AutoForwardMotionMagic(drivetrain, 120), 
+                new AutoTurnHeading(drivetrain, 90),
+                new AutoForwardMotionMagic(drivetrain, 120), 
+                new AutoTurnHeading(drivetrain, 180),
+                new AutoForwardMotionMagic(drivetrain, 120), 
+                new AutoTurnHeading(drivetrain, -90),
+                new AutoForwardMotionMagic(drivetrain, 120), 
+                new AutoTurnHeading(drivetrain, 0));
   }
 }

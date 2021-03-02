@@ -61,7 +61,7 @@ public class Drivetrain extends SubsystemBase {
   public Drivetrain() {
 
     /**
-     * Configure AHRS (navX)
+     * Configure AHRS (navX) need to think about brownout protection for the gyro
      */
     AHRS a = null;
     try{
@@ -218,9 +218,9 @@ public class Drivetrain extends SubsystemBase {
     s_Hi = 5;       // Can be 1-8, higher = more smoothing, just a guess so far
 
     //Made the lower becuase turn units are different (10 per degree) seems like there is some interaction with the PID0 loop that makes this more complicated.
-    maxVHiTurn = 45;
-    maxAHiTurn = 40;  // raw/100ms/s Seems good for lo, we'll see for hi
-    s_HiTurn = 5;
+    maxVHiTurn = 2;
+    maxAHiTurn = 4;  // raw/100ms/s Seems good for lo, we'll see for hi
+    s_HiTurn = 1;
     
     /* FPID Gains for Distance PID when in low gear -  Move these to a constants or gains class eventually*/
     m_RightLeader.config_kP(DriveConstants.kSlot_DistLow, 1, Constants.kTimeoutMs);//Increased from 0.6 to 1 to get within 0.5inches
@@ -561,6 +561,7 @@ public class Drivetrain extends SubsystemBase {
   /* Run navX field calibration*/
   public void calibrateGyro() {
     navX.calibrate();
+    navX.reset();
   }
   
   /* Check if navX is ready */

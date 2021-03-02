@@ -32,31 +32,6 @@ public class SlalomPathArc extends SequentialCommandGroup {
                 new AutoArcMotionMagic(drivetrain, 30, 90),
                 new AutoArcMotionMagic(drivetrain, 30, -90)); 
 
-/* Test using global headings from gyro, not working yet
-    addCommands(new Calibrate(drivetrain),
-                new AutoForwardMotionMagic(drivetrain, 45), 
-                new AutoTurnHeading(drivetrain, -90),
-                new AutoForwardMotionMagic(drivetrain, 85), 
-                new AutoTurnHeading(drivetrain, 0),
-                new AutoForwardMotionMagic(drivetrain, 180), 
-                new AutoTurnHeading(drivetrain, 90),
-                new AutoForwardMotionMagic(drivetrain, 75), 
-                new AutoTurnHeading(drivetrain, 0),
-                new AutoForwardMotionMagic(drivetrain, 60),
-                new AutoTurnHeading(drivetrain, -90),
-                new AutoForwardMotionMagic(drivetrain, 75),
-                new AutoTurnHeading(drivetrain, -180),
-                new AutoForwardMotionMagic(drivetrain, 60),
-                new AutoTurnHeading(drivetrain, 90),
-                new AutoForwardMotionMagic(drivetrain, 70),
-                new AutoTurnHeading(drivetrain, -180),
-                new AutoForwardMotionMagic(drivetrain, 170),
-                new AutoTurnHeading(drivetrain, -90), 
-                new AutoForwardMotionMagic(drivetrain, 60),
-                new AutoTurnHeading(drivetrain, -180),
-                new AutoForwardMotionMagic(drivetrain, 40));
-                */
-
     addCommands();
   }
 }
