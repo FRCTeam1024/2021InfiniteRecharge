@@ -129,7 +129,7 @@ public class RobotContainer {
 
     TrajectoryConfig config =
       new TrajectoryConfig(DriveConstants.kMaxSpeedMetersPerSecond,
-                          DriveConstants.kMaxAccelerationMetersPerSecondSquared)
+                           DriveConstants.kMaxAccelerationMetersPerSecondSquared)
                 // Add kinematics to ensure max speed is actually obeyed
                 .setKinematics(DriveConstants.kDriveKinematics)
                 // Apply the voltage constraint
@@ -150,25 +150,25 @@ public class RobotContainer {
     );
 
     // Reset odometry to the starting pose of the trajectory.
-    m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());  //idk what m_robotDrive is, need to look at that some next time
+    drivetrain.resetOdometry(exampleTrajectory.getInitialPose());  
 
     RamseteCommand ramseteCommand = new RamseteCommand(
       exampleTrajectory,
-      m_robotDrive::getPose,
+      drivetrain::getPose,
       new RamseteController(DriveConstants.kRamseteB, DriveConstants.kRamseteZeta),
       new SimpleMotorFeedforward(DriveConstants.ksVolts,
                                  DriveConstants.kvVoltSecondsPerMeter,
                                  DriveConstants.kaVoltSecondsSquaredPerMeter),
       DriveConstants.kDriveKinematics,
-      m_robotDrive::getWheelSpeeds,
+      drivetrain::getWheelSpeeds,
       new PIDController(DriveConstants.kPDriveVel, 0, 0),
       new PIDController(DriveConstants.kPDriveVel, 0, 0),
       // RamseteCommand passes volts to the callback
-      m_robotDrive::tankDriveVolts,
-      m_robotDrive
+      drivetrain::tankDriveVolts,
+      drivetrain
   );
 
-    return m_autoCommand;
+    return ramseteCommand.andThen(() -> drivetrain.tankDriveVolts(0, 0));
   }
 
   public void periodic() {

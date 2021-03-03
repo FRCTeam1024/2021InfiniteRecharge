@@ -100,6 +100,14 @@ public class Drivetrain extends SubsystemBase {
     return navX.getRotation2d().getDegrees();
   }
 
+  public void zeroHeading() {
+    navX.reset();
+  }
+
+  public double getTurnRate() {
+    return -navX.getRate();
+  }
+
   /**
    * Returns the currently-estimated pose of the robot.
    *
@@ -125,8 +133,34 @@ public class Drivetrain extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     outputToSmartDashboard();
-    m_odometry.update(navX.getRotation2d(), m_leftEncoder.getDistance(),
-    m_rightEncoder.getDistance());
+    m_odometry.update(navX.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
+  }
+
+  /**
+   * Resets the odometry to the specified pose.
+   *
+   * @param pose The pose to which to set the odometry.
+   */
+  public void resetOdometry(Pose2d pose) {
+    resetEncoders();
+    m_odometry.resetPosition(pose, navX.getRotation2d());
+  }
+
+  public void setMaxOutput(double maxOutput) {
+    m_drive.setMaxOutput(maxOutput);
+  }
+
+  public double getAverageEncoderDistance() {
+    return (m_leftEncoder.getDistance() + m_rightEncoder.getDistance()) / 2.0;
+  }
+
+
+    /**
+   * Resets the drive encoders to currently read a position of 0.
+   */
+  public void resetEncoders() {
+    m_leftEncoder.reset();
+    m_rightEncoder.reset();
   }
 
   public void driveForward(double power) {
