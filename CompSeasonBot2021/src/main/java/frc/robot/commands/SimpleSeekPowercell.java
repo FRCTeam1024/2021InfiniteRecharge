@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.PixyCam;
@@ -32,7 +33,8 @@ public class SimpleSeekPowercell extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    powercellX = this.pixy.getXOffset();
+    powercellX = SmartDashboard.getNumber("Block x", 0);
+    // powercellX = pixy.getXOffset();
     xError = powercellX - 180;
     if(Math.abs(xError) <= this.errorThreshold) {
       isFinished = true;

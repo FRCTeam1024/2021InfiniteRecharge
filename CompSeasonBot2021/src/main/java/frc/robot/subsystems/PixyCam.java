@@ -78,9 +78,9 @@ public class PixyCam extends SubsystemBase {
   public double getXOffset() {
     Block largestBlock = this.getLargestBlock();
     if(largestBlock != null) {
-      return largestBlock.getX() -155;
+      return largestBlock.getX() - 155;
     } else {
-      return 180.0;
+      return this.getXOffset();
     }
   }
 

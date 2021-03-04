@@ -6,15 +6,14 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.PixyCam;
+import frc.robot.subsystems.*;
 
 public class PixyCenter extends CommandBase {
   private final PixyCam m_Pixy;
   private final Drivetrain m_Drivetrain;
   private double powerCellX;
-  private int sequences = 0;
   public double driveTrainSpeed = .4;
+  private int sequences = 0;
   private final double minimumSpeed = .2;
   private double tolerance = 1.5;
 
@@ -30,13 +29,14 @@ public class PixyCenter extends CommandBase {
   @Override
   public void initialize() {
     sequences = 0;
-    powerCellX = m_Pixy.getXOffset();;
+    powerCellX = SmartDashboard.getNumber("Block x", 0);
+    m_Pixy.setTilt(200);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    powerCellX = m_Pixy.getXOffset();
+    powerCellX = SmartDashboard.getNumber("Block x", 0);
 
     if(Math.abs(powerCellX) < 7.5){
       driveTrainSpeed = 0.225;
@@ -73,7 +73,6 @@ public class PixyCenter extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    //return sequences >= 1 || driveTrainSpeed <= 0.1;
-    return false;
+    return sequences >= 1 || driveTrainSpeed <= 0.1;
   }
 }
