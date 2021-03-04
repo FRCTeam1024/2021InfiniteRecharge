@@ -82,7 +82,7 @@ public class RobotContainer {
   public Trigger shooterTrigger = new Trigger( () -> xboxController.getLeftTriggerAxis() > 0.50 );
 
 
-  private final Command m_autoCommand = new LimelightCenter(drivetrain);
+  private final Command m_autoCommand = this.getAutonomousCommand();
   private final DriveWithJoysticks driveWithJoysticks = new DriveWithJoysticks(drivetrain, leftJoystick, rightJoystick);
 
   /**
@@ -117,15 +117,13 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
-    // return limelightCenterPID;
     var autoVoltageConstraint =
         new DifferentialDriveVoltageConstraint(
             new SimpleMotorFeedforward(DriveConstants.ksVolts,
                                        DriveConstants.kvVoltSecondsPerMeter,
                                        DriveConstants.kaVoltSecondsSquaredPerMeter),
             DriveConstants.kDriveKinematics,
-            10);
+            2.5); //testing a lower voltage? hopefully that will slow it down so I can figure out what its trying 
 
     TrajectoryConfig config =
       new TrajectoryConfig(DriveConstants.kMaxSpeedMetersPerSecond,
@@ -140,8 +138,8 @@ public class RobotContainer {
                   new Pose2d(0, 0, new Rotation2d(0)),
                   // Pass through these two interior waypoints, making an 's' curve path
                   List.of(
-                      new Translation2d(1, 1),
-                      new Translation2d(2, -1)
+                      new Translation2d(0.5, 0.5),
+                      new Translation2d(1, -0.5)
                   ),
                   // End 3 meters straight ahead of where we started, facing forward
                   new Pose2d(3, 0, new Rotation2d(0)),

@@ -24,19 +24,37 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.SensorCollection;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 
 import com.kauailabs.navx.frc.AHRS;
 
-public class Drivetrain extends SubsystemBase {
 
-  /**public WPI_TalonSRX frontRight;
-  private WPI_TalonSRX middleRight;
-  private WPI_TalonSRX rearRight;
-  public WPI_TalonSRX frontLeft; // This is being used as the encoder
-  private WPI_TalonSRX middleLeft;
-  private WPI_TalonSRX rearLeft;**/
+/**
+ * Trying to summarize the current issues here so I don't have to go back 
+ * and redeploy to find the issues
+ * *Error Message: CTR: CAN frame not received/too-stale.
+ *      *According to the internet, the issue is that we're not receiving the 
+ *        information from the Talons often enough.
+ * *Error Message: DifferentialDrive... Output not updated often enough.
+ *      *Also an issue with the Talons not giving information quick enough.
+ *        Still not sure how we're supposed to actually fix that issue though.
+ * *Robot is very jerky when deployed. I'd assume that this has something to
+ *    do with the error messages above.
+ *      *Multiple people on Chief Delphi have reported issues with robot being 
+ *        very jerky to begin with, oftentimes related to the issue with 
+ *        Talons not returning information quick enough
+ * 
+ * All of the problems are coming back to Talons not updating quick enough
+ * Most fixes listed on the internet have been related to wiring.
+ * However, there could also simply be an issue of how our Encoders are not
+ * connected directly to the CAN, as they are in the Trajectory tutorial.
+ * Currently trying to work around and find a way to use the encoders as they 
+ * are now, connected to the Talon breakout boards.
+ */
+
+public class Drivetrain extends SubsystemBase {
 
   private WPI_TalonSRX leftEncoderTalon = new WPI_TalonSRX(20);
   private WPI_TalonSRX rightEncoderTalon = new WPI_TalonSRX(6);
@@ -51,14 +69,9 @@ public class Drivetrain extends SubsystemBase {
   private final DifferentialDrive m_drive = new DifferentialDrive(m_leftMotors, m_rightMotors);
 
 // The left-side drive encoder
-  private final Encoder m_leftEncoder =
-      new Encoder(Constants.QuadEncoderPortA, Constants.QuadEncoderPortB,
-                  Constants.kLeftEncoderReversed);
 
-  // The right-side drive encoder
-  private final Encoder m_rightEncoder =
-      new Encoder(Constants.QuadEncoderPortA, Constants.QuadEncoderPortB,
-                  Constants.kRightEncoderReversed);
+  SensorCollection m_leftEncoder = new SensorCollection(leftEncoderTalon);
+  SensorCollection m_rightEncoder = new SensorCollection(rightEncoderTalon);
 
   private final AHRS navX;  
 
@@ -69,6 +82,14 @@ public class Drivetrain extends SubsystemBase {
    */
   public Drivetrain() {
 
+    // The left-side drive encoder
+    leftEncoderTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
+    rightEncoderTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
+
+    //leftEncoderTalon.setStatusFramePeriod(0, 60); //trying to get rid of timeout error
+    //rightEncoderTalon.setStatusFramePeriod(0, 60);
+    
+
     AHRS a = null;
     try{
       a = new AHRS(SPI.Port.kMXP);
@@ -77,8 +98,8 @@ public class Drivetrain extends SubsystemBase {
     }
     navX = a;
 
-    m_leftEncoder.setDistancePerPulse(Constants.DriveConstants.kEncoderDistancePerPulse);
-    m_rightEncoder.setDistancePerPulse(Constants.DriveConstants.kEncoderDistancePerPulse);
+    //leftEncoderTalon.setDistancePerPulse(Constants.DriveConstants.kEncoderDistancePerPulse);
+    //m_rightEncoder.setDistancePerPulse(Constants.DriveConstants.kEncoderDistancePerPulse);
     m_odometry = new DifferentialDriveOdometry(new Rotation2d(navX.getRotation2d().getDegrees()));
   }
 
@@ -88,7 +109,8 @@ public class Drivetrain extends SubsystemBase {
    * @return The current wheel speeds.
    */
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-    return new DifferentialDriveWheelSpeeds(m_leftEncoder.getRate(), m_rightEncoder.getRate());
+    return new DifferentialDriveWheelSpeeds(m_leftEncoder.getQuadratureVelocity() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation, 
+                                            m_rightEncoder.getQuadratureVelocity() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation);
   }
 
   /**
@@ -126,14 +148,19 @@ public class Drivetrain extends SubsystemBase {
   public void tankDriveVolts(double leftVolts, double rightVolts) {
     m_leftMotors.setVoltage(leftVolts);
     m_rightMotors.setVoltage(-rightVolts);
-    m_drive.feed();
+    m_drive.feedWatchdog();
   }
+
+  
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     outputToSmartDashboard();
-    m_odometry.update(navX.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
+    m_odometry.update(navX.getRotation2d(), 
+        m_leftEncoder.getQuadraturePosition() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation, 
+        m_rightEncoder.getQuadraturePosition() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation);
+    //may need to scale these based on encoder values vs. circumference of wheel
   }
 
   /**
@@ -151,7 +178,8 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public double getAverageEncoderDistance() {
-    return (m_leftEncoder.getDistance() + m_rightEncoder.getDistance()) / 2.0;
+    return ((m_leftEncoder.getQuadraturePosition() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation)
+            + (m_rightEncoder.getQuadraturePosition()* Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation)) / 2.0;
   }
 
 
@@ -159,8 +187,8 @@ public class Drivetrain extends SubsystemBase {
    * Resets the drive encoders to currently read a position of 0.
    */
   public void resetEncoders() {
-    m_leftEncoder.reset();
-    m_rightEncoder.reset();
+    m_leftEncoder.setQuadraturePosition(0, 20);
+    m_rightEncoder.setQuadraturePosition(0, 20);
   }
 
   public void driveForward(double power) {
@@ -203,10 +231,6 @@ public class Drivetrain extends SubsystemBase {
 		drive(0.0, 0.0);
   }
 
-  public double getRawLeftEncoder() {
-    return m_leftEncoder.getRaw();
-    //wheel diameter: 6 in
-  }
     
   public void outputToSmartDashboard() {
     // SmartDashboard.putNumber("Left Encoder Distance (IN)", -getLeftEncoderInches());

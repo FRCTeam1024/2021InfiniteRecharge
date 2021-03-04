@@ -27,18 +27,18 @@ public final class Constants {
      */
     public static final int kTimeoutMs = 60;    //example was 30 made larger because was timing out, may be able to go back
 
-    public static final int QuadEncoderPortA = 7; //encoder ports found at the TalonSRX encoder users manual
-    public static final int QuadEncoderPortB = 5;
+    //public static final int QuadEncoderPortA = 7; //encoder ports found at the TalonSRX encoder users manual
+    //public static final int QuadEncoderPortB = 5; Not in use as they were needed for the Encoder class, which does not work with our encoders
     public static final boolean kLeftEncoderReversed = true; //assumed bc our drive function is reversed
     public static final boolean kRightEncoderReversed = true;
     
    
 
     public static final class DriveConstants {
-        public static final double ksVolts = 1.31; // foudn in our characterization data in google drive
-        public static final double kvVoltSecondsPerMeter = 1.95; //we may have to rerun the characterization routine, so these numbers may change
-        public static final double kaVoltSecondsSquaredPerMeter = 0.765;
-        public static final double kPDriveVel = 2.91;
+        public static final double ksVolts = 1; //in characterization data: 1.31  Testing 1
+        public static final double kvVoltSecondsPerMeter = 1; //in characterization data: 1.95  Testing 1
+        public static final double kaVoltSecondsSquaredPerMeter = 0.25; //in characterization data: 0.765  Testing 0.25 for slower acceleration
+        public static final double kPDriveVel = 1; //in characterization data: 2.91  Testing 1 to try and slow down the robot
 
         public static final double kTrackwidthMeters = 1.32;
         public static final DifferentialDriveKinematics kDriveKinematics =
@@ -77,7 +77,9 @@ public final class Constants {
 
         /* Inches per wheel rotation */
         public static final double kInchesPerRotation = 19.0805; //Tested and confirmed this value for 2021 compbot
-        
+
+        //meters per wheel rotation - used for trajectory class
+        public static final double kMetersPerRotation = 0.4846447;
         
         /* Distance per rotation of encoder in meters */
         public static final double kEncoderDistancePerPulse = 1.436; // 3 rotations of wheel in meters - not quite sure if math is corect, may need to fix later
