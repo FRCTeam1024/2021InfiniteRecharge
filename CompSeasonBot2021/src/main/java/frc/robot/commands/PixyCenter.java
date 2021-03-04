@@ -60,10 +60,10 @@ public class PixyCenter extends CommandBase {
     if(this.powerCellX > tolerance) {
       // Turn right
     m_Drivetrain.drive(driveTrainSpeed, -driveTrainSpeed);
-  } else if(this.powerCellX < -tolerance) {
+    } else if(this.powerCellX < -tolerance) {
       // Turn left
       m_Drivetrain.drive(-driveTrainSpeed, driveTrainSpeed);
-  } 
+    } 
   }
 
   // Called once the command ends or is interrupted.
