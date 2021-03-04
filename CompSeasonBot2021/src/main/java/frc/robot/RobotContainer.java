@@ -94,6 +94,8 @@ public class RobotContainer {
   public JoystickButton leftTrigger = new JoystickButton(leftJoystick, 1);
   public JoystickButton rightTrigger = new JoystickButton(rightJoystick, 1);
 
+  public JoystickButton rightCenterButton = new JoystickButton(rightJoystick, 2);
+
   public JoystickButton switchCamModeDefault = new JoystickButton(leftJoystick, 2);
   public JoystickButton switchCamModeCamera = new JoystickButton(rightJoystick, 2);
   // public JoystickButton runShooterJoystick = new JoystickButton(rightJoystick, 3);
@@ -108,6 +110,10 @@ public class RobotContainer {
 
   private final DriveWithJoysticks driveWithJoysticks = new DriveWithJoysticks(drivetrain, leftJoystick, rightJoystick);
   private final DriveClimberDefault driveClimberDefault = new DriveClimberDefault(climber, xboxController);
+  private final AnglePixy anglePixy = new AnglePixy(pixy, leftJoystick);
+
+  private int pixyTilt = 0;
+  private int pixyPan = 0;
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
@@ -116,6 +122,7 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
     drivetrain.setDefaultCommand(driveWithJoysticks);
+    pixy.setDefaultCommand(anglePixy);
     // climber.setDefaultCommand(driveClimberDefault);
   }
 
@@ -147,6 +154,8 @@ public class RobotContainer {
 
     leftTrigger.whenPressed(new LimelightCenter(limelight, drivetrain));
     rightTrigger.whenPressed(new LimelightShooter(limelight, drivetrain, shooter, ballFeed));
+
+    rightCenterButton.whenPressed(new PixyCenter(pixy, drivetrain));
 
     //DEAD BAND FOR LOGITECH JOYSTICK CONTROLLERS
     if(xboxController.getLeftStickY() > 0.2 || xboxController.getLeftStickY() < 0.2){
@@ -225,7 +234,7 @@ public class RobotContainer {
     SmartDashboard.putData("Fail Safe Auto", new FailSafeAutoWithVelocity(shooter, ballFeed, 1.0, 1.0, 1.0));
     SmartDashboard.putData("PID Gyro Aim", new PIDGyroAim(drivetrain, 65));
     SmartDashboard.putData("Reset Gyro Senser", new ResetGyro(drivetrain));
-    SmartDashboard.putNumber("Gyro Angle", drivetrain.ahrs.getAngle());
+    SmartDashboard.putNumber("Gyro Angle", drivetrain.getGyroHeading());
 
     SmartDashboard.putData("Limelight PID", new LimelightAutoAim(limelight, drivetrain));
     //SmartDashboard.putNumber("LkFF", limelight.getPIDController().getP());
@@ -238,13 +247,9 @@ public class RobotContainer {
     SmartDashboard.putData("Shooter Zone 4", new RunShooter(shooter, 0.40)); // hood back ?, hood forward ?
     SmartDashboard.putData("Shooter Zone 5", new RunShooter(shooter, 0.40)); // hood back ?, hood forward ?
     */
-
+    SmartDashboard.putNumber("Servo tilt", 0);
     SmartDashboard.putNumber("Shooter RPM", 3400);
     SmartDashboard.putData("Run Shooter PID", new RunShooterPID(shooter, 3400));
- 
-    SmartDashboard.putNumber("Servo tilt", 0);
-    SmartDashboard.putNumber("Servo pan", 0);
-    SmartDashboard.putData("Angle Pixy", new AnglePixy(pixy, (int) SmartDashboard.getNumber("Servo tilt", 180), (int) SmartDashboard.getNumber("Servo pan", 180)));
   
     SmartDashboard.putData("Simply seek powercell", new SimpleSeekPowercell(pixy, drivetrain));
     SmartDashboard.putData("Seek powercell w/ PID", new SeekPowercell(pixy, drivetrain));
@@ -269,5 +274,6 @@ public class RobotContainer {
   public void outputToSmartDashboard() {
     //SmartDashboard.putNumber("Yaw", sensors.getHeading());
     //SmartDashboard.putData("Reset Gyro", new InstantCommand(sensors::resetGyro));
+    
   }
 }

@@ -31,7 +31,7 @@ public class PixyCam extends SubsystemBase {
     pixy.setLED(0, 255, 0);
     
     this.pan = 0;
-    this.tilt = 0;
+    this.tilt = 200;
     pixy.setServos(this.pan, this.tilt);
 
     kP = 0.01;
@@ -78,7 +78,7 @@ public class PixyCam extends SubsystemBase {
   public double getXOffset() {
     Block largestBlock = this.getLargestBlock();
     if(largestBlock != null) {
-      return this.getLargestBlock().getX();
+      return largestBlock.getX() -155;
     } else {
       return 180.0;
     }
