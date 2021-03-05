@@ -2,11 +2,24 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+/**
+ * Can you add some comments here explaining what the goal of this command is?
+ * 
+ * Are we trying to actively track and remain pointed at a moving target or just turn
+ * to face a stationary target and only update our position if this command is triggered
+ * by the operator?
+ * 
+ */
+
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.*;
+import frc.robot.subsystems.*; //We should not use wildcard imports like this.
+                               //This should only be used when we would otherwise have to type in a
+                               //whole lot of classes.  It is important that we understand what is being 
+                               //used in any class, and importing only what we need confirms that 
+                               //we know what we are doing.
 
 public class PixyCenter extends CommandBase {
   private final PixyCam m_Pixy;
@@ -29,14 +42,19 @@ public class PixyCenter extends CommandBase {
   @Override
   public void initialize() {
     sequences = 0;
-    powerCellX = SmartDashboard.getNumber("Block x", 0);
+    powerCellX = SmartDashboard.getNumber("Block x", 0);  //This is very bad practice.
+                                                          //We should not be using the smartdashboard to 
+                                                          //transfer information between classes.
+                                                          //We should call m_Pixy.getBlockX() here.  If that
+                                                          //doesn't work, we need to understand why and
+                                                          //fix that properly.
     m_Pixy.setTilt(200);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    powerCellX = SmartDashboard.getNumber("Block x", 0);
+    powerCellX = SmartDashboard.getNumber("Block x", 0);  //See note above
 
     if(Math.abs(powerCellX) < 7.5){
       driveTrainSpeed = 0.225;

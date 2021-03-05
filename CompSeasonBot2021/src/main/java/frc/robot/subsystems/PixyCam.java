@@ -2,6 +2,18 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+/**
+ * 
+ * 
+ * Note:  this.XXXX  is only necessary if there is a need to differentiate
+ * between a class variable and a variable with a constructor or method of the same name.
+ * It is really a matter of preference but it feels over used here.  I think in
+ * all cases here the code would be the same without it.  I prefer to just always use
+ * different variable names anyway to avoid confusion.
+ * 
+ */
+
+
 package frc.robot.subsystems;
 
 import java.util.ArrayList;
@@ -72,15 +84,32 @@ public class PixyCam extends SubsystemBase {
     return this.PID;
   }
 
-  // @TODO: Fix this command.
-  // Throws a nullPointerException half of the time,
-  // likely because no Block is detected by the Pixy.
+  /**
+   * @TODO: Fix this command.
+   * Throws a nullPointerException half of the time,
+   * likely because no Block is detected by the Pixy.
+   * 
+   * See my comments below.  I also think we need to be storing the largest block to a private Block object,
+   * perhaps called currentBlock, within the Periodic method of this class. If the largest block is ever   
+   * null, we just leave currentBlock as is, unless the largest block remains null for an extended time
+   * say 0.5-1sec.  Then we know that ball is actually gone and it isn't just flicker.  This method would 
+   * be the same except it would return currentBlock.getX() instead of calling getLargestBlock()
+   * 
+   */ 
   public double getXOffset() {
     Block largestBlock = this.getLargestBlock();
     if(largestBlock != null) {
       return largestBlock.getX() - 155;
     } else {
-      return this.getXOffset();
+      return this.getXOffset();  //I think this will freeze us in a recursive loop until we see something
+                                 //I don't think this is what we want to do as we want to keep processing
+                                 //other code while we are waiting and only check periodically.
+                                 //Can we establish that getX() is always postive if we see something?
+                                 //Then we can return -1 if there is nothing in view and that will tell
+                                 //us that no block is currently visible.  We could also use a wrapper
+                                 //class for a double value rather than the primitive and then we could 
+                                 //return null and just check for a null object from the point where we 
+                                 //call this.
     }
   }
 
@@ -117,7 +146,8 @@ public class PixyCam extends SubsystemBase {
     Block currentBlock = this.getLargestBlock();
     if (currentBlock != null)
     {
-      SmartDashboard.putNumber("Block x", currentBlock.getX());
+      SmartDashboard.putNumber("Block x", currentBlock.getX()); //have this display getBlockX() instead so we know what 
+                                                                //receiving class will see.
       SmartDashboard.putNumber("Block y", currentBlock.getY());
       SmartDashboard.putNumber("Block width", currentBlock.getWidth());
       SmartDashboard.putNumber("Block height", currentBlock.getHeight());

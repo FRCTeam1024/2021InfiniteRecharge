@@ -5,6 +5,11 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
+/**
+ * Please add some comments here explaining what the goal of this command is.
+ * 
+ */
+
 package frc.robot.commands;
 import frc.robot.subsystems.*;
 import java.lang.Math;
