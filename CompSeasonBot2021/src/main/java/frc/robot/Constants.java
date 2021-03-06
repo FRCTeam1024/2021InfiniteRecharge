@@ -78,4 +78,8 @@ public final class Constants {
 	    public static final int kSlot_DistHi = SLOT_2;
         public static final int kSlot_TurnHi = SLOT_3;
     }
+
+    public static final class PixyConstants {
+        public static final double TARGET_X = 157;
+    }
 }

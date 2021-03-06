@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.commands.AnglePixy;
+import frc.robot.Constants;
 import io.github.pseudoresonance.pixy2api.Pixy2;
 import io.github.pseudoresonance.pixy2api.Pixy2CCC;
 import io.github.pseudoresonance.pixy2api.Pixy2CCC.Block;
@@ -32,7 +32,13 @@ public class PixyCam extends SubsystemBase {
   private final PIDController PID;
 
   private int pan, tilt;
-  private Block currentBlock;
+  
+  // These variables are used for detection flicker handling.
+  //private Block currentBlock;
+  private double xOffset, yOffset; // Last known offsets
+  private long lastXOffsetTime, lastYOffsetTime; // Milliseconds when the last known offsets were identified
+  private Block currentBlock; // The largest block (used to reduce computation)
+
   boolean isLampEnabled;
 
   private final double kP, kI, kD;
@@ -47,7 +53,9 @@ public class PixyCam extends SubsystemBase {
     tilt = 200;
     pixy.setServos(pan, tilt);
 
+    lastXOffsetTime = 0;
     currentBlock = getLargestBlock();
+    xOffset = Constants.PixyConstants.TARGET_X; // getXOffset();
 
     kP = 0.01;
     kI = 0.0;
@@ -103,24 +111,11 @@ public class PixyCam extends SubsystemBase {
    * 
    */ 
   public double getXOffset() {
-    Block largestBlock = this.getLargestBlock();
-    if(largestBlock != null) { // Implement here a way to compensate for flickering.
-      return largestBlock.getX();
-    } else { // No power cell, return -1.
-      /* Can we establish that getX() is always postive if we see something?
-      Then we can return -1 if there is nothing in view and that will tell
-      us that no block is currently visible.  We could also use a wrapper
-      class for a double value rather than the primitive and then we could 
-      return null and just check for a null object from the point where we 
-      call this. */
-
-      // This should work but check to make sure
-      return -1.0; //return this.getXOffset();
-    }
+    return xOffset;
   }
 
   public double getYOffset() {
-    return getLargestBlock().getY();
+    return currentBlock.getY();
   }
 
   public void setLamp(int state) {
@@ -146,16 +141,31 @@ public class PixyCam extends SubsystemBase {
     return tilt;
   }
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-    Block currentBlock = getLargestBlock();
+  private void calculateXOffset() {
+    if(currentBlock != null) {
+      lastXOffsetTime = System.currentTimeMillis();
+      xOffset = currentBlock.getX();
+    } else if(System.currentTimeMillis() - lastXOffsetTime > 1000) { // If it's been more than 1 second since the last block was found
+      xOffset = -1.0;
+    }
+  }
+
+  private void outputBlockData() {
+    SmartDashboard.putNumber("Block x", getXOffset());
+    
     if (currentBlock != null)
     {
-      SmartDashboard.putNumber("Block x", getXOffset());
       SmartDashboard.putNumber("Block y", getYOffset());
       SmartDashboard.putNumber("Block width", currentBlock.getWidth());
       SmartDashboard.putNumber("Block height", currentBlock.getHeight());
     }
+  }
+
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+    currentBlock = getLargestBlock();
+    calculateXOffset();
+    outputBlockData();
   }
 }

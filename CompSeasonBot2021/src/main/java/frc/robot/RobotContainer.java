@@ -94,7 +94,8 @@ public class RobotContainer {
   public JoystickButton leftTrigger = new JoystickButton(leftJoystick, 1);
   public JoystickButton rightTrigger = new JoystickButton(rightJoystick, 1);
 
-  public JoystickButton rightCenterButton = new JoystickButton(rightJoystick, 2);
+  public JoystickButton button5 = new JoystickButton(rightJoystick, 5);
+  public JoystickButton button6 = new JoystickButton(rightJoystick, 6);
 
   public JoystickButton switchCamModeDefault = new JoystickButton(leftJoystick, 2);
   public JoystickButton switchCamModeCamera = new JoystickButton(rightJoystick, 2);
@@ -155,7 +156,8 @@ public class RobotContainer {
     leftTrigger.whenPressed(new LimelightCenter(limelight, drivetrain));
     rightTrigger.whenPressed(new LimelightShooter(limelight, drivetrain, shooter, ballFeed));
 
-    rightCenterButton.whenPressed(new PixyCenter(pixy, drivetrain));
+    button5.toggleWhenPressed(new SimpleSeekPowercell(pixy, drivetrain));
+    //button5.toggleWhenPressed(new RunShooterPID(shooter, 1000));
 
     //DEAD BAND FOR LOGITECH JOYSTICK CONTROLLERS
     if(xboxController.getLeftStickY() > 0.2 || xboxController.getLeftStickY() < 0.2){
@@ -251,7 +253,7 @@ public class RobotContainer {
     SmartDashboard.putNumber("Shooter RPM", 3400);
     SmartDashboard.putData("Run Shooter PID", new RunShooterPID(shooter, 3400));
   
-    SmartDashboard.putData("Simply seek powercell", new SimpleSeekPowercell(pixy, drivetrain));
+    //SmartDashboard.putData("Simply seek powercell", new SimpleSeekPowercell(pixy, drivetrain));
     SmartDashboard.putData("Seek powercell w/ PID", new SeekPowercell(pixy, drivetrain));
   }
 
