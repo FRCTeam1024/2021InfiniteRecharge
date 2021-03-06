@@ -123,7 +123,7 @@ public class RobotContainer {
                                        DriveConstants.kvVoltSecondsPerMeter,
                                        DriveConstants.kaVoltSecondsSquaredPerMeter),
             DriveConstants.kDriveKinematics,
-            2.5); //testing a lower voltage? hopefully that will slow it down so I can figure out what its trying 
+            7.5); //testing a lower voltage? hopefully that will slow it down so I can figure out what its trying 
 
     TrajectoryConfig config =
       new TrajectoryConfig(DriveConstants.kMaxSpeedMetersPerSecond,
@@ -138,11 +138,11 @@ public class RobotContainer {
                   new Pose2d(0, 0, new Rotation2d(0)),
                   // Pass through these two interior waypoints, making an 's' curve path
                   List.of(
-                      new Translation2d(0.5, 0.5),
-                      new Translation2d(1, -0.5)
+                      new Translation2d(0.25, 0),
+                      new Translation2d(0.5, 0)
                   ),
                   // End 3 meters straight ahead of where we started, facing forward
-                  new Pose2d(3, 0, new Rotation2d(0)),
+                  new Pose2d(1, 0, new Rotation2d(0)),
                   // Pass config
                   config
     );
