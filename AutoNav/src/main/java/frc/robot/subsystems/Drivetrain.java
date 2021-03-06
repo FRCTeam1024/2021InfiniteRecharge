@@ -30,30 +30,6 @@ import edu.wpi.first.wpilibj.SPI;
 
 import com.kauailabs.navx.frc.AHRS;
 
-
-/**
- * Trying to summarize the current issues here so I don't have to go back 
- * and redeploy to find the issues
- * *Error Message: CTR: CAN frame not received/too-stale.
- *      *According to the internet, the issue is that we're not receiving the 
- *        information from the Talons often enough.
- * *Error Message: DifferentialDrive... Output not updated often enough.
- *      *Also an issue with the Talons not giving information quick enough.
- *        Still not sure how we're supposed to actually fix that issue though.
- * *Robot is very jerky when deployed. I'd assume that this has something to
- *    do with the error messages above.
- *      *Multiple people on Chief Delphi have reported issues with robot being 
- *        very jerky to begin with, oftentimes related to the issue with 
- *        Talons not returning information quick enough
- * 
- * All of the problems are coming back to Talons not updating quick enough
- * Most fixes listed on the internet have been related to wiring.
- * However, there could also simply be an issue of how our Encoders are not
- * connected directly to the CAN, as they are in the Trajectory tutorial.
- * Currently trying to work around and find a way to use the encoders as they 
- * are now, connected to the Talon breakout boards.
- */
-
 public class Drivetrain extends SubsystemBase {
 
   private WPI_TalonSRX leftEncoderTalon = new WPI_TalonSRX(20);
@@ -82,9 +58,13 @@ public class Drivetrain extends SubsystemBase {
    */
   public Drivetrain() {
 
+    //m_rightMotors.setInverted(true);
+
     // The left-side drive encoder
     leftEncoderTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
     rightEncoderTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
+
+    resetEncoders();
 
     //leftEncoderTalon.setStatusFramePeriod(0, 60); //trying to get rid of timeout error
     //rightEncoderTalon.setStatusFramePeriod(0, 60);
@@ -109,8 +89,8 @@ public class Drivetrain extends SubsystemBase {
    * @return The current wheel speeds.
    */
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-    return new DifferentialDriveWheelSpeeds(m_leftEncoder.getQuadratureVelocity() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation / 2, 
-                                            m_rightEncoder.getQuadratureVelocity() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation / 2);
+    return new DifferentialDriveWheelSpeeds(m_leftEncoder.getQuadratureVelocity() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation, 
+                                            m_rightEncoder.getQuadratureVelocity() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation);
   }
 
   /**
@@ -159,8 +139,8 @@ public class Drivetrain extends SubsystemBase {
     // This method will be called once per scheduler run
     outputToSmartDashboard();
     m_odometry.update(navX.getRotation2d(), 
-        m_leftEncoder.getQuadraturePosition() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation / 2, //fudge factor? in testing
-        m_rightEncoder.getQuadraturePosition() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation / 2);
+        m_leftEncoder.getQuadraturePosition() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation , //fudge factor? in testing
+        m_rightEncoder.getQuadraturePosition() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation );
     //may need to scale these based on encoder values vs. circumference of wheel
   }
 
@@ -179,8 +159,8 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public double getAverageEncoderDistance() {
-    return ((m_leftEncoder.getQuadraturePosition() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation / 2)
-            + (m_rightEncoder.getQuadraturePosition() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation / 2)) / 2.0;
+    return (m_leftEncoder.getQuadraturePosition()//* Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation)
+            + m_rightEncoder.getQuadraturePosition() /*** Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation)**/) / 2.0;
   }
 
 

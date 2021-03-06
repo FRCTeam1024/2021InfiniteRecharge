@@ -29,16 +29,16 @@ public final class Constants {
 
     //public static final int QuadEncoderPortA = 7; //encoder ports found at the TalonSRX encoder users manual
     //public static final int QuadEncoderPortB = 5; Not in use as they were needed for the Encoder class, which does not work with our encoders
-    public static final boolean kLeftEncoderReversed = true; //assumed bc our drive function is reversed
+    public static final boolean kLeftEncoderReversed = false; //assumed bc our drive function is reversed
     public static final boolean kRightEncoderReversed = true;
     
    
 
     public static final class DriveConstants {
-        public static final double ksVolts = 1; //in characterization data: 1.31  Testing 1
-        public static final double kvVoltSecondsPerMeter = 1; //in characterization data: 1.95  Testing 1
-        public static final double kaVoltSecondsSquaredPerMeter = 0.25; //in characterization data: 0.765  Testing 0.25 for slower acceleration
-        public static final double kPDriveVel = 1; //in characterization data: 2.91  Testing 1 to try and slow down the robot
+        public static final double ksVolts = 1.31; //in characterization data: 1.31  Testing 1
+        public static final double kvVoltSecondsPerMeter = 1.95; //in characterization data: 1.95  Testing 1
+        public static final double kaVoltSecondsSquaredPerMeter = 0.765; //in characterization data: 0.765  Testing 0.25 for slower acceleration
+        public static final double kPDriveVel = 2.91; //in characterization data: 2.91  Testing 1 to try and slow down the robot
 
         public static final double kTrackwidthMeters = 1.32;
         public static final DifferentialDriveKinematics kDriveKinematics =
