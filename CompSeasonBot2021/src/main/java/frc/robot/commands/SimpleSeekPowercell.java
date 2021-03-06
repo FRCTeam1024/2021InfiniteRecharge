@@ -12,7 +12,7 @@ import frc.robot.subsystems.PixyCam;
 public class SimpleSeekPowercell extends CommandBase {
   private final PixyCam pixy;
   private final Drivetrain drivetrain;
-  private final int errorThreshold = 25; // Must be within 25 (out of 360) pixels.
+  private final int errorThreshold = 15; // Must be within 15 (out of 360) pixels.
   private final double speed = 0.5; // Speed to drive the robot.
   double powercellX;
   double xError;
@@ -21,8 +21,8 @@ public class SimpleSeekPowercell extends CommandBase {
   /** Creates a new SimpleSeekPowercell. */
   public SimpleSeekPowercell(PixyCam pixySubsystem, Drivetrain drivetrainSubsystem) {
     addRequirements(pixySubsystem, drivetrainSubsystem);
-    this.pixy = pixySubsystem;
-    this.drivetrain = drivetrainSubsystem;
+    pixy = pixySubsystem;
+    drivetrain = drivetrainSubsystem;
   }
 
   // Called when the command is initially scheduled.
@@ -33,24 +33,27 @@ public class SimpleSeekPowercell extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    powercellX = SmartDashboard.getNumber("Block x", 0);
-    // powercellX = pixy.getXOffset();
+    powercellX = pixy.getXOffset();
+    if(powerCellX == -1) {
+      isFinished = true; // End command if no object is detected for now...
+    }
+    
     xError = powercellX - 180;
-    if(Math.abs(xError) <= this.errorThreshold) {
+    if(Math.abs(xError) <= errorThreshold) {
       isFinished = true;
     } else if(xError < 180) {
-      this.drivetrain.drive(this.speed, -this.speed);
+      drivetrain.drive(speed, -speed);
     } else if(xError > 180) {
-      this.drivetrain.drive(-this.speed, this.speed);
+      drivetrain.drive(-speed, speed);
     } else {
-      this.drivetrain.drive(0, 0);
+      drivetrain.drive(0, 0);
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    this.drivetrain.drive(0, 0);
+    drivetrain.drive(0, 0);
   }
 
   // Returns true when the command should end.

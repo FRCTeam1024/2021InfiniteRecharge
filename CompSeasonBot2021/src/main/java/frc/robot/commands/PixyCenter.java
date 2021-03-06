@@ -15,11 +15,8 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.*; //We should not use wildcard imports like this.
-                               //This should only be used when we would otherwise have to type in a
-                               //whole lot of classes.  It is important that we understand what is being 
-                               //used in any class, and importing only what we need confirms that 
-                               //we know what we are doing.
+import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.PixyCam;
 
 public class PixyCenter extends CommandBase {
   private final PixyCam m_Pixy;
@@ -42,19 +39,14 @@ public class PixyCenter extends CommandBase {
   @Override
   public void initialize() {
     sequences = 0;
-    powerCellX = SmartDashboard.getNumber("Block x", 0);  //This is very bad practice.
-                                                          //We should not be using the smartdashboard to 
-                                                          //transfer information between classes.
-                                                          //We should call m_Pixy.getBlockX() here.  If that
-                                                          //doesn't work, we need to understand why and
-                                                          //fix that properly.
+    powerCellX = this.m_Pixy.getXOffset();
     m_Pixy.setTilt(200);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    powerCellX = SmartDashboard.getNumber("Block x", 0);  //See note above
+    powerCellX = m_Pixy.getXOffset();
 
     if(Math.abs(powerCellX) < 7.5){
       driveTrainSpeed = 0.225;
