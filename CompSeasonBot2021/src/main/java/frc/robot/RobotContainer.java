@@ -7,20 +7,12 @@
 
 package frc.robot;
 
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
-import frc.robot.commands.auto.AutoSequentialShooter;
-import frc.robot.commands.auto.FailSafeAutoBackward;
-import frc.robot.commands.auto.FailSafeAutoForward;
 
 import frc.robot.commands.auto.FailSafeAutoWithVelocity;
 import frc.robot.commands.auto.GalacticSearch;
@@ -31,13 +23,6 @@ import frc.robot.oi.CONSTANTS_OI;
 import frc.robot.oi.Logitech;
 import edu.wpi.first.wpilibj2.command.Command;
 
-import edu.wpi.cscore.UsbCamera;
-import edu.wpi.cscore.HttpCamera;
-import edu.wpi.cscore.VideoMode;
-
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -50,7 +35,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Drivetrain drivetrain = new Drivetrain();
-  private final Sensors sensors = new Sensors();
   private final Intake intake = new Intake();
   private final Shooter shooter = new Shooter();
   private final Climber climber  = new Climber();
@@ -60,54 +44,10 @@ public class RobotContainer {
   private final PixyCam pixy = new PixyCam();
   private final Hood hood = new Hood();
 
-  public Joystick leftJoystick = new Joystick(1);
-  public Joystick rightJoystick = new Joystick(2);
-  public Logitech xboxController = new Logitech(0);
-
-  // public JoystickButton runShooterAndBallFeed = new JoystickButton(leftJoystick, 6);
-  
-  // below this done with Marc
-  public JoystickButton xboxLeftTrigger = new JoystickButton(xboxController, CONSTANTS_OI.XBOX_LEFT_TRIGGER);
-  public JoystickButton xboxLeftBumper = new JoystickButton(xboxController, XboxController.Button.kBumperLeft.value);
-
-
-  public JoystickButton xboxLeftClimberStick = new JoystickButton(xboxController, XboxController.Button.kStickLeft.value);
-  public JoystickButton xboxRightClimberStick = new JoystickButton(xboxController, XboxController.Button.kStickRight.value);
-  
-  public JoystickButton xboxButtonX = new JoystickButton(xboxController, 1);
-  public JoystickButton xboxButtonA = new JoystickButton(xboxController, 2);
-  public JoystickButton xboxButtonB = new JoystickButton(xboxController, 3);
-  public JoystickButton xboxButtonY = new JoystickButton(xboxController, 4);
-  
-  public JoystickButton xboxRightBumper = new JoystickButton(xboxController, XboxController.Button.kBumperRight.value);
-  public JoystickButton xboxRightTrigger = new JoystickButton(xboxController, CONSTANTS_OI.XBOX_RIGHT_TRIGGER);
-  
-  public Trigger xboxDPadUp = new Trigger( () -> xboxController.getDPadState().equals(Logitech.DPadState.UP));
-  public Trigger xboxDPadLeft = new Trigger( () -> xboxController.getDPadState().equals(Logitech.DPadState.LEFT));
-  public Trigger xboxDPadRight = new Trigger( () -> xboxController.getDPadState().equals(Logitech.DPadState.RIGHT));
-  public Trigger xboxDPadDown = new Trigger( () -> xboxController.getDPadState().equals(Logitech.DPadState.DOWN));
-
-  //JUST FOR MARC
-  // public JoystickButton runIntakeAndBallFeedJoystick = new JoystickButton(leftJoystick, 1);
-  public JoystickButton shiftHighJoystick = new JoystickButton(leftJoystick, 3);
-  public JoystickButton shiftLowJoystick = new JoystickButton(rightJoystick, 4);
-
-  public JoystickButton leftTrigger = new JoystickButton(leftJoystick, 1);
-  public JoystickButton rightTrigger = new JoystickButton(rightJoystick, 1);
-
-  public JoystickButton button5 = new JoystickButton(rightJoystick, 5);
-  public JoystickButton button6 = new JoystickButton(rightJoystick, 6);
-
-  public JoystickButton button13 = new JoystickButton(rightJoystick, 13);
-  public JoystickButton button12 = new JoystickButton(rightJoystick, 12);
-
-  public JoystickButton switchCamModeDefault = new JoystickButton(leftJoystick, 2);
-  public JoystickButton switchCamModeCamera = new JoystickButton(rightJoystick, 2);
-  // public JoystickButton runShooterJoystick = new JoystickButton(rightJoystick, 3);
-  // public JoystickButton runBothFeedersJoystick = new JoystickButton(rightJoystick, 1);
-  public JoystickButton xBoxBackButton = new JoystickButton(xboxController, CONSTANTS_OI.XBOX_BACK_BUTTON);
-  public JoystickButton xboxStartButton = new JoystickButton(xboxController, CONSTANTS_OI.XBOX_START_BUTTON);
-
+  // The robot's operator interface controllers are defined here...
+  private final Joystick leftJoystick = new Joystick(1);
+  private final Joystick rightJoystick = new Joystick(2);
+  private final Logitech xboxController = new Logitech(0);
 
   // private final Command m_autoCommand = new LimelightCenter(drivetrain);
   // private final Command m_autoCommand = new FailSafeAutoBackward(drivetrain, shooter, ballFeed, 1.0, 1.0, -1.0);
@@ -115,21 +55,23 @@ public class RobotContainer {
   private final Command m_autoCommand = new GalacticSearch(drivetrain, intake, pixy, ballFeed);
 
   private final DriveWithJoysticks driveWithJoysticks = new DriveWithJoysticks(drivetrain, leftJoystick, rightJoystick);
-  private final DriveClimberDefault driveClimberDefault = new DriveClimberDefault(climber, xboxController);
-  private final AnglePixy anglePixy = new AnglePixy(pixy, leftJoystick);
-
-  private int pixyTilt = 0;
-  private int pixyPan = 0;
+  //private final AnglePixy anglePixy = new AnglePixy(pixy);
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+
+    //Put some buttons on the dashboard
+    configureDashboard();
+
+    //Assign default commands
+    drivetrain.setDefaultCommand(driveWithJoysticks);
+    //pixy.setDefaultCommand(anglePixy);
+    // climber.setDefaultCommand(driveClimberDefault);
+
     // Configure the button bindings
     configureButtonBindings();
-    drivetrain.setDefaultCommand(driveWithJoysticks);
-    pixy.setDefaultCommand(anglePixy);
-    // climber.setDefaultCommand(driveClimberDefault);
   }
 
   /**
@@ -147,16 +89,61 @@ public class RobotContainer {
     
     // below done with Marc
     //UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(0);
-		//camera.setResolution(144, 144);
+    //camera.setResolution(144, 144);
+     // public JoystickButton runShooterAndBallFeed = new JoystickButton(leftJoystick, 6);
+  
+    // Buttons on each controller are defined here...
+    final JoystickButton xboxLeftTrigger = new JoystickButton(xboxController, CONSTANTS_OI.XBOX_LEFT_TRIGGER);
+    final JoystickButton xboxLeftBumper = new JoystickButton(xboxController, XboxController.Button.kBumperLeft.value);
 
+
+    final JoystickButton xboxLeftClimberStick = new JoystickButton(xboxController, XboxController.Button.kStickLeft.value);
+    final JoystickButton xboxRightClimberStick = new JoystickButton(xboxController, XboxController.Button.kStickRight.value);
+    
+    final JoystickButton xboxButtonX = new JoystickButton(xboxController, 1);
+    final JoystickButton xboxButtonA = new JoystickButton(xboxController, 2);
+    final JoystickButton xboxButtonB = new JoystickButton(xboxController, 3);
+    final JoystickButton xboxButtonY = new JoystickButton(xboxController, 4);
+    
+    final JoystickButton xboxRightBumper = new JoystickButton(xboxController, XboxController.Button.kBumperRight.value);
+    final JoystickButton xboxRightTrigger = new JoystickButton(xboxController, CONSTANTS_OI.XBOX_RIGHT_TRIGGER);
+    
+    final Trigger xboxDPadUp = new Trigger( () -> xboxController.getDPadState().equals(Logitech.DPadState.UP));
+    final Trigger xboxDPadLeft = new Trigger( () -> xboxController.getDPadState().equals(Logitech.DPadState.LEFT));
+    final Trigger xboxDPadRight = new Trigger( () -> xboxController.getDPadState().equals(Logitech.DPadState.RIGHT));
+    final Trigger xboxDPadDown = new Trigger( () -> xboxController.getDPadState().equals(Logitech.DPadState.DOWN));
+
+    final JoystickButton xboxBackButton = new JoystickButton(xboxController, CONSTANTS_OI.XBOX_BACK_BUTTON);
+    final JoystickButton xboxStartButton = new JoystickButton(xboxController, CONSTANTS_OI.XBOX_START_BUTTON);
+
+    //JUST FOR MARC
+    // public JoystickButton runIntakeAndBallFeedJoystick = new JoystickButton(leftJoystick, 1);
+    final JoystickButton leftButton3 = new JoystickButton(leftJoystick, 3);
+    final JoystickButton leftButton4 = new JoystickButton(rightJoystick, 4);
+
+    final JoystickButton leftTrigger = new JoystickButton(leftJoystick, 1);
+    final JoystickButton rightTrigger = new JoystickButton(rightJoystick, 1);
+
+    final JoystickButton button5 = new JoystickButton(rightJoystick, 5);
+    final JoystickButton button6 = new JoystickButton(rightJoystick, 6);
+
+    final JoystickButton button13 = new JoystickButton(rightJoystick, 13);
+    final JoystickButton button12 = new JoystickButton(rightJoystick, 12);
+
+    final JoystickButton switchCamModeDefault = new JoystickButton(leftJoystick, 2);
+    final JoystickButton switchCamModeCamera = new JoystickButton(rightJoystick, 2);
+    // public JoystickButton runShooterJoystick = new JoystickButton(rightJoystick, 3);
+    // public JoystickButton runBothFeedersJoystick = new JoystickButton(rightJoystick, 1);
+ 
+
+    // Linking buttons to commands here...
     xboxButtonA.whileHeld(new RunClimberHook(climber, -0.25));
     xboxButtonX.whileHeld(new RunClimberHook(climber, 0.50));
-    //xboxButtonY.toggleWhenActive(new RunShooter(shooter, 1)); //Removed in favor of PID control below
     xboxButtonY.toggleWhenActive(new RunShooterPID(shooter, 3400));
     xboxButtonB.whileHeld(new RunBothWinches(climber, 1.0, 1.0));
 
-    shiftHighJoystick.toggleWhenPressed(new ShiftHigh(drivetrain));
-    shiftLowJoystick.toggleWhenPressed(new ShiftLow(drivetrain));
+    leftButton3.toggleWhenPressed(new ShiftHigh(drivetrain));
+    leftButton4.toggleWhenPressed(new ShiftLow(drivetrain));
 
     leftTrigger.whenPressed(new LimelightCenter(limelight, drivetrain));
     rightTrigger.whenPressed(new LimelightShooter(limelight, drivetrain, shooter, ballFeed));
@@ -202,36 +189,27 @@ public class RobotContainer {
     xboxRightTrigger.whileHeld(new RunShooterFeed(ballFeed, -1.0));
 
     xboxStartButton.whileHeld(new RunBallFeed(ballFeed, 0.75));
-    xBoxBackButton.whileHeld(new RunBallFeed(ballFeed, -0.75));
+    xboxBackButton.whileHeld(new RunBallFeed(ballFeed, -0.75));
+  }
 
+  private void configureDashboard(){
     
     SmartDashboard.putData("Score Power Cell", new ShootPowerCell(intake, ballFeed, drivetrain, shooter));
     SmartDashboard.putNumber("Ballfeed Speed", ballFeed.getBallFedVelocity());
     //runShooterAndBallFeed.whenActive(new RunShooterFeed(ballFeed, 0.25), new RunBallFeed(ballFeed, 0.25));
-    
-    // Shooter Info - Ignoring this for now
-    //SmartDashboard.putNumber("Desired Shooter Speed", 1.0);
-    //SmartDashboard.putData("Set Shooters to Desired Speed", new AdjustShooterSpeed(shooter));
-    // SmartDashboard.putNumber("Shooter Speed", shooter.getShooterSpeed());
 
-    // Shooter Hood
-    SmartDashboard.putData("Extend hood", new ExtendHood(hood));  // I think the hood needs its own subsystem so it can be changed while running the shooter
+
+    SmartDashboard.putData("Extend hood", new ExtendHood(hood));  
     SmartDashboard.putData("Retract hood", new RetractHood(hood));
    
     SmartDashboard.putData(drivetrain);  
     SmartDashboard.putData("Run Intake", new RunIntake(intake, 0.35));
-
-    // Don't need these, have this elsewhere now
-    // SmartDashboard.putData("Run Shooter", new RunShooter(shooter, 1.0));
-    // SmartDashboard.putNumber("Velocity", shooter.shooterEncoderOne.getVelocity());
 
     SmartDashboard.putData("Run Climber One", new RunClimberLeft(climber, 0.35));
     SmartDashboard.putData("Stop Climber", new StopClimber(climber));
 
     SmartDashboard.putData("Run Climber Two", new RunClimberRight(climber, -0.35));
     SmartDashboard.putData("Run Climber", new RunClimber(climber, -0.35, 0.35));
-    Shuffleboard.getTab("Climber").add("Run Climber", new RunClimber(climber, 0.35, -0.35));
-
 
     SmartDashboard.putData("Extend Intake", new ExtendIntake(intake));
     SmartDashboard.putData("Retract Intake", new RetractIntake(intake));
@@ -272,18 +250,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
+    
     return m_autoCommand;
     // return limelightCenterPID;
-  }
-
-  public void periodic() {
-    outputToSmartDashboard();
-  }
-
-  public void outputToSmartDashboard() {
-    //SmartDashboard.putNumber("Yaw", sensors.getHeading());
-    //SmartDashboard.putData("Reset Gyro", new InstantCommand(sensors::resetGyro));
-    
   }
 }
