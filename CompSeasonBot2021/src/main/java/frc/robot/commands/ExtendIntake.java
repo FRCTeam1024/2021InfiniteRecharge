@@ -16,15 +16,15 @@ public class ExtendIntake extends CommandBase {
   private final Intake intake;
   Boolean isFinished;
 
-  public ExtendIntake(Intake intake) {
-    this.intake = intake;
-    isFinished = false;
+  public ExtendIntake(Intake intakeSubsystem) {
+    intake = intakeSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    isFinished = false;
   }
 
   // Called every time the scheduler runs while the command is scheduled.

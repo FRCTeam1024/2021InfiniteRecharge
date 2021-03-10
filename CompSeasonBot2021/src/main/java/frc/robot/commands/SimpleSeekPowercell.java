@@ -13,8 +13,8 @@ import frc.robot.subsystems.PixyCam;
 public class SimpleSeekPowercell extends CommandBase {
   private final PixyCam pixy;
   private final Drivetrain drivetrain;
-  private final int errorThreshold = 5; // Must be within 15 (out of 360) pixels.
-  private final double speed = 0.5; // Speed to drive the robot.
+  private final int errorThreshold = 2; // Must be within 15 (out of 360) pixels.
+  private final double speed = 0.2; // Speed to drive the robot.
   private boolean powercellDetected;
   double powercellX;
   double xError;
@@ -30,6 +30,7 @@ public class SimpleSeekPowercell extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    drivetrain.shiftLow();
     powercellDetected = false;
     isFinished = false;
     SmartDashboard.putBoolean("Seeking powercell", true);

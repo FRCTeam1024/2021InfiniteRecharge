@@ -20,7 +20,6 @@ public class Calibrate extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
     drivetrain.stop(); // Make sure we aren't moving
     drivetrain.calibrateGyro(); //Run calibration on gyro
   }

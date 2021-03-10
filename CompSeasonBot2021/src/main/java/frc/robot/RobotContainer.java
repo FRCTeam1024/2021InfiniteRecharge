@@ -23,6 +23,7 @@ import frc.robot.commands.auto.FailSafeAutoBackward;
 import frc.robot.commands.auto.FailSafeAutoForward;
 
 import frc.robot.commands.auto.FailSafeAutoWithVelocity;
+import frc.robot.commands.auto.GalacticSearch;
 import frc.robot.commands.auto.LimelightCenter;
 import frc.robot.commands.auto.LimelightShooter;
 import frc.robot.commands.auto.SequentialShooter;
@@ -97,6 +98,9 @@ public class RobotContainer {
   public JoystickButton button5 = new JoystickButton(rightJoystick, 5);
   public JoystickButton button6 = new JoystickButton(rightJoystick, 6);
 
+  public JoystickButton button13 = new JoystickButton(rightJoystick, 13);
+  public JoystickButton button12 = new JoystickButton(rightJoystick, 12);
+
   public JoystickButton switchCamModeDefault = new JoystickButton(leftJoystick, 2);
   public JoystickButton switchCamModeCamera = new JoystickButton(rightJoystick, 2);
   // public JoystickButton runShooterJoystick = new JoystickButton(rightJoystick, 3);
@@ -107,7 +111,8 @@ public class RobotContainer {
 
   // private final Command m_autoCommand = new LimelightCenter(drivetrain);
   // private final Command m_autoCommand = new FailSafeAutoBackward(drivetrain, shooter, ballFeed, 1.0, 1.0, -1.0);
-  private final Command m_autoCommand = new AutoSequentialShooter(shooter, ballFeed);
+  //private final Command m_autoCommand = new AutoSequentialShooter(shooter, ballFeed);
+  private final Command m_autoCommand = new GalacticSearch(drivetrain, intake, pixy, ballFeed);
 
   private final DriveWithJoysticks driveWithJoysticks = new DriveWithJoysticks(drivetrain, leftJoystick, rightJoystick);
   private final DriveClimberDefault driveClimberDefault = new DriveClimberDefault(climber, xboxController);
@@ -158,6 +163,9 @@ public class RobotContainer {
 
     button5.toggleWhenPressed(new SimpleSeekPowercell(pixy, drivetrain));
     //button5.toggleWhenPressed(new RunShooterPID(shooter, 1000));
+
+    button13.whenPressed(new LimelightLED(limelight, 1));
+    button12.whenPressed(new LimelightLED(limelight, 0));
 
     //DEAD BAND FOR LOGITECH JOYSTICK CONTROLLERS
     if(xboxController.getLeftStickY() > 0.2 || xboxController.getLeftStickY() < 0.2){

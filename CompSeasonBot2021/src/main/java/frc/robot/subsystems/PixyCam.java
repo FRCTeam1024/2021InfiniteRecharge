@@ -35,8 +35,8 @@ public class PixyCam extends SubsystemBase {
   
   // These variables are used for detection flicker handling.
   //private Block currentBlock;
-  private double xOffset, yOffset; // Last known offsets
-  private long lastXOffsetTime, lastYOffsetTime; // Milliseconds when the last known offsets were identified
+  private double xOffset, yOffset, blockWidth, blockHeight; // Last known block properties
+  private long lastBlockDetection; // Milliseconds when the last known block was identified
   private Block currentBlock; // The largest block (used to reduce computation)
 
   boolean isLampEnabled;
@@ -53,9 +53,10 @@ public class PixyCam extends SubsystemBase {
     tilt = 200;
     pixy.setServos(pan, tilt);
 
-    lastXOffsetTime = 0;
+    lastBlockDetection = 0;
     currentBlock = getLargestBlock();
     xOffset = Constants.PixyConstants.TARGET_X; // getXOffset();
+    yOffset = 104; // Half of the vertical height of the pixy
 
     kP = 0.01;
     kI = 0.0;
@@ -94,28 +95,20 @@ public class PixyCam extends SubsystemBase {
     return PID;
   }
 
-  /**
-   * @TODO: Improve detection flicker handling.
-   * We need a way for the Pixy to detect if there really is no power cell, or if
-   * the detection is just flickering instead.
-   * 
-   * If the detection is flickering, check again.
-   * If there is no power cell, return -1 (no object).
-   * 
-   * From Dan:
-   * See my comments below. I also think we need to be storing the largest block to a private Block object,
-   * perhaps called currentBlock, within the Periodic method of this class. If the largest block is ever   
-   * null, we just leave currentBlock as is, unless the largest block remains null for an extended time
-   * say 0.5-1sec.  Then we know that ball is actually gone and it isn't just flicker.  This method would 
-   * be the same except it would return currentBlock.getX() instead of calling getLargestBlock()
-   * 
-   */ 
   public double getXOffset() {
     return xOffset;
   }
 
   public double getYOffset() {
-    return currentBlock.getY();
+    return yOffset;
+  }
+
+  public double getBlockWidth() {
+    return blockWidth;
+  }
+
+  public double getBlockHeight() {
+    return blockHeight;
   }
 
   public void setLamp(int state) {
@@ -141,31 +134,34 @@ public class PixyCam extends SubsystemBase {
     return tilt;
   }
 
-  private void calculateXOffset() {
+  private void calculateOffsets() {
     if(currentBlock != null) {
-      lastXOffsetTime = System.currentTimeMillis();
+      lastBlockDetection = System.currentTimeMillis();
       xOffset = currentBlock.getX();
-    } else if(System.currentTimeMillis() - lastXOffsetTime > 1000) { // If it's been more than 1 second since the last block was found
+      yOffset = currentBlock.getY();
+      blockWidth = currentBlock.getWidth();
+      blockHeight = currentBlock.getHeight();
+    } else if(System.currentTimeMillis() - lastBlockDetection > 1000) { // If it's been more than 1 second since the last block was found
       xOffset = -1.0;
+      yOffset = -1.0;
+      blockWidth = -1.0;
+      blockHeight = -1.0;
     }
   }
 
   private void outputBlockData() {
     SmartDashboard.putNumber("Block x", getXOffset());
-    
-    if (currentBlock != null)
-    {
-      SmartDashboard.putNumber("Block y", getYOffset());
-      SmartDashboard.putNumber("Block width", currentBlock.getWidth());
-      SmartDashboard.putNumber("Block height", currentBlock.getHeight());
-    }
+    SmartDashboard.putNumber("Block y", getYOffset());
+    SmartDashboard.putNumber("Block width", getBlockWidth());
+    SmartDashboard.putNumber("Block height", getBlockHeight());
+    SmartDashboard.putNumber("Pixy target offset", getXOffset() - Constants.PixyConstants.TARGET_X);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     currentBlock = getLargestBlock();
-    calculateXOffset();
+    calculateOffsets();
     outputBlockData();
   }
 }
