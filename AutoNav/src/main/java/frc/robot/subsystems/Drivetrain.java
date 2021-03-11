@@ -61,8 +61,11 @@ public class Drivetrain extends SubsystemBase {
     //m_rightMotors.setInverted(true);
 
     // The left-side drive encoder
-    leftEncoderTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
-    rightEncoderTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
+    leftEncoderTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 60);
+    rightEncoderTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 60);
+
+    leftEncoderTalon.configSelectedFeedbackCoefficient(Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation, 0, 60);
+    rightEncoderTalon.configSelectedFeedbackCoefficient(Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation, 0 ,60);
 
     resetEncoders();
 
@@ -89,8 +92,8 @@ public class Drivetrain extends SubsystemBase {
    * @return The current wheel speeds.
    */
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-    return new DifferentialDriveWheelSpeeds(m_leftEncoder.getQuadratureVelocity() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation, 
-                                            m_rightEncoder.getQuadratureVelocity() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation);
+    return new DifferentialDriveWheelSpeeds(leftEncoderTalon.getSelectedSensorVelocity(), 
+                                            rightEncoderTalon.getSelectedSensorVelocity());
   }
 
   /**
@@ -139,8 +142,8 @@ public class Drivetrain extends SubsystemBase {
     // This method will be called once per scheduler run
     outputToSmartDashboard();
     m_odometry.update(navX.getRotation2d(), 
-        m_leftEncoder.getQuadraturePosition() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation , //fudge factor? in testing
-        m_rightEncoder.getQuadraturePosition() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation );
+        leftEncoderTalon.getSelectedSensorPosition(),
+        rightEncoderTalon.getSelectedSensorPosition());
     //may need to scale these based on encoder values vs. circumference of wheel
   }
 
@@ -159,8 +162,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public double getAverageEncoderDistance() {
-    return (m_leftEncoder.getQuadraturePosition()//* Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation)
-            + m_rightEncoder.getQuadraturePosition() /*** Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation)**/) / 2.0;
+    return ((-1 * leftEncoderTalon.getSelectedSensorPosition()) + rightEncoderTalon.getSelectedSensorPosition()) / 2.0;
   }
 
 
@@ -168,8 +170,8 @@ public class Drivetrain extends SubsystemBase {
    * Resets the drive encoders to currently read a position of 0.
    */
   public void resetEncoders() {
-    m_leftEncoder.setQuadraturePosition(0, 20);
-    m_rightEncoder.setQuadraturePosition(0, 20);
+    leftEncoderTalon.setSelectedSensorPosition(0);
+    rightEncoderTalon.setSelectedSensorPosition(0);
   }
 
   public void driveForward(double power) {
@@ -219,6 +221,8 @@ public class Drivetrain extends SubsystemBase {
     // SmartDashboard.putNumber("Right Encoder Distance (IN)", -getRightEncoderInches());
     // SmartDashboard.putNumber("Right Encoder Raw", -frontRight.getSelectedSensorPosition());
     SmartDashboard.putNumber("Average Encoder Distance", getAverageEncoderDistance());
+    SmartDashboard.putNumber("Raw Left Encoder", leftEncoderTalon.getSelectedSensorPosition());
+    SmartDashboard.putNumber("Raw Right Encoder", rightEncoderTalon.getSelectedSensorPosition());
     //SmartDashboard.putNumber("Pose meters", getPose());
   }
 }

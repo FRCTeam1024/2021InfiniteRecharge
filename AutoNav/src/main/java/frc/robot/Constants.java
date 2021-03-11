@@ -36,9 +36,9 @@ public final class Constants {
 
     public static final class DriveConstants {
         public static final double ksVolts = 1.31; //in characterization data: 1.31  Testing 1
-        public static final double kvVoltSecondsPerMeter = 1.95; //in characterization data: 1.95  Testing 1
-        public static final double kaVoltSecondsSquaredPerMeter = 0.765; //in characterization data: 0.765  Testing 0.25 for slower acceleration
-        public static final double kPDriveVel = 2.91; //in characterization data: 2.91  Testing 1 to try and slow down the robot
+        public static final double kvVoltSecondsPerMeter = 1.5; //in characterization data: 1.95  Testing 1
+        public static final double kaVoltSecondsSquaredPerMeter = 0.5; //in characterization data: 0.765  Testing 0.25 for slower acceleration
+        public static final double kPDriveVel = 2; //in characterization data: 2.91  Testing 1 to try and slow down the robot
 
         public static final double kTrackwidthMeters = 1.32;
         public static final DifferentialDriveKinematics kDriveKinematics =
