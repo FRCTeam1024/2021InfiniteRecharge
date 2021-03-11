@@ -42,6 +42,7 @@ public class PixyCam extends SubsystemBase {
   boolean isLampEnabled;
 
   private final double kP, kI, kD;
+  public ArrayList<Block> largestBlocks = new ArrayList<Block>();
 
   /** Creates a new Pixy2. */
   public PixyCam() {
@@ -83,11 +84,13 @@ public class PixyCam extends SubsystemBase {
     for (Block block : blocks) {
       if(largestBlock == null) {
         largestBlock = block;
+        largestBlocks.add(largestBlock);
       } else if(block.getWidth() > largestBlock.getWidth()) {
         largestBlock = block;
+        largestBlocks.add(largestBlock);
       }
     }
-
+    
     return largestBlock;
   }
 

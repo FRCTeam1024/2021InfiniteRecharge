@@ -11,12 +11,14 @@ import frc.robot.subsystems.BallFeed;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.PixyCam;
+import io.github.pseudoresonance.pixy2api.Pixy2CCC.Block;
 
 public class DriveWithIntake extends CommandBase {
   private final Intake intake;
   private final BallFeed ballfeed;
   private final Drivetrain drivetrain;
   private final PixyCam pixy;
+  private Block targettedBlock;
 
   boolean hasPowercell;
 
@@ -34,11 +36,13 @@ public class DriveWithIntake extends CommandBase {
   @Override
   public void initialize() {
     hasPowercell = false;
+    // Gets the index of the very last block in the 
+    targettedBlock = pixy.largestBlocks.get(pixy.largestBlocks.size() - 1);
     drivetrain.shiftLow();
 
     intake.runIntake(0.35);
     ballfeed.runBallFeedMotor(0.75);
-    drivetrain.driveStraight(1000, true);
+    drivetrain.driveSpeed(5, false);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -49,6 +53,14 @@ public class DriveWithIntake extends CommandBase {
       System.out.println("Powercell achieved.");
       hasPowercell = true;
     }
+    // At the very beggining,  this command stores 
+    /* if(pixy.getLargestBlock() != targettedBlock)
+    {
+      Timer.delay(1);
+      System.out.println("Powercell achieved.");
+      hasPowercell = true;
+    }
+    */
   }
 
   // Called once the command ends or is interrupted.

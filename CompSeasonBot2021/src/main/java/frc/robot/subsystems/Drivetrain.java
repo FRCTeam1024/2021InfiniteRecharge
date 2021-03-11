@@ -370,6 +370,8 @@ public class Drivetrain extends SubsystemBase {
       shiftLow();
     }
 
+   
+
     /* Calculate targets */
     target_Distance = distance * DriveConstants.kSensorUnitsPerRotation / DriveConstants.kInchesPerRotation;
     target_Heading = 0;
@@ -381,6 +383,28 @@ public class Drivetrain extends SubsystemBase {
 
     /* Configure for MotionMagic on Quad Encoders' Sum and Auxiliary PID on Quad Encoders' Difference */
 		m_RightLeader.set(ControlMode.MotionMagic, target_Distance, DemandType.AuxPID, target_Heading);
+		m_LeftLeader.follow(m_RightLeader, FollowerType.AuxOutput1);
+  }
+//This method takes a speed in ft/sec in desired gear
+  public void driveSpeed(double speed, boolean gear){
+
+    double targetSpeed = speed*12*DriveConstants.kSensorUnitsPerRotation/(DriveConstants.kInchesPerRotation*10); 
+
+    if (gear) {
+      m_RightLeader.selectProfileSlot(DriveConstants.kSlot_DistHi, DriveConstants.PID_PRIMARY);
+      m_RightLeader.selectProfileSlot(DriveConstants.kSlot_TurnHi, DriveConstants.PID_TURN);
+      setProfile(maxVHi, maxAHi, s_Hi);
+      shiftHi();
+    } else {
+      m_RightLeader.selectProfileSlot(DriveConstants.kSlot_DistLow, DriveConstants.PID_PRIMARY);
+      m_RightLeader.selectProfileSlot(DriveConstants.kSlot_TurnLow, DriveConstants.PID_TURN);
+      setProfile(maxVLo, maxALo, s_Lo);
+      shiftLow();
+    }
+    zeroEncoders();
+
+    /* Configure for MotionMagic on Quad Encoders' Sum and Auxiliary PID on Quad Encoders' Difference */
+		m_RightLeader.set(ControlMode.Velocity, targetSpeed, DemandType.AuxPID, 0);
 		m_LeftLeader.follow(m_RightLeader, FollowerType.AuxOutput1);
   }
 
