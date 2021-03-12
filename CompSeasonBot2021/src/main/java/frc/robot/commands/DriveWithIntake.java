@@ -13,6 +13,8 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.PixyCam;
 import io.github.pseudoresonance.pixy2api.Pixy2CCC.Block;
 
+
+// @TODO: Refactor to a more descriptive, accurate name.
 public class DriveWithIntake extends CommandBase {
   private final Intake intake;
   private final BallFeed ballfeed;
@@ -36,8 +38,6 @@ public class DriveWithIntake extends CommandBase {
   @Override
   public void initialize() {
     hasPowercell = false;
-    // Gets the index of the very last block in the 
-    targettedBlock = pixy.largestBlocks.get(pixy.largestBlocks.size() - 1);
     drivetrain.shiftLow();
 
     intake.runIntake(0.35);

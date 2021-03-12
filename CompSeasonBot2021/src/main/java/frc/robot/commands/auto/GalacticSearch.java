@@ -21,15 +21,21 @@ public class GalacticSearch extends SequentialCommandGroup {
   public GalacticSearch(Drivetrain drivetrain, Intake intake, PixyCam pixy, BallFeed ballfeed) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
+
+    /**
+     * @TODO: Find a way to combine SimpleSeekPowercell and DriveWithIntake into one command
+     * See if it's possible to call SimpleSeekPowercell within DriveWithIntake?
+     */
     addCommands(new Calibrate(drivetrain),
                 new RetractIntake(intake),
                 new SimpleSeekPowercell(pixy, drivetrain),
                 new DriveWithIntake(intake, ballfeed, drivetrain, pixy),
+                new SimpleSeekPowercell(pixy, drivetrain),
                 new DriveWithIntake(intake, ballfeed, drivetrain, pixy),
-                new AutoTurnMotionMagic(drivetrain, -90),
+                new SimpleSeekPowercell(pixy, drivetrain),
                 new DriveWithIntake(intake, ballfeed, drivetrain, pixy),
                 new AutoTurnHeading(drivetrain, 0),
-                new AutoForwardMotionMagic(drivetrain, 1000)    
+                new AutoForwardMotionMagic(drivetrain, 1000)
     );
   }
 }

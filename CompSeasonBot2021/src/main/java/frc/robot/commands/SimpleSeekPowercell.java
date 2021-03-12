@@ -4,9 +4,15 @@
 
 package frc.robot.commands;
 
+import java.sql.DriverAction;
+import java.util.Hashtable;
+
+import com.kauailabs.navx.IMUProtocol.GyroUpdate;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
+import frc.robot.commands.auto.AutoTurnHeading;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.PixyCam;
 
@@ -16,6 +22,7 @@ public class SimpleSeekPowercell extends CommandBase {
   private final int errorThreshold = 2; // Must be within 15 (out of 360) pixels.
   private final double speed = 0.2; // Speed to drive the robot.
   private boolean powercellDetected;
+  private double startHeading;
   double powercellX;
   double xError;
   boolean isFinished;
@@ -33,6 +40,8 @@ public class SimpleSeekPowercell extends CommandBase {
     drivetrain.shiftLow();
     powercellDetected = false;
     isFinished = false;
+
+    startHeading = drivetrain.getGyroHeading();
     SmartDashboard.putBoolean("Seeking powercell", true);
   }
 
@@ -40,9 +49,13 @@ public class SimpleSeekPowercell extends CommandBase {
   @Override
   public void execute() {
     powercellX = pixy.getXOffset();
-    if(powercellX == -1) {
-      isFinished = true; // End command if no object is detected for now...
-    } else {
+    if(powercellX == -1) { // If we still don't find a powercell
+      if(startHeading > 0) {
+        drivetrain.drive(-0.5, 0.5);
+      } else if(startHeading < 0) {
+        drivetrain.drive(0.5, -0.5);
+      }
+    } else { // If we do see a powercell
       powercellDetected = true;
       xError = powercellX - Constants.PixyConstants.TARGET_X;
       if(Math.abs(xError) <= errorThreshold) {
