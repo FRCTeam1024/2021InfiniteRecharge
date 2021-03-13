@@ -4,15 +4,9 @@
 
 package frc.robot.commands;
 
-import java.sql.DriverAction;
-import java.util.Hashtable;
-
-import com.kauailabs.navx.IMUProtocol.GyroUpdate;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
-import frc.robot.commands.auto.AutoTurnHeading;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.PixyCam;
 

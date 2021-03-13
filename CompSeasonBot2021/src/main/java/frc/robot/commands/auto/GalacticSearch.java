@@ -5,7 +5,7 @@
 package frc.robot.commands.auto;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.DriveWithIntake;
+import frc.robot.commands.CollectNearestPowercell;
 import frc.robot.commands.RetractIntake;
 import frc.robot.commands.SimpleSeekPowercell;
 import frc.robot.subsystems.BallFeed;
@@ -29,11 +29,11 @@ public class GalacticSearch extends SequentialCommandGroup {
     addCommands(new Calibrate(drivetrain),
                 new RetractIntake(intake),
                 new SimpleSeekPowercell(pixy, drivetrain),
-                new DriveWithIntake(intake, ballfeed, drivetrain, pixy),
+                new CollectNearestPowercell(intake, ballfeed, drivetrain, pixy),
                 new SimpleSeekPowercell(pixy, drivetrain),
-                new DriveWithIntake(intake, ballfeed, drivetrain, pixy),
+                new CollectNearestPowercell(intake, ballfeed, drivetrain, pixy),
                 new SimpleSeekPowercell(pixy, drivetrain),
-                new DriveWithIntake(intake, ballfeed, drivetrain, pixy),
+                new CollectNearestPowercell(intake, ballfeed, drivetrain, pixy),
                 new AutoTurnHeading(drivetrain, 0),
                 new AutoForwardMotionMagic(drivetrain, 1000)
     );
