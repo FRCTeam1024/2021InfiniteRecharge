@@ -83,7 +83,7 @@ public class SimpleSeekPowercell extends CommandBase {
         }
       } else { // If we do see a powercell
         powercellDetected = true;
-        xError = powercellX - Constants.PixyConstants.TARGET_X; // Get the offset between the robot and the target
+        xError = powercellX - Constants.PixyConstants.HALF_WIDTH; // Get the offset between the robot and the target
         if(Math.abs(xError) <= errorThreshold) { // If the robot is within the target offset threshold
           isFinished = true; // We're done
         } else if(xError > 0) { // If the robot is to the left of the target

@@ -34,17 +34,17 @@ public class PixyCam extends SubsystemBase {
   /** Creates a new Pixy2. */
   public PixyCam() {
     pixy = Pixy2.createInstance(new SPILink());
-    pixy.init(0); // Defaults to CS0, inputting 0 it just in case.
+    pixy.init(0); // Defaults to CS0, inputting 0 just in case.
     setLamp(0);
     
-    pan = 0;
-    tilt = 185;
+    pan = Constants.PixyConstants.PAN;
+    tilt = Constants.PixyConstants.TILT;
     pixy.setServos(pan, tilt);
 
     lastBlockDetection = 0;
     currentBlock = getLargestBlock();
-    xOffset = Constants.PixyConstants.TARGET_X; // getXOffset();
-    yOffset = 104; // Half of the vertical height of the pixy
+    xOffset = Constants.PixyConstants.HALF_WIDTH; // Initializes the pixy reading to the center of the screen
+    yOffset = Constants.PixyConstants.HALF_HEIGHT; // Half of the vertical height of the pixy
 
     kP = 0.01;
     kI = 0.0;
@@ -144,7 +144,7 @@ public class PixyCam extends SubsystemBase {
     SmartDashboard.putNumber("Block y", getYOffset());
     SmartDashboard.putNumber("Block width", getBlockWidth());
     SmartDashboard.putNumber("Block height", getBlockHeight());
-    SmartDashboard.putNumber("Pixy target offset", getXOffset() - Constants.PixyConstants.TARGET_X);
+    SmartDashboard.putNumber("Pixy target offset", getXOffset() - Constants.PixyConstants.HALF_WIDTH);
   }
 
   @Override

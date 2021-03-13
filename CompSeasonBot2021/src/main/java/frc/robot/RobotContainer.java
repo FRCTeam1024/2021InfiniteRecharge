@@ -127,6 +127,8 @@ public class RobotContainer {
     final JoystickButton button5 = new JoystickButton(rightJoystick, 5);
     final JoystickButton button6 = new JoystickButton(rightJoystick, 6);
 
+    final JoystickButton button7 = new JoystickButton(rightJoystick, 7);
+
     final JoystickButton button13 = new JoystickButton(rightJoystick, 13);
     final JoystickButton button12 = new JoystickButton(rightJoystick, 12);
 
@@ -148,8 +150,10 @@ public class RobotContainer {
     leftTrigger.whenPressed(new LimelightCenter(limelight, drivetrain));
     rightTrigger.whenPressed(new LimelightShooter(limelight, drivetrain, shooter, ballFeed));
 
-    button5.toggleWhenPressed(new SimpleSeekPowercell(pixy, drivetrain));
-    //button5.toggleWhenPressed(new RunShooterPID(shooter, 1000));
+    button5.toggleWhenPressed(new ExtendHood(hood));
+    button6.toggleWhenPressed(new RetractHood(hood));
+
+    button7.toggleWhenPressed(new RunShooter(shooter, 0.75));
 
     button13.whenPressed(new LimelightLED(limelight, 1));
     button12.whenPressed(new LimelightLED(limelight, 0));

@@ -80,6 +80,9 @@ public final class Constants {
     }
 
     public static final class PixyConstants {
-        public static final double TARGET_X = 157;
+        public static final int TILT = 200;
+        public static final int PAN = 0;
+        public static final double HALF_WIDTH = 157;
+        public static final double HALF_HEIGHT = 104;
     }
 }
