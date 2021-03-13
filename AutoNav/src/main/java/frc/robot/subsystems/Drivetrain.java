@@ -25,8 +25,11 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
+import com.ctre.phoenix.motorcontrol.StatusFrame;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Solenoid;
 
 import com.kauailabs.navx.frc.AHRS;
 
@@ -34,6 +37,7 @@ public class Drivetrain extends SubsystemBase {
 
   private WPI_TalonSRX leftEncoderTalon = new WPI_TalonSRX(20);
   private WPI_TalonSRX rightEncoderTalon = new WPI_TalonSRX(6);
+  private final Solenoid m_Shift = new Solenoid(Constants.DriveConstants.kDrivePCMID, Constants.DriveConstants.kDriveSolenoidPort);
 
   private final SpeedControllerGroup m_rightMotors =
       new SpeedControllerGroup(leftEncoderTalon, new WPI_TalonSRX(11), new WPI_TalonSRX(4));
@@ -61,6 +65,9 @@ public class Drivetrain extends SubsystemBase {
     //m_rightMotors.setInverted(true);
 
     // The left-side drive encoder
+    leftEncoderTalon.configFactoryDefault();
+    rightEncoderTalon.configFactoryDefault();
+
     leftEncoderTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 60);
     rightEncoderTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 60);
 
@@ -69,8 +76,8 @@ public class Drivetrain extends SubsystemBase {
 
     resetEncoders();
 
-    //leftEncoderTalon.setStatusFramePeriod(0, 60); //trying to get rid of timeout error
-    //rightEncoderTalon.setStatusFramePeriod(0, 60);
+    leftEncoderTalon.setStatusFramePeriod(StatusFrame.Status_2_Feedback0,20, 60); //trying to get rid of timeout error
+    rightEncoderTalon.setStatusFramePeriod(StatusFrame.Status_2_Feedback0,20, 60);
     
 
     AHRS a = null;
@@ -84,8 +91,13 @@ public class Drivetrain extends SubsystemBase {
     //leftEncoderTalon.setDistancePerPulse(Constants.DriveConstants.kMetersPerRotation);
     //m_rightEncoder.setDistancePerPulse(Constants.DriveConstants.kMetersPerRotation);
     m_odometry = new DifferentialDriveOdometry(new Rotation2d(navX.getRotation2d().getDegrees()));
+    shiftHi();
   }
 
+    public void shiftHi() {
+      m_Shift.set(false);
+     // System.out.printIn("The drivetrain is in Hi Gear \n");
+    } 
   /**
    * Returns the current wheel speeds of the robot.
    *

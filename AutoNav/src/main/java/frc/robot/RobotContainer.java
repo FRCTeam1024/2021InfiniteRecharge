@@ -138,7 +138,6 @@ public class RobotContainer {
                   new Pose2d(0, 0, new Rotation2d(0)),
                   // Pass through these two interior waypoints, making an 's' curve path
                   List.of(
-                      new Translation2d(0.25, 0),
                       new Translation2d(0.5, 0)
                   ),
                   // End 3 meters straight ahead of where we started, facing forward
@@ -174,6 +173,6 @@ public class RobotContainer {
   }
 
   public void outputToSmartDashboard() {
-    
+
   }
 }
