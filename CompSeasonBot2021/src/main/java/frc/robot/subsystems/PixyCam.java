@@ -1,19 +1,6 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
-
-/**
- * 
- * 
- * Note:  this.XXXX  is only necessary if there is a need to differentiate
- * between a class variable and a variable with a constructor or method of the same name.
- * It is really a matter of preference but it feels over used here.  I think in
- * all cases here the code would be the same without it.  I prefer to just always use
- * different variable names anyway to avoid confusion.
- * 
- */
-
-
 package frc.robot.subsystems;
 
 import java.util.ArrayList;
