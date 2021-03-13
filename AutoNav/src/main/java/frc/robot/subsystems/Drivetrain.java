@@ -33,6 +33,8 @@ import edu.wpi.first.wpilibj.Solenoid;
 
 import com.kauailabs.navx.frc.AHRS;
 
+//Robot consistently going 3 times as far as it should go - tried to implement fudge factors, had no effect?
+
 public class Drivetrain extends SubsystemBase {
 
   private WPI_TalonSRX leftEncoderTalon = new WPI_TalonSRX(20);
