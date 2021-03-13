@@ -38,7 +38,7 @@ public class PixyCam extends SubsystemBase {
     setLamp(0);
     
     pan = 0;
-    tilt = 200;
+    tilt = 185;
     pixy.setServos(pan, tilt);
 
     lastBlockDetection = 0;

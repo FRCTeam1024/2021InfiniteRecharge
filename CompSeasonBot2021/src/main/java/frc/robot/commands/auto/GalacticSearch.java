@@ -31,6 +31,7 @@ public class GalacticSearch extends SequentialCommandGroup {
      */
     addCommands(new Calibrate(drivetrain), // Reset heading to 0 when we're straight on
                 new RetractIntake(intake), // Lower the intake
+                // Get nearest powercell
                 new SimpleSeekPowercell(pixy, drivetrain), // Align to the nearest powercell
                 new CollectNearestPowercell(intake, ballfeed, drivetrain, pixy), // Collect it
                 // Repeat 2x

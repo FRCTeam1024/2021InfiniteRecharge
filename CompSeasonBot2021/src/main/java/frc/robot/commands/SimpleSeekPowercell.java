@@ -19,10 +19,12 @@ public class SimpleSeekPowercell extends CommandBase {
   private final int errorThreshold = 2; // Must be within 15 (out of 360) pixels.
   private final double speed = 0.2; // Speed to drive the robot.
   private boolean powercellDetected;
-  private double startHeading;
-  double powercellX;
-  double xError;
+  private double powercellX;
+  private double xError;
   boolean isFinished;
+
+  private boolean needsToTurn;
+  private double startHeading, currentHeading, desiredHeading, headingThreshold;
 
   /**
    * Aligns the robot to the nearest powercell, according to the Pixy2 camera.
@@ -40,31 +42,55 @@ public class SimpleSeekPowercell extends CommandBase {
   public void initialize() {
     powercellDetected = false;
     isFinished = false;
+    needsToTurn = false;
     startHeading = drivetrain.getGyroHeading(); // Get our initial angle for turning when nothing is found
+    headingThreshold = 10;
     drivetrain.shiftLow(); // Shift into low gear
     
     SmartDashboard.putBoolean("Seeking powercell", true);
+
+    if(pixy.getXOffset() == -1) { // If no powercell is in front of us
+      needsToTurn = true;
+      if(drivetrain.getGyroHeading() > 0) { // If we're right of our initial heading
+        desiredHeading = drivetrain.getGyroHeading() - 90; // Set heading to 90 degrees left
+      } else { // If we're left of our initial heading
+        desiredHeading = drivetrain.getGyroHeading() + 90; // Set heading to 90 degrees right
+      }
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    powercellX = pixy.getXOffset(); // Get the horizontal alignment to the powercell
-    if(powercellX == -1) { // If we don't find a powercell
-      if(startHeading > 0) { // And we're too far to the right
-        drivetrain.drive(-0.5, 0.5); // Turn left until we see a powercell
-      } else if(startHeading < 0) { // Or we're too far to the left
-        drivetrain.drive(0.5, -0.5); // Turn right until we see a powercell
+    if(needsToTurn) { // If we need to turn 90 degrees
+      currentHeading = drivetrain.getGyroHeading(); // Get the current heading
+      if(currentHeading < desiredHeading - headingThreshold) { // If we're left of our desired heading
+        drivetrain.drive(0.5, -0.5); // Turn right
+      } else if(currentHeading > desiredHeading + headingThreshold) { // If we're right of our desired heading
+        drivetrain.drive(-0.5, 0.5); // Turn left
+      } else { // If we're within our heading thresholds
+        drivetrain.drive(0, 0); // Stop driving
+        needsToTurn = false;
       }
-    } else { // If we do see a powercell
-      powercellDetected = true;
-      xError = powercellX - Constants.PixyConstants.TARGET_X; // Get the offset between the robot and the target
-      if(Math.abs(xError) <= errorThreshold) { // If the robot is within the target offset threshold
-        isFinished = true; // We're done
-      } else if(xError > 0) { // If the robot is to the left of the target
-        drivetrain.drive(speed, -speed); // Turn right
-      } else if(xError < 0) { // If the robot is to the right of the target
-        drivetrain.drive(-speed, speed); // Turn left
+    } else { // If we didn't need to turn or have already
+      powercellX = pixy.getXOffset(); // Get the horizontal alignment to the powercell
+      // @TODO: Turn left or right 90 degrees if no powercell was found initially
+      if(powercellX == -1) { // If we don't find a powercell
+        if(startHeading > 0) { // And we're too far to the right
+          drivetrain.drive(-0.5, 0.5); // Turn left until we see a powercell
+        } else if(startHeading < 0) { // Or we're too far to the left
+          drivetrain.drive(0.5, -0.5); // Turn right until we see a powercell
+        }
+      } else { // If we do see a powercell
+        powercellDetected = true;
+        xError = powercellX - Constants.PixyConstants.TARGET_X; // Get the offset between the robot and the target
+        if(Math.abs(xError) <= errorThreshold) { // If the robot is within the target offset threshold
+          isFinished = true; // We're done
+        } else if(xError > 0) { // If the robot is to the left of the target
+          drivetrain.drive(speed, -speed); // Turn right
+        } else if(xError < 0) { // If the robot is to the right of the target
+          drivetrain.drive(-speed, speed); // Turn left
+        }
       }
     }
   }
