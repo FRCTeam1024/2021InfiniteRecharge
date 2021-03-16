@@ -7,6 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
+import frc.robot.commands.auto.AutoTurnHeading;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.PixyCam;
 
@@ -16,8 +17,8 @@ import frc.robot.subsystems.PixyCam;
 public class SimpleSeekPowercell extends CommandBase {
   private final PixyCam pixy;
   private final Drivetrain drivetrain;
-  private final int errorThreshold = 2; // Must be within 15 (out of 360) pixels.
-  private final double speed = 0.2; // Speed to drive the robot.
+  private final int errorThreshold = 1; // Must be within 15 (out of 360) pixels.
+  private final double speed = 0.275; // Speed to drive the robot.
   private boolean powercellDetected;
   private double powercellX;
   private double xError;
@@ -44,17 +45,20 @@ public class SimpleSeekPowercell extends CommandBase {
     isFinished = false;
     needsToTurn = false;
     startHeading = drivetrain.getGyroHeading(); // Get our initial angle for turning when nothing is found
-    headingThreshold = 10;
+    headingThreshold = 1;
     drivetrain.shiftLow(); // Shift into low gear
-    
+    //drivetrain.shiftHi();
+
     SmartDashboard.putBoolean("Seeking powercell", true);
 
     if(pixy.getXOffset() == -1) { // If no powercell is in front of us
       needsToTurn = true;
       if(drivetrain.getGyroHeading() > 0) { // If we're right of our initial heading
         desiredHeading = drivetrain.getGyroHeading() - 90; // Set heading to 90 degrees left
+        //desiredHeading = -90;
       } else { // If we're left of our initial heading
         desiredHeading = drivetrain.getGyroHeading() + 90; // Set heading to 90 degrees right
+        //desiredHeading = 90;
       }
     }
   }
@@ -64,6 +68,7 @@ public class SimpleSeekPowercell extends CommandBase {
   public void execute() {
     if(needsToTurn) { // If we need to turn 90 degrees
       currentHeading = drivetrain.getGyroHeading(); // Get the current heading
+      System.out.println(currentHeading);
       if(currentHeading < desiredHeading - headingThreshold) { // If we're left of our desired heading
         drivetrain.drive(0.5, -0.5); // Turn right
       } else if(currentHeading > desiredHeading + headingThreshold) { // If we're right of our desired heading

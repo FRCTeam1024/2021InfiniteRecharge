@@ -21,6 +21,8 @@ public class CollectNearestPowercell extends CommandBase {
   private final Drivetrain drivetrain;
   private final PixyCam pixy;
 
+  private double speed = 7; // feet per second
+
   boolean hasPowercell;
 
   /**
@@ -47,7 +49,7 @@ public class CollectNearestPowercell extends CommandBase {
 
     intake.runIntake(0.35); // Run the intake
     ballfeed.runBallFeedMotor(0.75); // Run the ballfeed motor
-    drivetrain.driveSpeed(5, false); // Drive forward at 5ft/sec in low gear
+    drivetrain.driveSpeed(speed, false); // Drive forward at 5ft/sec in low gear 
   }
 
   // Called every time the scheduler runs while the command is scheduled.
