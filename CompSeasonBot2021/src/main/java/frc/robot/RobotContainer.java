@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
 
@@ -19,6 +20,9 @@ import frc.robot.commands.auto.GalacticSearch;
 import frc.robot.commands.auto.LimelightCenter;
 import frc.robot.commands.auto.LimelightShooter;
 import frc.robot.commands.auto.SequentialShooter;
+import frc.robot.commands.auto.SlalomPathArc;
+import frc.robot.commands.auto.BouncePathArc;
+import frc.robot.commands.auto.BarrelPathArc;
 import frc.robot.oi.CONSTANTS_OI;
 import frc.robot.oi.Logitech;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -49,13 +53,22 @@ public class RobotContainer {
   private final Joystick rightJoystick = new Joystick(2);
   private final Logitech xboxController = new Logitech(0);
 
+  //Define various autos to select from
+  private final Command m_SlalomAuto = new SlalomPathArc(drivetrain);
+  private final Command m_BarrelAuto = new BarrelPathArc(drivetrain);
+  private final Command m_BounceAuto = new BouncePathArc(drivetrain);
   // private final Command m_autoCommand = new LimelightCenter(drivetrain);
   // private final Command m_autoCommand = new FailSafeAutoBackward(drivetrain, shooter, ballFeed, 1.0, 1.0, -1.0);
   //private final Command m_autoCommand = new AutoSequentialShooter(shooter, ballFeed);
-  private final Command m_autoCommand = new GalacticSearch(drivetrain, intake, pixy, ballFeed);
+  private final Command m_GalacticAuto = new GalacticSearch(drivetrain, intake, pixy, ballFeed);
+
+  //Create a chooser for auto
+  SendableChooser<Command> m_AutoChooser = new SendableChooser<>();
 
   private final DriveWithJoysticks driveWithJoysticks = new DriveWithJoysticks(drivetrain, leftJoystick, rightJoystick);
   //private final AnglePixy anglePixy = new AnglePixy(pixy);
+
+
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
@@ -245,6 +258,17 @@ public class RobotContainer {
   
     //SmartDashboard.putData("Simply seek powercell", new SimpleSeekPowercell(pixy, drivetrain));
     SmartDashboard.putData("Seek powercell w/ PID", new SeekPowercell(pixy, drivetrain));
+
+
+    //Add commands to auto chooser, set default to null to avoid surprise operation
+    m_AutoChooser.setDefaultOption("None", null);
+    m_AutoChooser.addOption("Slalom", m_SlalomAuto);
+    m_AutoChooser.addOption("Barrel", m_BarrelAuto);
+    m_AutoChooser.addOption("Bounce", m_BounceAuto);
+    m_AutoChooser.addOption("Galactic Search", m_GalacticAuto);
+
+    //Put the auto chooser on the dashboard
+    SmartDashboard.putData(m_AutoChooser);
   }
 
 
@@ -255,7 +279,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     
-    return m_autoCommand;
+    return m_AutoChooser.getSelected();
     // return limelightCenterPID;
   }
 }
