@@ -6,31 +6,29 @@
 /*----------------------------------------------------------------------------*/
 
 package frc.robot.commands;
-import frc.robot.subsystems.*;
+import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class ShiftLow extends CommandBase {
   /**
    * Creates a new ShiftHigh.
    */
-  Boolean isFinished;
-  Drivetrain drivetrain;
-  public ShiftLow(Drivetrain drivetrain) {
-    this.drivetrain = drivetrain;
-    isFinished = false;
+  private final Drivetrain m_Drivetrain;
+  public ShiftLow(Drivetrain drive) {
+    m_Drivetrain = drive;
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(m_Drivetrain);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    m_Drivetrain.shiftLow();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    drivetrain.shiftLow();
-    isFinished = true;
   }
 
   // Called once the command ends or is interrupted.
@@ -41,6 +39,6 @@ public class ShiftLow extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return isFinished;
+    return true;
   }
 }

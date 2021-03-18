@@ -23,7 +23,7 @@ public class CollectNearestPowercell extends CommandBase {
 
   private double speed = 7; // feet per second
 
-  boolean hasPowercell;
+  private boolean hasPowercell;
 
   /**
    * This command collects a powercell directly in front of the robot.

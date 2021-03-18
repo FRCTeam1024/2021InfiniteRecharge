@@ -6,7 +6,7 @@
 /*----------------------------------------------------------------------------*/
 
 package frc.robot.commands;
-import frc.robot.subsystems.*;
+import frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class ExtendIntake extends CommandBase {
@@ -18,6 +18,7 @@ public class ExtendIntake extends CommandBase {
   public ExtendIntake(Intake intakeSubsystem) {
     intake = intakeSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(intake);
   }
 
   // Called when the command is initially scheduled.

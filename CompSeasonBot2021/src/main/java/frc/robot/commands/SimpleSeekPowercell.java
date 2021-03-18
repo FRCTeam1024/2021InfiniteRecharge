@@ -22,7 +22,7 @@ public class SimpleSeekPowercell extends CommandBase {
   private boolean powercellDetected;
   private double powercellX;
   private double xError;
-  boolean isFinished;
+  private boolean isFinished;
 
   private boolean needsToTurn;
   private double startHeading, currentHeading, desiredHeading, headingThreshold;
@@ -50,7 +50,7 @@ public class SimpleSeekPowercell extends CommandBase {
     //drivetrain.shiftHi();
 
     SmartDashboard.putBoolean("Seeking powercell", true);
-    System.out.println("Alinging to powercell");
+    System.out.println("Aligning to powercell");
 
     if(pixy.getXOffset() == -1) { // If no powercell is in front of us
       needsToTurn = true;
@@ -70,6 +70,7 @@ public class SimpleSeekPowercell extends CommandBase {
     if(needsToTurn) { // If we need to turn 90 degrees
       currentHeading = drivetrain.getGyroHeading(); // Get the current heading
       System.out.println(currentHeading);
+
       if(currentHeading < desiredHeading - headingThreshold) { // If we're left of our desired heading
         drivetrain.drive(0.5, -0.5); // Turn right
       } else if(currentHeading > desiredHeading + headingThreshold) { // If we're right of our desired heading
