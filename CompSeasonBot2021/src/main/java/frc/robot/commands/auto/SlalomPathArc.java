@@ -24,7 +24,7 @@ public class SlalomPathArc extends SequentialCommandGroup {
     addCommands(new AutoForwardMotionMagic(drivetrain, 25),
                 new AutoArcMotionMagic(drivetrain, 30, -90),
                 new AutoArcMotionMagic(drivetrain, 30, 90),
-                new AutoForwardMotionMagic(drivetrain, 120),
+                new AutoForwardMotionMagic(drivetrain, 118),
                 new AutoArcMotionMagic(drivetrain, 30, 90),
                 new AutoArcMotionMagic(drivetrain, 30, -360),
                 new AutoArcMotionMagic(drivetrain, 30, 90),

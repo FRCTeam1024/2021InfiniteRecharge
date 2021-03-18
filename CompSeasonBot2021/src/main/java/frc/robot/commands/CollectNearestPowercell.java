@@ -47,6 +47,8 @@ public class CollectNearestPowercell extends CommandBase {
     hasPowercell = false;
     drivetrain.shiftLow(); // Shift into low gear
 
+    System.out.println("Going to get powercell");
+
     intake.runIntake(0.35); // Run the intake
     ballfeed.runBallFeedMotor(0.75); // Run the ballfeed motor
     drivetrain.driveSpeed(speed, false); // Drive forward at 5ft/sec in low gear 
@@ -76,6 +78,7 @@ public class CollectNearestPowercell extends CommandBase {
     intake.runIntake(0);
     ballfeed.runBallFeedMotor(0);
     drivetrain.drive(0, 0);
+    System.out.println("I got the powercell!");
   }
 
   // Returns true when the command should end.

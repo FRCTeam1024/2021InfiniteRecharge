@@ -24,11 +24,9 @@ public class BarrelPathArc extends SequentialCommandGroup {
     addCommands(new AutoForwardMotionMagic(drivetrain, 120),
                 new AutoArcMotionMagic(drivetrain, 33, 360),
                 new AutoForwardMotionMagic(drivetrain, 90),
-                new AutoArcMotionMagic(drivetrain, 34, -270),
-                new AutoForwardMotionMagic(drivetrain, 60),
-                new AutoArcMotionMagic(drivetrain, 31, -90),
-                new AutoForwardMotionMagic(drivetrain, 60),
-                new AutoArcMotionMagic(drivetrain, 30, -180),
+                new AutoArcMotionMagic(drivetrain, 34, -315),
+                new AutoForwardMotionMagic(drivetrain, 90),
+                new AutoArcMotionMagic(drivetrain, 33, -220),
                 new AutoForwardMotionMagic(drivetrain, 240)); 
 
     addCommands();

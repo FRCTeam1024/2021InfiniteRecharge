@@ -50,6 +50,7 @@ public class SimpleSeekPowercell extends CommandBase {
     //drivetrain.shiftHi();
 
     SmartDashboard.putBoolean("Seeking powercell", true);
+    System.out.println("Alinging to powercell");
 
     if(pixy.getXOffset() == -1) { // If no powercell is in front of us
       needsToTurn = true;
@@ -105,6 +106,7 @@ public class SimpleSeekPowercell extends CommandBase {
   public void end(boolean interrupted) {
     SmartDashboard.putBoolean("Seeking powercell", false);
     drivetrain.drive(0, 0);
+    System.out.println("Aligned with powercell");
   }
 
   // Returns true when the command should end.
