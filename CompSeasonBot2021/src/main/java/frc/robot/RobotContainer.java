@@ -152,10 +152,18 @@ public class RobotContainer {
  
 
     // Linking buttons to commands here...
+    /*
     xboxButtonA.whileHeld(new RunClimberHook(climber, -0.25));
     xboxButtonX.whileHeld(new RunClimberHook(climber, 0.50));
     xboxButtonY.toggleWhenActive(new RunShooterPID(shooter, 3400));
     xboxButtonB.whileHeld(new RunBothWinches(climber, 1.0, 1.0));
+    */
+
+    xboxButtonA.toggleWhenActive(new RunShooterPID(shooter, 4900));
+    xboxButtonX.toggleWhenActive(new RunShooterPID(shooter, 2400));
+    xboxButtonY.toggleWhenActive(new RunShooterPID(shooter, 2600));
+    xboxButtonB.whileHeld(new RunBothWinches(climber, 1.0, 1.0));
+    
 
     leftButton3.toggleWhenPressed(new ShiftHigh(drivetrain));
     leftButton4.toggleWhenPressed(new ShiftLow(drivetrain));
@@ -279,7 +287,8 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     
-    return m_AutoChooser.getSelected();
+    return new GalacticSearch(drivetrain, intake, pixy, ballFeed);
+    //return m_AutoChooser.getSelected();
     // return limelightCenterPID;
   }
 }

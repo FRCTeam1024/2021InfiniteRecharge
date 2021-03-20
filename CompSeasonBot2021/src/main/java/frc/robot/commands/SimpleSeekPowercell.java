@@ -17,11 +17,12 @@ import frc.robot.subsystems.PixyCam;
 public class SimpleSeekPowercell extends CommandBase {
   private final PixyCam pixy;
   private final Drivetrain drivetrain;
-  private final int errorThreshold = 1; // Must be within 15 (out of 360) pixels.
+  private final double errorThreshold = 0.5; // Must be within 15 (out of 360) pixels.
   private final double speed = 0.275; // Speed to drive the robot.
   private boolean powercellDetected;
   private double powercellX;
   private double xError;
+  private double driveSpeed;
   private boolean isFinished;
 
   private boolean needsToTurn;
@@ -46,6 +47,8 @@ public class SimpleSeekPowercell extends CommandBase {
     needsToTurn = false;
     startHeading = drivetrain.getGyroHeading(); // Get our initial angle for turning when nothing is found
     headingThreshold = 1;
+    driveSpeed = 0.5;
+
     drivetrain.shiftLow(); // Shift into low gear
     //drivetrain.shiftHi();
 
@@ -55,11 +58,11 @@ public class SimpleSeekPowercell extends CommandBase {
     if(pixy.getXOffset() == -1) { // If no powercell is in front of us
       needsToTurn = true;
       if(drivetrain.getGyroHeading() > 0) { // If we're right of our initial heading
-        desiredHeading = drivetrain.getGyroHeading() - 90; // Set heading to 90 degrees left
-        //desiredHeading = -90;
+        //desiredHeading = drivetrain.getGyroHeading() - 90; // Set heading to 90 degrees left
+        desiredHeading = -90;
       } else { // If we're left of our initial heading
-        desiredHeading = drivetrain.getGyroHeading() + 90; // Set heading to 90 degrees right
-        //desiredHeading = 90;
+        //desiredHeading = drivetrain.getGyroHeading() + 90; // Set heading to 90 degrees right
+        desiredHeading = 90;
       }
     }
   }
@@ -69,12 +72,13 @@ public class SimpleSeekPowercell extends CommandBase {
   public void execute() {
     if(needsToTurn) { // If we need to turn 90 degrees
       currentHeading = drivetrain.getGyroHeading(); // Get the current heading
-      System.out.println(currentHeading);
+      System.out.println("Current heading: " + currentHeading);
+      System.out.println("Error: " + Math.abs(desiredHeading - currentHeading));
 
       if(currentHeading < desiredHeading - headingThreshold) { // If we're left of our desired heading
-        drivetrain.drive(0.5, -0.5); // Turn right
+        drivetrain.drive(driveSpeed, -driveSpeed); // Turn right
       } else if(currentHeading > desiredHeading + headingThreshold) { // If we're right of our desired heading
-        drivetrain.drive(-0.5, 0.5); // Turn left
+        drivetrain.drive(-driveSpeed, driveSpeed); // Turn left
       } else { // If we're within our heading thresholds
         drivetrain.drive(0, 0); // Stop driving
         needsToTurn = false;
@@ -84,9 +88,9 @@ public class SimpleSeekPowercell extends CommandBase {
       // @TODO: Turn left or right 90 degrees if no powercell was found initially
       if(powercellX == -1) { // If we don't find a powercell
         if(startHeading > 0) { // And we're too far to the right
-          drivetrain.drive(-0.5, 0.5); // Turn left until we see a powercell
+          drivetrain.drive(-driveSpeed, driveSpeed); // Turn left until we see a powercell
         } else if(startHeading < 0) { // Or we're too far to the left
-          drivetrain.drive(0.5, -0.5); // Turn right until we see a powercell
+          drivetrain.drive(driveSpeed, -driveSpeed); // Turn right until we see a powercell
         }
       } else { // If we do see a powercell
         powercellDetected = true;
