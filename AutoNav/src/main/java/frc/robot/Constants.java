@@ -72,7 +72,7 @@ public final class Constants {
         public static final int kEncoderUnitsPerRotation = 11587;  //Tested and confirmed this value for 2021 compbot
 
         /* Encoder Counts Per Wheel Rotation (3:1 ratio in AM Gearbox)*/
-        public static final double kSensorUnitsPerRotation = 1365.3333;
+        public static final double kSensorUnitsPerRotation = 1365.3333; //testing to see if it lowering this for some unknown reason would make it work???
     
 
 

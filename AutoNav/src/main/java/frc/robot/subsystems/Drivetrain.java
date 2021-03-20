@@ -74,12 +74,12 @@ public class Drivetrain extends SubsystemBase {
     rightEncoderTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 60);
 
     leftEncoderTalon.configSelectedFeedbackCoefficient(Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation, 0, 60);
-    rightEncoderTalon.configSelectedFeedbackCoefficient(Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation, 0 ,60);
+    rightEncoderTalon.configSelectedFeedbackCoefficient(Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation, 0, 60);
 
     resetEncoders();
 
-    leftEncoderTalon.setStatusFramePeriod(StatusFrame.Status_2_Feedback0,20, 60); //trying to get rid of timeout error
-    rightEncoderTalon.setStatusFramePeriod(StatusFrame.Status_2_Feedback0,20, 60);
+    leftEncoderTalon.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20, 60); //trying to get rid of timeout error
+    rightEncoderTalon.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20, 60);
     
 
     AHRS a = null;
@@ -154,10 +154,10 @@ public class Drivetrain extends SubsystemBase {
   public void periodic() {
     
     // This method will be called once per scheduler run
-    outputToSmartDashboard();
+    //outputToSmartDashboard();   commented out solely because of issues with robot loop overrunning
     m_odometry.update(navX.getRotation2d(), 
-        leftEncoderTalon.getSelectedSensorPosition(),
-        rightEncoderTalon.getSelectedSensorPosition());
+        (leftEncoderTalon.getSelectedSensorPosition()),
+        (rightEncoderTalon.getSelectedSensorPosition()));
     //may need to scale these based on encoder values vs. circumference of wheel
   }
 
