@@ -65,7 +65,7 @@ public class Drivetrain extends SubsystemBase {
   public Drivetrain() {
 
     //m_rightMotors.setInverted(true);
-
+    shiftHi();
     // The left-side drive encoder
     leftEncoderTalon.configFactoryDefault();
     rightEncoderTalon.configFactoryDefault();
@@ -78,8 +78,8 @@ public class Drivetrain extends SubsystemBase {
 
     resetEncoders();
 
-    leftEncoderTalon.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20, 60); //trying to get rid of timeout error
-    rightEncoderTalon.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20, 60);
+    leftEncoderTalon.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, 60); //trying to get rid of timeout error
+    rightEncoderTalon.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, 60);
     
 
     AHRS a = null;
@@ -89,17 +89,21 @@ public class Drivetrain extends SubsystemBase {
       DriverStation.reportError("Error instantiating navX MXP: " + ex.getMessage(), true);
     }
     navX = a;
+    navX.reset();
 
     //leftEncoderTalon.setDistancePerPulse(Constants.DriveConstants.kMetersPerRotation);
     //m_rightEncoder.setDistancePerPulse(Constants.DriveConstants.kMetersPerRotation);
     m_odometry = new DifferentialDriveOdometry(new Rotation2d(navX.getRotation2d().getDegrees()));
-    shiftHi();
   }
 
     public void shiftHi() {
       m_Shift.set(false);
      // System.out.printIn("The drivetrain is in Hi Gear \n");
     } 
+
+    public void shiftLo(){
+      m_Shift.set(true);
+    }
   /**
    * Returns the current wheel speeds of the robot.
    *
@@ -155,9 +159,13 @@ public class Drivetrain extends SubsystemBase {
     
     // This method will be called once per scheduler run
     //outputToSmartDashboard();   commented out solely because of issues with robot loop overrunning
-    m_odometry.update(navX.getRotation2d(), 
+    double radians = getHeading() * Constants.PI / 180;
+    Rotation2d rotation = new Rotation2d(radians);
+    
+    m_odometry.update(rotation, 
         (leftEncoderTalon.getSelectedSensorPosition()),
         (rightEncoderTalon.getSelectedSensorPosition()));
+    m_drive.feedWatchdog();
     //may need to scale these based on encoder values vs. circumference of wheel
   }
 

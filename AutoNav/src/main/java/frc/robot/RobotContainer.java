@@ -138,18 +138,42 @@ public class RobotContainer {
                   new Pose2d(0.254, 0.254, new Rotation2d(0)),
                   // Pass through these two interior waypoints, making an 's' curve path
                   List.of(
-                      new Translation2d(0.508, 0.254),
-                      new Translation2d( 1.016, .762),
-                      new Translation2d( 2.032, .762),
-                      new Translation2d( 2.54, .254),
-                      new Translation2d(2.794, .508),
-                      new Translation2d( 2.54, .762),
-                      new Translation2d( 2.032, .254)),
-                      new Translation2d(1.016, .254),
+                      new Translation2d(0.508, 0.254), //0.508, 0.254
+                      new Translation2d(0.762, 0.254)
+                      //any time you add a turn it tends to overshoot, i was able to test a straight-line trajectory and it was almost perfect,
+                      //but as soon as i added a single turn it overshot the mark by about 6 feet
 
+                      //ideal path - idk if any of this will actually work the way its supposed to, but we'll see.
+                      //new Translation2d(0.762, 0.254)//,
+                      /*new Translation2d(0.762, 0.508),
+                      new Translation2d(0.762, 0.762),
+                      new Translation2d(1.016, 0.762)//,
+                      /*new Translation2d(1.270, 0.762),
+                      new Translation2d(1.524, 0.762),
+                      new Translation2d(1.778, 0.762),
+                      new Translation2d(2.032, 0.762),
+                      new Translation2d(2.286, 0.762), //end of long run, move down
+                      new Translation2d(2.286, 0.508),
+                      new Translation2d(2.286, 0.254),
+                      new Translation2d(2.540, 0.254),
+                      new Translation2d(2.794, 0.254), //start moving back up
+                      new Translation2d(2.794, 0.508),
+                      new Translation2d(2.794, 0.762),
+                      new Translation2d(2.540, 0.762),
+                      new Translation2d(2.286, 0.762),
+                      new Translation2d(2.286, 0.508),
+                      new Translation2d(2.286, 0.254),
+                      new Translation2d(2.032, 0.254),
+                      new Translation2d(1.778, 0.254),
+                      new Translation2d(1.524, 0.254),
+                      new Translation2d(1.270, 0.254),
+                      new Translation2d(1.016, 0.254),
+                      new Translation2d(0.762, 0.254),
+                      new Translation2d(0.762, 0.508),
+                      new Translation2d(0.762, 0.762)*/
                   ),
                   // End 3 meters straight ahead of where we started, facing forward
-                  new Pose2d(.508, .762, new Rotation2d(0)),
+                  new Pose2d(0.762, 0.508, new Rotation2d(Constants.PI/2)), //0.508, .762 (PI)
                   // Pass config
                   config
     );
@@ -171,7 +195,7 @@ public class RobotContainer {
       // RamseteCommand passes volts to the callback
       drivetrain::tankDriveVolts,
       drivetrain
-  );
+    );
 
     return ramseteCommand.andThen(() -> drivetrain.tankDriveVolts(0, 0));
   }
