@@ -14,6 +14,9 @@ import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Limelight extends SubsystemBase {
+  /*
+  Gets all of the retquired network tables from the limelight for calculations
+  */
   private NetworkTable limelight;
   private NetworkTableEntry targetEntry;
   private NetworkTableEntry xOffsetEntry;
@@ -21,7 +24,7 @@ public class Limelight extends SubsystemBase {
   private NetworkTableEntry targetAreaEntry;
   private NetworkTableEntry ledModeEntry;
 
-  private final PIDController limelightPID;
+  private final PIDController limelightPID; 
   private final double kP, kI, kD, kMaxOutput, kMinOutput;  //Gains, may move elsewhere.
   //private final double kIz, kFF;
 
@@ -36,6 +39,7 @@ public class Limelight extends SubsystemBase {
     this.targetAreaEntry = limelight.getEntry("ta");
     this.ledModeEntry = limelight.getEntry("ledMode");
     
+    // PID variable initalization
     kP = 0.03;
     kI = 0;
     kD = 0; 
@@ -53,9 +57,15 @@ public class Limelight extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    // This method will be called once per scheduler run, not used here
   }
 
+  /**
+   * Gets the PID controller using information from the SmartDashboard
+   * Preconditon: the limelightPID is not null and the SmartDashboard is initalized
+   * @return PIDController - sets the current PID Controller using inputed data from the SmartDashboard corresponding to P, I, and D and
+   * returns the object.
+   */
   public PIDController getPIDController() {
     this.limelightPID.setP(SmartDashboard.getNumber("LkP", 0));
     this.limelightPID.setI(SmartDashboard.getNumber("LkI", 0));

@@ -61,6 +61,11 @@ public class PixyCam extends SubsystemBase {
     return pixy.getCCC().getBlockCache().get(0);
   }
 
+  /**
+   * Goes through all of the avilable detectable objects, (in this case powercells), and returns the largest object.
+   * Precondition: Must have at least one fully detectable powercell to properly operate.
+   * @return Block - the largest block after sorting through an ArrayList based on size.
+   */
   public Block getLargestBlock() {
     int blockCount = pixy.getCCC().getBlocks(false, Pixy2CCC.CCC_SIG2, 5);
     if(blockCount <= 0) { return null; }
@@ -101,29 +106,52 @@ public class PixyCam extends SubsystemBase {
     return blockHeight;
   }
 
+  /**
+   * Sets the current emission of the lamp on the Pixy.
+   * @param state - 0 for disabled and 1 for enabled
+   */
   public void setLamp(int state) {
     pixy.setLamp((byte) state, (byte) state);
     isLampEnabled = (state == 1);
   }
 
+  /**
+   * Pans the pixy at a certain degree
+   * @param panValue - the degree of the way the pixy should tilt.
+   */
   public void setPan(int panValue) {
     pixy.setServos(pan, tilt);
     pan = panValue;
   }
 
+  /**
+   * Tilts the pixy at the given angle from a scale from 0 - 1000
+   * @param tiltValue - int between 0 and 1000, inclusivley.
+   */
   public void setTilt(int tiltValue) {
     pixy.setServos(pan, tilt);
     tilt = tiltValue;
   }
 
+  /**
+   * Returns the current angle on the pan axis
+   * @return int - pan of the current degree between 0 and 1000
+   */
   public int getPan() {
     return pan;
   }
-
+  
+  /**
+   * Returns the current angle of the tilt axis
+   * @return int - current tilt between 0 and 1000
+   */
   public int getTilt() {
     return tilt;
   }
 
+  /**
+   * Calculates the offsets of the powercells based on the previous detection of powercells.
+   */
   private void calculateOffsets() {
     if(currentBlock != null) {
       lastBlockDetection = System.currentTimeMillis();
@@ -139,6 +167,9 @@ public class PixyCam extends SubsystemBase {
     }
   }
 
+  /**
+   * Outputs all of the current pixy data to the SmartDashboard
+   */
   private void outputBlockData() {
     SmartDashboard.putNumber("Block x", getXOffset());
     SmartDashboard.putNumber("Block y", getYOffset());

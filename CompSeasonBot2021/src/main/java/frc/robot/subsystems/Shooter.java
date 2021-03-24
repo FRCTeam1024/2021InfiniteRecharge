@@ -126,6 +126,12 @@ public class Shooter extends SubsystemBase {
     return leadMotor.getAppliedOutput();
   }
 
+  /**
+   * Gets the applied output of the following motor of the shooter
+   * Precondition: the followMotor object must not be null
+   * Postconditon: returns a double object containing the output of the follow motor object
+   * @return double - getAppliedOutput()
+   */
   public double getOutputTwo() {
     return followMotor.getAppliedOutput();
   }
