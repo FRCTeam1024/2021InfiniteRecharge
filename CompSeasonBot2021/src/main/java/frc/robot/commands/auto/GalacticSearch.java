@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.CollectNearestPowercell;
 import frc.robot.commands.RetractIntake;
 import frc.robot.commands.SimpleSeekPowercell;
+import frc.robot.commands.SmartCollectNearestPowercell;
 import frc.robot.subsystems.BallFeed;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
@@ -31,10 +32,13 @@ public class GalacticSearch extends SequentialCommandGroup {
      */
     addCommands(new Calibrate(drivetrain), // Reset heading to 0 when we're straight on
                 new RetractIntake(intake), // Lower the intake
+                
+                
+                
+                //new SmartCollectNearestPowercell(intake, ballfeed, drivetrain, pixy)
                 // Get nearest powercell
                 new SimpleSeekPowercell(pixy, drivetrain), // Align to the nearest powercell
                 new CollectNearestPowercell(intake, ballfeed, drivetrain, pixy), // Collect it
-                // Repeat 2x
                 new SimpleSeekPowercell(pixy, drivetrain), 
                 new CollectNearestPowercell(intake, ballfeed, drivetrain, pixy),
                 new SimpleSeekPowercell(pixy, drivetrain),

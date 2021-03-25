@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.commands.auto.AutoTurnHeading;
 import frc.robot.subsystems.Drivetrain;
@@ -46,7 +47,7 @@ public class SimpleSeekPowercell extends CommandBase {
     isFinished = false;
     needsToTurn = false;
     startHeading = drivetrain.getGyroHeading(); // Get our initial angle for turning when nothing is found
-    headingThreshold = 1;
+    headingThreshold = 2;
     driveSpeed = 0.5;
 
     drivetrain.shiftLow(); // Shift into low gear
@@ -55,7 +56,7 @@ public class SimpleSeekPowercell extends CommandBase {
     SmartDashboard.putBoolean("Seeking powercell", true);
     System.out.println("Aligning to powercell");
 
-    if(pixy.getXOffset() == -1) { // If no powercell is in front of us
+    /*if(pixy.getXOffset() == -1) { // If no powercell is in front of us
       needsToTurn = true;
       if(drivetrain.getGyroHeading() > 0) { // If we're right of our initial heading
         //desiredHeading = drivetrain.getGyroHeading() - 90; // Set heading to 90 degrees left
@@ -64,13 +65,13 @@ public class SimpleSeekPowercell extends CommandBase {
         //desiredHeading = drivetrain.getGyroHeading() + 90; // Set heading to 90 degrees right
         desiredHeading = 90;
       }
-    }
+    }*/
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(needsToTurn) { // If we need to turn 90 degrees
+    /*if(needsToTurn) { // If we need to turn 90 degrees
       currentHeading = drivetrain.getGyroHeading(); // Get the current heading
       System.out.println("Current heading: " + currentHeading);
       System.out.println("Error: " + Math.abs(desiredHeading - currentHeading));
@@ -103,6 +104,34 @@ public class SimpleSeekPowercell extends CommandBase {
           drivetrain.drive(-speed, speed); // Turn left
         }
       }
+    }*/
+    if(pixy.getXOffset() == -1) {
+      double desiredHeading;
+      double headingThreshold = 5;
+
+      if(drivetrain.getGyroHeading() >= 0) {
+        desiredHeading = -90;
+      } else {
+        desiredHeading = 90;
+      }
+
+      CommandBase turnCommand = new AutoTurnHeading(drivetrain, desiredHeading);
+      new WaitUntilCommand(turnCommand::isFinished);
+      //do {
+      //  new Turn
+      //} while(drivetrain.getGyroHeading() < desiredHeading - headingThreshold || drivetrain.getGyroHeading() > desiredHeading + headingThreshold);
+      // This while loop triggers if we are too far to the left or right of our desired heading (not aligned).
+    }
+
+    powercellX = pixy.getXOffset(); // Get the horizontal alignment to the powercell
+    powercellDetected = true;
+    xError = powercellX - Constants.PixyConstants.HALF_WIDTH; // Get the offset between the robot and the target
+    if(Math.abs(xError) <= errorThreshold) { // If the robot is within the target offset threshold
+      isFinished = true; // We're done
+    } else if(xError > 0) { // If the robot is to the left of the target
+      drivetrain.drive(speed, 0); // Turn right
+    } else if(xError < 0) { // If the robot is to the right of the target
+      drivetrain.drive(0, speed); // Turn left
     }
   }
 
