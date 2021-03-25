@@ -138,19 +138,19 @@ public class RobotContainer {
                   new Pose2d(0.762, 0.762, new Rotation2d(0)),
                   // Pass through these two interior waypoints, making an 's' curve path
                   List.of(
-                      new Translation2d(2.286, 0.762),
-                      new Translation2d(2.286, 2.286),
+                      new Translation2d(2.25, 0.762),
+                      new Translation2d(2.25, 2.286),
                       new Translation2d(6.096, 2.286), //calculated x of 6.858
                       new Translation2d(6.096, 0.762),
-                      new Translation2d(8.362, 0.762), //calculated x of 8.382
-                      new Translation2d(8.362, 2.286),
-                      new Translation2d(6.858, 2.286),
-                      new Translation2d(6.858, 0.762),
-                      new Translation2d(2.286, 0.762),
-                      new Translation2d(2.286, 2.286)
+                      new Translation2d(8.0, 0.762), //calculated x of 8.382
+                      new Translation2d(8.0, 2.286),
+                      new Translation2d(7.0, 2.286),
+                      new Translation2d(7.0, 1.0),
+                      new Translation2d(3.0, 1.0),
+                      new Translation2d(3.0, 2.0)
                   ),
                   // End 3 meters straight ahead of where we started, facing forward
-                  new Pose2d(0.762, 2.286, new Rotation2d(Constants.PI)), //0.508, .762 (PI)
+                  new Pose2d(1.5, 2.0, new Rotation2d(Constants.PI)), //0.508, .762 (PI)
                   // Pass config
                   config
     );
