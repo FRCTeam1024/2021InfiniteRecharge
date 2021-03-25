@@ -135,45 +135,22 @@ public class RobotContainer {
 
     Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
                   // Start at the origin facing the +X direction
-                  new Pose2d(0.254, 0.254, new Rotation2d(0)),
+                  new Pose2d(0.762, 0.762, new Rotation2d(0)),
                   // Pass through these two interior waypoints, making an 's' curve path
                   List.of(
-                      new Translation2d(0.508, 0.254), //0.508, 0.254
-                      new Translation2d(0.762, 0.254)
-                      //any time you add a turn it tends to overshoot, i was able to test a straight-line trajectory and it was almost perfect,
-                      //but as soon as i added a single turn it overshot the mark by about 6 feet
-
-                      //ideal path - idk if any of this will actually work the way its supposed to, but we'll see.
-                      //new Translation2d(0.762, 0.254)//,
-                      /*new Translation2d(0.762, 0.508),
-                      new Translation2d(0.762, 0.762),
-                      new Translation2d(1.016, 0.762)//,
-                      /*new Translation2d(1.270, 0.762),
-                      new Translation2d(1.524, 0.762),
-                      new Translation2d(1.778, 0.762),
-                      new Translation2d(2.032, 0.762),
-                      new Translation2d(2.286, 0.762), //end of long run, move down
-                      new Translation2d(2.286, 0.508),
-                      new Translation2d(2.286, 0.254),
-                      new Translation2d(2.540, 0.254),
-                      new Translation2d(2.794, 0.254), //start moving back up
-                      new Translation2d(2.794, 0.508),
-                      new Translation2d(2.794, 0.762),
-                      new Translation2d(2.540, 0.762),
                       new Translation2d(2.286, 0.762),
-                      new Translation2d(2.286, 0.508),
-                      new Translation2d(2.286, 0.254),
-                      new Translation2d(2.032, 0.254),
-                      new Translation2d(1.778, 0.254),
-                      new Translation2d(1.524, 0.254),
-                      new Translation2d(1.270, 0.254),
-                      new Translation2d(1.016, 0.254),
-                      new Translation2d(0.762, 0.254),
-                      new Translation2d(0.762, 0.508),
-                      new Translation2d(0.762, 0.762)*/
+                      new Translation2d(2.286, 2.286),
+                      new Translation2d(6.096, 2.286), //calculated x of 6.858
+                      new Translation2d(6.096, 0.762),
+                      new Translation2d(8.362, 0.762), //calculated x of 8.382
+                      new Translation2d(8.362, 2.286),
+                      new Translation2d(6.858, 2.286),
+                      new Translation2d(6.858, 0.762),
+                      new Translation2d(2.286, 0.762),
+                      new Translation2d(2.286, 2.286)
                   ),
                   // End 3 meters straight ahead of where we started, facing forward
-                  new Pose2d(0.762, 0.508, new Rotation2d(Constants.PI/2)), //0.508, .762 (PI)
+                  new Pose2d(0.762, 2.286, new Rotation2d(Constants.PI)), //0.508, .762 (PI)
                   // Pass config
                   config
     );

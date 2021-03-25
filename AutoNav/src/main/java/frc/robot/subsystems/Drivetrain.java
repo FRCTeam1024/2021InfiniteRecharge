@@ -37,23 +37,23 @@ import com.kauailabs.navx.frc.AHRS;
 
 public class Drivetrain extends SubsystemBase {
 
-  private WPI_TalonSRX leftEncoderTalon = new WPI_TalonSRX(20);
-  private WPI_TalonSRX rightEncoderTalon = new WPI_TalonSRX(6);
+  private WPI_TalonSRX rightEncoderTalon = new WPI_TalonSRX(20);
+  private WPI_TalonSRX leftEncoderTalon = new WPI_TalonSRX(6);
   private final Solenoid m_Shift = new Solenoid(Constants.DriveConstants.kDrivePCMID, Constants.DriveConstants.kDriveSolenoidPort);
 
   private final SpeedControllerGroup m_rightMotors =
-      new SpeedControllerGroup(leftEncoderTalon, new WPI_TalonSRX(11), new WPI_TalonSRX(4));
+      new SpeedControllerGroup(rightEncoderTalon, new WPI_TalonSRX(11), new WPI_TalonSRX(4));
 
   // The motors on the right side of the drive.
   private final SpeedControllerGroup m_leftMotors =
-      new SpeedControllerGroup(rightEncoderTalon, new WPI_TalonSRX(5), new WPI_TalonSRX(8));
+      new SpeedControllerGroup(leftEncoderTalon, new WPI_TalonSRX(5), new WPI_TalonSRX(8));
 
   private final DifferentialDrive m_drive = new DifferentialDrive(m_leftMotors, m_rightMotors);
 
 // The left-side drive encoder
 
-  SensorCollection m_leftEncoder = new SensorCollection(leftEncoderTalon);
-  SensorCollection m_rightEncoder = new SensorCollection(rightEncoderTalon);
+  //SensorCollection m_leftEncoder = new SensorCollection(leftEncoderTalon);
+  //SensorCollection m_rightEncoder = new SensorCollection(rightEncoderTalon);
 
   private final AHRS navX;  
 
@@ -73,8 +73,8 @@ public class Drivetrain extends SubsystemBase {
     leftEncoderTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 60);
     rightEncoderTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 60);
 
-    leftEncoderTalon.configSelectedFeedbackCoefficient(Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation, 0, 60);
-    rightEncoderTalon.configSelectedFeedbackCoefficient(Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation, 0, 60);
+    leftEncoderTalon.configSelectedFeedbackCoefficient(1, 0, 60);
+    rightEncoderTalon.configSelectedFeedbackCoefficient(1, 0, 60);
 
     resetEncoders();
 
@@ -93,7 +93,7 @@ public class Drivetrain extends SubsystemBase {
 
     //leftEncoderTalon.setDistancePerPulse(Constants.DriveConstants.kMetersPerRotation);
     //m_rightEncoder.setDistancePerPulse(Constants.DriveConstants.kMetersPerRotation);
-    m_odometry = new DifferentialDriveOdometry(new Rotation2d(navX.getRotation2d().getDegrees()));
+    m_odometry = new DifferentialDriveOdometry(navX.getRotation2d());
   }
 
     public void shiftHi() {
@@ -110,8 +110,12 @@ public class Drivetrain extends SubsystemBase {
    * @return The current wheel speeds.
    */
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-    return new DifferentialDriveWheelSpeeds(leftEncoderTalon.getSelectedSensorVelocity(), 
-                                            rightEncoderTalon.getSelectedSensorVelocity());
+    SmartDashboard.putNumber("Raw Left Encoder", leftEncoderTalon.getSelectedSensorPosition());
+    SmartDashboard.putNumber("Raw Right Encoder", -1 * rightEncoderTalon.getSelectedSensorPosition());
+    SmartDashboard.putNumber("Average Encoder Distance", getAverageEncoderDistance());
+    SmartDashboard.putNumber("Gyro Angle", getHeading());
+    return new DifferentialDriveWheelSpeeds(10 * leftEncoderTalon.getSelectedSensorVelocity() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation, 
+                                            -10 * rightEncoderTalon.getSelectedSensorVelocity() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation);
   }
 
   /**
@@ -158,13 +162,13 @@ public class Drivetrain extends SubsystemBase {
   public void periodic() {
     
     // This method will be called once per scheduler run
-    //outputToSmartDashboard();   commented out solely because of issues with robot loop overrunning
-    double radians = getHeading() * Constants.PI / 180;
-    Rotation2d rotation = new Rotation2d(radians);
+    //outputToSmartDashboard();
+    //double radians = getHeading() * Constants.PI / 180;
+    //Rotation2d rotation = new Rotation2d(radians);
     
-    m_odometry.update(rotation, 
-        (leftEncoderTalon.getSelectedSensorPosition()),
-        (rightEncoderTalon.getSelectedSensorPosition()));
+    m_odometry.update(navX.getRotation2d(), 
+        (leftEncoderTalon.getSelectedSensorPosition() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation),
+        (-1 * rightEncoderTalon.getSelectedSensorPosition() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation));
     m_drive.feedWatchdog();
     //may need to scale these based on encoder values vs. circumference of wheel
   }
@@ -184,7 +188,8 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public double getAverageEncoderDistance() {
-    return ((-1 * leftEncoderTalon.getSelectedSensorPosition()) + rightEncoderTalon.getSelectedSensorPosition()) / 2.0;
+    return ((leftEncoderTalon.getSelectedSensorPosition() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation) 
+            + -1 * rightEncoderTalon.getSelectedSensorPosition() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation) / 2.0;
   }
 
 
@@ -242,9 +247,9 @@ public class Drivetrain extends SubsystemBase {
     // SmartDashboard.putNumber("Left Encoder Raw", frontLeft.getSelectedSensorPosition());
     // SmartDashboard.putNumber("Right Encoder Distance (IN)", -getRightEncoderInches());
     // SmartDashboard.putNumber("Right Encoder Raw", -frontRight.getSelectedSensorPosition());
-    SmartDashboard.putNumber("Average Encoder Distance", getAverageEncoderDistance());
-    SmartDashboard.putNumber("Raw Left Encoder", leftEncoderTalon.getSelectedSensorPosition());
-    SmartDashboard.putNumber("Raw Right Encoder", rightEncoderTalon.getSelectedSensorPosition());
+   // SmartDashboard.putNumber("Average Encoder Distance", getAverageEncoderDistance());
+    //SmartDashboard.putNumber("Raw Left Encoder", -1 * leftEncoderTalon.getSelectedSensorPosition());
+    //SmartDashboard.putNumber("Raw Right Encoder", rightEncoderTalon.getSelectedSensorPosition());
     //SmartDashboard.putNumber("Pose meters", getPose());
   }
 }

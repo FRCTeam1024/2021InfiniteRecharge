@@ -41,7 +41,7 @@ public final class Constants {
         public static final double kaVoltSecondsSquaredPerMeter = 0.25; //in characterization data: 0.765  Testing 0.25 for slower acceleration
         public static final double kPDriveVel = 1; //in characterization data: 2.91  Testing 1 to try and slow down the robot
 
-        public static final double kTrackwidthMeters = 1.32;
+        public static final double kTrackwidthMeters = 0.59;  //characterized 1.32; measured 0.59
         public static final DifferentialDriveKinematics kDriveKinematics =
             new DifferentialDriveKinematics(kTrackwidthMeters);
 
@@ -83,7 +83,7 @@ public final class Constants {
         public static final double kMetersPerRotation = 0.4846447;
         
         /* Distance per rotation of encoder in meters */
-        public static final double kEncoderDistancePerPulse = 1.436; // 3 rotations of wheel in meters - not quite sure if math is corect, may need to fix later
+        public static final double kEncoderDistancePerPulse = 1.454; // 3 rotations of wheel in meters - not quite sure if math is corect, may need to fix later
 
         /**
 	    * Motor neutral dead-band, set to the minimum 0.1%.
