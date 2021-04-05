@@ -151,7 +151,7 @@ public class RobotContainer {
                       new Translation2d(3.0, 2.0)
                   ),
                   new Pose2d(1.5, 2.0, new Rotation2d(Constants.PI)),**/
-                  /**Barrel Path Trajectory */
+                  /**Barrel Path Trajectory - best 21 seconds */
                   new Pose2d(0.762, 2.286, new Rotation2d(0)),
                   List.of(
                       new Translation2d(4.0, 2.286),
@@ -161,10 +161,11 @@ public class RobotContainer {
                       new Translation2d(6.0, 2.0),
                       new Translation2d(6.0, 3.5),
                       new Translation2d(5.5, 3.5),
-                      new Translation2d(5.5, 1),
-                      new Translation2d(7.5, 1),
-                      new Translation2d(7.5, 2),
-                      new Translation2d(5, 2)
+                      new Translation2d(5.5, 1.05),
+                      new Translation2d(7.5, 1.05),
+                      new Translation2d(7.5, 1.8),
+                      new Translation2d(6, 1.9),
+                      new Translation2d(5, 2.286)
                   ),
                   new Pose2d(1, 2.286, new Rotation2d(Constants.PI)),
                   // Pass config
