@@ -39,9 +39,7 @@ public class GalacticSearch extends SequentialCommandGroup {
                 new CollectNearestPowercell(intake, ballfeed, drivetrain, pixy),
                 new SimpleSeekPowercell(pixy, drivetrain),
                 new CollectNearestPowercell(intake, ballfeed, drivetrain, pixy),
-                //new AutoTurnHeading(drivetrain, 0), // Align towards the end zone
-                //new AutoForwardMotionMagic(drivetrain, 1000) // Drive forwards
-                new GalacticSearchFinishLine(drivetrain)
+                new GalacticSearchFinishLine(drivetrain) // Align to the finish zone and drive towards it
     );
   }
 }

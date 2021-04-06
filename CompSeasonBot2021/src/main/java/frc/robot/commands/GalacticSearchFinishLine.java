@@ -31,11 +31,14 @@ public class GalacticSearchFinishLine extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(Math.abs(drivetrain.getGyroHeading()) > 90) {
-      new AutoTurnHeading(drivetrain, 0);
+    // @TODO: Test this tomorrow; it may not run the command
+    if(Math.abs(drivetrain.getGyroHeading()) > 90) { // If we are more than 90 degrees from the finish zone
+      new AutoTurnHeading(drivetrain, 0); // Turn towards the heading of 0
     }
 
-    drivetrain.drive(0.5, 0.5);
+    drivetrain.drive(0.5, 0.5); // Drive towards the finish zone
+
+    // The command doesn't need to end; driver must stop it.
   }
 
   // Called once the command ends or is interrupted.

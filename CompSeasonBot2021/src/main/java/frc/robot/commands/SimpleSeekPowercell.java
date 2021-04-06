@@ -16,18 +16,16 @@ import frc.robot.subsystems.PixyCam;
  * This command is used to align the robot to the nearest powercell.
  */
 public class SimpleSeekPowercell extends CommandBase {
+  // Subsystems
   private final PixyCam pixy;
   private final Drivetrain drivetrain;
-  private final double errorThreshold = 0.5; // Must be within 15 (out of 360) pixels.
+  // Data
+  private final double errorThreshold = 0.5; // Must be within 0.5 pixels
   private final double alignSpeed = 0.275; // Speed to drive when aligning to target
   private final double findSpeed = 0.5; // Speed to drive when looking for a target
-  private boolean powercellDetected;
-  private double powercellX, gyroHeading;
-  private double xError;
-  private double driveSpeed;
-  private boolean isFinished;
-
-  private boolean hasFirstCell;
+  private double powercellX, xError; // Saving the powercell X position and the distance from our goal
+  // Booleans for checking if commands is finished
+  private boolean powercellDetected, isFinished;
 
   /**
    * Aligns the robot to the nearest powercell, according to the Pixy2 camera.
@@ -38,31 +36,28 @@ public class SimpleSeekPowercell extends CommandBase {
     addRequirements(pixySubsystem, drivetrainSubsystem);
     pixy = pixySubsystem;
     drivetrain = drivetrainSubsystem;
-    hasFirstCell = true;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    // Reset finished check booleans
     powercellDetected = false;
     isFinished = false;
-    //driveSpeed = 0.5;
 
     drivetrain.shiftLow(); // Shift into low gear
-    //drivetrain.shiftHi();
-
-    SmartDashboard.putBoolean("Has gotten first cell", hasFirstCell);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    //powercellX = pixy.getXOffset();
-    //gyroHeading = drivetrain.getGyroHeading();
-
+    // If no powercell is in our line of sight
     if(pixy.getXOffset() == -1) {
-      /*double startHeading = drivetrain.getGyroHeading();
 
+      // NOTE: This could potentially be used for later in case
+      //        the current implementation does not suit our needs.
+
+      /*double startHeading = drivetrain.getGyroHeading();
       if(drivetrain.getGyroHeading() > 0) {
         while(drivetrain.getGyroHeading() > startHeading - 90) {
           drivetrain.drive(-speed, speed);
@@ -73,44 +68,24 @@ public class SimpleSeekPowercell extends CommandBase {
         }
       }*/
 
-      // If we're to the right of our starting angle, turn to -90 degrees, else, to 90.
+      // If we're to the right of our starting angle, turn left 90 degrees, else, right 90.
       double desiredHeading = drivetrain.getGyroHeading() >= 0 ? drivetrain.getGyroHeading() - 90 : drivetrain.getGyroHeading() + 90;
-      //new AutoTurnHeading(drivetrain, desiredHeading);
-      
-      /*// If we need to go to the left, set direction to -1, else, to 1;
-      double turnDirection = desiredHeading < 0 ? -1 : 1;
-
-      // While we haven't passed our heading goal
-      while(Math.abs(drivetrain.getGyroHeading()) < Math.abs(desiredHeading)) {
-        // Turn in accordance to our direction
-        drivetrain.drive(speed * turnDirection, -speed * turnDirection);
-      }*/
-
-      // If we need to turn right
+      // If we need to turn right 90 degrees
       if(drivetrain.getGyroHeading() < desiredHeading) {
-        // While we are to the left of our goal
+        // While we are still to the left of our goal
         while(drivetrain.getGyroHeading() < desiredHeading) {
-          // Turn right
-          drivetrain.drive(findSpeed, -findSpeed);
+          drivetrain.drive(findSpeed, -findSpeed); // Turn right
         }
-      } else { // If we need to turn left
-        // While we are to the right of our goal
+      } else { // If we need to turn left 90 degrees
+        // While we are still to the right of our goal
         while(drivetrain.getGyroHeading() > desiredHeading) {
-          // Turn left
-          drivetrain.drive(-findSpeed, findSpeed);
+          drivetrain.drive(-findSpeed, findSpeed); // Turn left
         }
       }
-
-      /*if(drivetrain.getGyroHeading() >= desiredHeading) {
-        drivetrain.drive(-speed, speed);
-        //drivetrain.pivotTurn(-90, true);
-      } else {
-        drivetrain.drive(speed, -speed);
-        //drivetrain.pivotTurn(90, true);
-      }*/
+    // If we see a powercell
     } else {
       powercellX = pixy.getXOffset(); // Get the horizontal alignment to the powercell
-      powercellDetected = true;
+      powercellDetected = true; // Record that we found a powercell
       xError = powercellX - Constants.PixyConstants.HALF_WIDTH; // Get the offset between the robot and the target
       if(Math.abs(xError) <= errorThreshold) { // If the robot is within the target offset threshold
         isFinished = true; // We're done
@@ -125,9 +100,7 @@ public class SimpleSeekPowercell extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    SmartDashboard.putBoolean("Seeking powercell", false);
-    drivetrain.drive(0, 0);
-    System.out.println("Aligned with powercell");
+    drivetrain.drive(0, 0); // Shut off drivetrain motors when command ends
   }
 
   // Returns true when the command should end.
