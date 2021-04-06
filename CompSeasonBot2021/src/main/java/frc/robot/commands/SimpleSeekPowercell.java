@@ -19,15 +19,15 @@ public class SimpleSeekPowercell extends CommandBase {
   private final PixyCam pixy;
   private final Drivetrain drivetrain;
   private final double errorThreshold = 0.5; // Must be within 15 (out of 360) pixels.
-  private final double speed = 0.275; // Speed to drive the robot.
+  private final double alignSpeed = 0.275; // Speed to drive when aligning to target
+  private final double findSpeed = 0.5; // Speed to drive when looking for a target
   private boolean powercellDetected;
-  private double powercellX;
+  private double powercellX, gyroHeading;
   private double xError;
   private double driveSpeed;
   private boolean isFinished;
 
-  private boolean needsToTurn;
-  private double startHeading, currentHeading, desiredHeading, headingThreshold;
+  private boolean hasFirstCell;
 
   /**
    * Aligns the robot to the nearest powercell, according to the Pixy2 camera.
@@ -38,6 +38,7 @@ public class SimpleSeekPowercell extends CommandBase {
     addRequirements(pixySubsystem, drivetrainSubsystem);
     pixy = pixySubsystem;
     drivetrain = drivetrainSubsystem;
+    hasFirstCell = true;
   }
 
   // Called when the command is initially scheduled.
@@ -45,93 +46,79 @@ public class SimpleSeekPowercell extends CommandBase {
   public void initialize() {
     powercellDetected = false;
     isFinished = false;
-    needsToTurn = false;
-    startHeading = drivetrain.getGyroHeading(); // Get our initial angle for turning when nothing is found
-    headingThreshold = 2;
-    driveSpeed = 0.5;
+    //driveSpeed = 0.5;
 
     drivetrain.shiftLow(); // Shift into low gear
     //drivetrain.shiftHi();
 
-    SmartDashboard.putBoolean("Seeking powercell", true);
-    System.out.println("Aligning to powercell");
-
-    /*if(pixy.getXOffset() == -1) { // If no powercell is in front of us
-      needsToTurn = true;
-      if(drivetrain.getGyroHeading() > 0) { // If we're right of our initial heading
-        //desiredHeading = drivetrain.getGyroHeading() - 90; // Set heading to 90 degrees left
-        desiredHeading = -90;
-      } else { // If we're left of our initial heading
-        //desiredHeading = drivetrain.getGyroHeading() + 90; // Set heading to 90 degrees right
-        desiredHeading = 90;
-      }
-    }*/
+    SmartDashboard.putBoolean("Has gotten first cell", hasFirstCell);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    /*if(needsToTurn) { // If we need to turn 90 degrees
-      currentHeading = drivetrain.getGyroHeading(); // Get the current heading
-      System.out.println("Current heading: " + currentHeading);
-      System.out.println("Error: " + Math.abs(desiredHeading - currentHeading));
+    //powercellX = pixy.getXOffset();
+    //gyroHeading = drivetrain.getGyroHeading();
 
-      if(currentHeading < desiredHeading - headingThreshold) { // If we're left of our desired heading
-        drivetrain.drive(driveSpeed, -driveSpeed); // Turn right
-      } else if(currentHeading > desiredHeading + headingThreshold) { // If we're right of our desired heading
-        drivetrain.drive(-driveSpeed, driveSpeed); // Turn left
-      } else { // If we're within our heading thresholds
-        drivetrain.drive(0, 0); // Stop driving
-        needsToTurn = false;
-      }
-    } else { // If we didn't need to turn or have already
-      powercellX = pixy.getXOffset(); // Get the horizontal alignment to the powercell
-      // @TODO: Turn left or right 90 degrees if no powercell was found initially
-      if(powercellX == -1) { // If we don't find a powercell
-        if(startHeading > 0) { // And we're too far to the right
-          drivetrain.drive(-driveSpeed, driveSpeed); // Turn left until we see a powercell
-        } else if(startHeading < 0) { // Or we're too far to the left
-          drivetrain.drive(driveSpeed, -driveSpeed); // Turn right until we see a powercell
-        }
-      } else { // If we do see a powercell
-        powercellDetected = true;
-        xError = powercellX - Constants.PixyConstants.HALF_WIDTH; // Get the offset between the robot and the target
-        if(Math.abs(xError) <= errorThreshold) { // If the robot is within the target offset threshold
-          isFinished = true; // We're done
-        } else if(xError > 0) { // If the robot is to the left of the target
-          drivetrain.drive(speed, -speed); // Turn right
-        } else if(xError < 0) { // If the robot is to the right of the target
-          drivetrain.drive(-speed, speed); // Turn left
-        }
-      }
-    }*/
     if(pixy.getXOffset() == -1) {
-      double desiredHeading;
-      double headingThreshold = 5;
+      /*double startHeading = drivetrain.getGyroHeading();
 
-      if(drivetrain.getGyroHeading() >= 0) {
-        desiredHeading = -90;
+      if(drivetrain.getGyroHeading() > 0) {
+        while(drivetrain.getGyroHeading() > startHeading - 90) {
+          drivetrain.drive(-speed, speed);
+        }
       } else {
-        desiredHeading = 90;
+        while(drivetrain.getGyroHeading() < startHeading + 90) {
+          drivetrain.drive(speed, -speed);
+        }
+      }*/
+
+      // If we're to the right of our starting angle, turn to -90 degrees, else, to 90.
+      double desiredHeading = drivetrain.getGyroHeading() >= 0 ? drivetrain.getGyroHeading() - 90 : drivetrain.getGyroHeading() + 90;
+      //new AutoTurnHeading(drivetrain, desiredHeading);
+      
+      /*// If we need to go to the left, set direction to -1, else, to 1;
+      double turnDirection = desiredHeading < 0 ? -1 : 1;
+
+      // While we haven't passed our heading goal
+      while(Math.abs(drivetrain.getGyroHeading()) < Math.abs(desiredHeading)) {
+        // Turn in accordance to our direction
+        drivetrain.drive(speed * turnDirection, -speed * turnDirection);
+      }*/
+
+      // If we need to turn right
+      if(drivetrain.getGyroHeading() < desiredHeading) {
+        // While we are to the left of our goal
+        while(drivetrain.getGyroHeading() < desiredHeading) {
+          // Turn right
+          drivetrain.drive(findSpeed, -findSpeed);
+        }
+      } else { // If we need to turn left
+        // While we are to the right of our goal
+        while(drivetrain.getGyroHeading() > desiredHeading) {
+          // Turn left
+          drivetrain.drive(-findSpeed, findSpeed);
+        }
       }
 
-      CommandBase turnCommand = new AutoTurnHeading(drivetrain, desiredHeading);
-      new WaitUntilCommand(turnCommand::isFinished);
-      //do {
-      //  new Turn
-      //} while(drivetrain.getGyroHeading() < desiredHeading - headingThreshold || drivetrain.getGyroHeading() > desiredHeading + headingThreshold);
-      // This while loop triggers if we are too far to the left or right of our desired heading (not aligned).
-    }
-
-    powercellX = pixy.getXOffset(); // Get the horizontal alignment to the powercell
-    powercellDetected = true;
-    xError = powercellX - Constants.PixyConstants.HALF_WIDTH; // Get the offset between the robot and the target
-    if(Math.abs(xError) <= errorThreshold) { // If the robot is within the target offset threshold
-      isFinished = true; // We're done
-    } else if(xError > 0) { // If the robot is to the left of the target
-      drivetrain.drive(speed, 0); // Turn right
-    } else if(xError < 0) { // If the robot is to the right of the target
-      drivetrain.drive(0, speed); // Turn left
+      /*if(drivetrain.getGyroHeading() >= desiredHeading) {
+        drivetrain.drive(-speed, speed);
+        //drivetrain.pivotTurn(-90, true);
+      } else {
+        drivetrain.drive(speed, -speed);
+        //drivetrain.pivotTurn(90, true);
+      }*/
+    } else {
+      powercellX = pixy.getXOffset(); // Get the horizontal alignment to the powercell
+      powercellDetected = true;
+      xError = powercellX - Constants.PixyConstants.HALF_WIDTH; // Get the offset between the robot and the target
+      if(Math.abs(xError) <= errorThreshold) { // If the robot is within the target offset threshold
+        isFinished = true; // We're done
+      } else if(xError > 0) { // If the robot is to the left of the target
+        drivetrain.drive(alignSpeed, 0); // Turn right
+      } else if(xError < 0) { // If the robot is to the right of the target
+        drivetrain.drive(0, alignSpeed); // Turn left
+      }
     }
   }
 

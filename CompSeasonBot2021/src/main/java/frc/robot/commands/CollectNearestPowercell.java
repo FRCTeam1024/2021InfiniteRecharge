@@ -21,7 +21,7 @@ public class CollectNearestPowercell extends CommandBase {
   private final Drivetrain drivetrain;
   private final PixyCam pixy;
 
-  private double speed = 5; // feet per second
+  private double speed = 10; // feet per second
 
   private boolean hasPowercell;
 

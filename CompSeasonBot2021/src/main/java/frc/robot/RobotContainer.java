@@ -265,8 +265,6 @@ public class RobotContainer {
     SmartDashboard.putData("Run Shooter PID", new RunShooterPID(shooter, 3400));
   
     //SmartDashboard.putData("Simply seek powercell", new SimpleSeekPowercell(pixy, drivetrain));
-    SmartDashboard.putData("Seek powercell w/ PID", new SeekPowercell(pixy, drivetrain));
-
 
     //Add commands to auto chooser, set default to null to avoid surprise operation
     m_AutoChooser.setDefaultOption("None", null);
