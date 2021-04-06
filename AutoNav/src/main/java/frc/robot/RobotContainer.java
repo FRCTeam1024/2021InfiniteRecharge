@@ -151,7 +151,7 @@ public class RobotContainer {
                       new Translation2d(3.0, 2.0)
                   ),
                   new Pose2d(1.5, 2.0, new Rotation2d(Constants.PI)),**/
-                  /**Barrel Path Trajectory - best 21 seconds */
+                  /**Barrel Path Trajectory - best 21 seconds
                   new Pose2d(0.762, 2.286, new Rotation2d(0)),
                   List.of(
                       new Translation2d(4.0, 2.286),
@@ -167,7 +167,33 @@ public class RobotContainer {
                       new Translation2d(6, 1.9),
                       new Translation2d(5, 2.286)
                   ),
-                  new Pose2d(1, 2.286, new Rotation2d(Constants.PI)),
+                  new Pose2d(1, 2.286, new Rotation2d(Constants.PI)),**/
+                  /**Bounce Path Trajectory 
+                   * 
+                   * I'm working on setting up a trajectory for the bounce path,
+                   * but it currently wants to turn 180 degrees at every starred
+                   * point. Tried a different constructor for the trajectory,
+                   * robot seemed to have an issue with it, will not start at all.
+                   * "Robots should not quit, but yours did!"
+                   * Insists that there is no robot code
+                   * power cycled robot - did not help
+                   * returned to barrel path and deployed - no issues there
+                  */
+                  List.of(
+                      new Pose2d(0.762, 2.286, new Rotation2d(0)),
+                      new Pose2d(1.95, 2.286, new Rotation2d(0)),
+                      new Pose2d(1.95, 3.81, new Rotation2d(Constants.PI/2)),
+                      new Pose2d(2.286, 2.286, new Rotation2d(Constants.PI)),
+                      new Pose2d(3.048, 2.286, new Rotation2d(Constants.PI/2)),
+                      new Pose2d(3.048, 0.762, new Rotation2d(Constants.PI)),
+                      new Pose2d(4.572, 0.762, new Rotation2d(-1 * Constants.PI/2)),
+                      new Pose2d(4.572, 3.81, new Rotation2d(-1 * Constants.PI/2)),
+                      new Pose2d(4.572, 0.762, new Rotation2d(0)),
+                      new Pose2d(6.858, 0.762, new Rotation2d(Constants.PI/2)),
+                      new Pose2d(6.858, 3.81, new Rotation2d(Constants.PI)),
+                      new Pose2d(6.858, 2.286, new Rotation2d(Constants.PI)),
+                      new Pose2d(7.62, 2.286, new Rotation2d(Constants.PI))
+                  ),**/
                   // Pass config
                   config
     );
