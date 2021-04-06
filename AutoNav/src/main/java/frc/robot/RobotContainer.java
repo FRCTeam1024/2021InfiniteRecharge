@@ -133,7 +133,16 @@ public class RobotContainer {
                 // Apply the voltage constraint
                 .addConstraint(autoVoltageConstraint);
 
-    Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+    TrajectoryConfig reverseConfig = 
+      new TrajectoryConfig(DriveConstants.kMaxSpeedMetersPerSecond,
+                           DriveConstants.kMaxAccelerationMetersPerSecondSquared)
+                           // Add kinematics to ensure max speed is actually obeyed
+                           .setKinematics(DriveConstants.kDriveKinematics)
+                           // Apply the voltage constraint
+                           .addConstraint(autoVoltageConstraint);
+    reverseConfig.setReversed(true);
+
+    Trajectory Trajectory1 = TrajectoryGenerator.generateTrajectory(
                   /**
                    * 
                    * Slalom Path Trajectory - working, may be tweaked as we get filmed versions.
@@ -162,8 +171,8 @@ public class RobotContainer {
                       new Translation2d(6.0, 3.5),
                       new Translation2d(5.5, 3.5),
                       new Translation2d(5.5, 1.05),
-                      new Translation2d(7.5, 1.05),
-                      new Translation2d(7.5, 1.8),
+                      new Translation2d(7.7, 1.05),
+                      new Translation2d(7.7, 1.8),
                       new Translation2d(6, 1.9),
                       new Translation2d(5, 2.286)
                   ),
@@ -177,32 +186,50 @@ public class RobotContainer {
                    * "Robots should not quit, but yours did!"
                    * Insists that there is no robot code
                    * power cycled robot - did not help
-                   * returned to barrel path and deployed - no issues there
-                  */
+                   * returned to barrel path and deployed - no issues there**/
+                  
                   List.of(
                       new Pose2d(0.762, 2.286, new Rotation2d(0)),
-                      new Pose2d(1.95, 2.286, new Rotation2d(0)),
-                      new Pose2d(1.95, 3.81, new Rotation2d(Constants.PI/2)),
-                      new Pose2d(2.286, 2.286, new Rotation2d(Constants.PI)),
-                      new Pose2d(3.048, 2.286, new Rotation2d(Constants.PI/2)),
-                      new Pose2d(3.048, 0.762, new Rotation2d(Constants.PI)),
-                      new Pose2d(4.572, 0.762, new Rotation2d(-1 * Constants.PI/2)),
-                      new Pose2d(4.572, 3.81, new Rotation2d(-1 * Constants.PI/2)),
-                      new Pose2d(4.572, 0.762, new Rotation2d(0)),
-                      new Pose2d(6.858, 0.762, new Rotation2d(Constants.PI/2)),
-                      new Pose2d(6.858, 3.81, new Rotation2d(Constants.PI)),
-                      new Pose2d(6.858, 2.286, new Rotation2d(Constants.PI)),
-                      new Pose2d(7.62, 2.286, new Rotation2d(Constants.PI))
-                  ),**/
+                      new Pose2d(1.95, 2.286, new Rotation2d(Constants.PI/4)),
+                      new Pose2d(1.95, 3.81, new Rotation2d(Constants.PI/2))
+                  ),
                   // Pass config
                   config
     );
+    Trajectory Trajectory2 = TrajectoryGenerator.generateTrajectory(
+      List.of(
+        new Pose2d(1.95, 3.81, new Rotation2d(Constants.PI/2)),
+        new Pose2d(2.286, 2.286, new Rotation2d(3 * Constants.PI/4)),
+        new Pose2d(3.048, 2.286, new Rotation2d(Constants.PI/2)),
+        new Pose2d(3.048, 0.762, new Rotation2d(3 * Constants.PI/4)),
+        new Pose2d(4.572, 0.762, new Rotation2d(-1 * Constants.PI/4)),
+        new Pose2d(4.572, 3.81, new Rotation2d(-1 * Constants.PI/2))
+      ),
+      reverseConfig
+    );
+    Trajectory Trajectory3 = TrajectoryGenerator.generateTrajectory(
+      List.of(
+        new Pose2d(4.572, 3.81, new Rotation2d(-1 * Constants.PI/2)),
+        new Pose2d(4.572, 0.762, new Rotation2d(-1 * Constants.PI/4)),
+        new Pose2d(6.858, 0.762, new Rotation2d(Constants.PI/4)),
+        new Pose2d(6.858, 3.81, new Rotation2d(Constants.PI/2))
+      ),
+      config
+    );
+    Trajectory Trajectory4 = TrajectoryGenerator.generateTrajectory(
+      List.of(
+        new Pose2d(6.858, 3.81, new Rotation2d(Constants.PI/2)),
+        new Pose2d(6.858, 2.286, new Rotation2d(3 * Constants.PI/4)),
+        new Pose2d(7.62, 2.286, new Rotation2d(Constants.PI))
+      ),
+      reverseConfig
+    );
 
     // Reset odometry to the starting pose of the trajectory.
-    drivetrain.resetOdometry(exampleTrajectory.getInitialPose());  
+    drivetrain.resetOdometry(Trajectory1.getInitialPose());  
 
     RamseteCommand ramseteCommand = new RamseteCommand(
-      exampleTrajectory,
+      Trajectory1,
       drivetrain::getPose,
       new RamseteController(DriveConstants.kRamseteB, DriveConstants.kRamseteZeta),
       new SimpleMotorFeedforward(DriveConstants.ksVolts,
@@ -217,7 +244,53 @@ public class RobotContainer {
       drivetrain
     );
 
-    return ramseteCommand.andThen(() -> drivetrain.tankDriveVolts(0, 0));
+    RamseteCommand ramseteCommand2 = new RamseteCommand(
+      Trajectory1,
+      drivetrain::getPose,
+      new RamseteController(DriveConstants.kRamseteB, DriveConstants.kRamseteZeta),
+      new SimpleMotorFeedforward(DriveConstants.ksVolts,
+                                 DriveConstants.kvVoltSecondsPerMeter,
+                                 DriveConstants.kaVoltSecondsSquaredPerMeter),
+      DriveConstants.kDriveKinematics,
+      drivetrain::getWheelSpeeds,
+      new PIDController(DriveConstants.kPDriveVel, 0, 0),
+      new PIDController(DriveConstants.kPDriveVel, 0, 0),
+      // RamseteCommand passes volts to the callback
+      drivetrain::tankDriveVolts,
+      drivetrain
+    );
+    RamseteCommand ramseteCommand3 = new RamseteCommand(
+      Trajectory1,
+      drivetrain::getPose,
+      new RamseteController(DriveConstants.kRamseteB, DriveConstants.kRamseteZeta),
+      new SimpleMotorFeedforward(DriveConstants.ksVolts,
+                                 DriveConstants.kvVoltSecondsPerMeter,
+                                 DriveConstants.kaVoltSecondsSquaredPerMeter),
+      DriveConstants.kDriveKinematics,
+      drivetrain::getWheelSpeeds,
+      new PIDController(DriveConstants.kPDriveVel, 0, 0),
+      new PIDController(DriveConstants.kPDriveVel, 0, 0),
+      // RamseteCommand passes volts to the callback
+      drivetrain::tankDriveVolts,
+      drivetrain
+    );
+    RamseteCommand ramseteCommand4 = new RamseteCommand(
+      Trajectory1,
+      drivetrain::getPose,
+      new RamseteController(DriveConstants.kRamseteB, DriveConstants.kRamseteZeta),
+      new SimpleMotorFeedforward(DriveConstants.ksVolts,
+                                 DriveConstants.kvVoltSecondsPerMeter,
+                                 DriveConstants.kaVoltSecondsSquaredPerMeter),
+      DriveConstants.kDriveKinematics,
+      drivetrain::getWheelSpeeds,
+      new PIDController(DriveConstants.kPDriveVel, 0, 0),
+      new PIDController(DriveConstants.kPDriveVel, 0, 0),
+      // RamseteCommand passes volts to the callback
+      drivetrain::tankDriveVolts,
+      drivetrain
+    );
+
+    return ramseteCommand.andThen(new ResetOdometry(drivetrain, 2)).andThen(ramseteCommand2).andThen(new ResetOdometry(drivetrain, 3)).andThen(ramseteCommand3).andThen(new ResetOdometry(drivetrain, 4)).andThen(ramseteCommand4).andThen(() -> drivetrain.tankDriveVolts(0, 0));
   }
 
   public void periodic() {
