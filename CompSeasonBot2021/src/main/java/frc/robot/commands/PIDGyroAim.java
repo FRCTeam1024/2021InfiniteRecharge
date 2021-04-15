@@ -5,6 +5,11 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
+/**
+ * Please add some comments here explaining what the goal of this command is.
+ * 
+ */
+
 package frc.robot.commands;
 import frc.robot.subsystems.*;
 import java.lang.Math;
@@ -32,13 +37,13 @@ public class PIDGyroAim extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    drivetrain.ahrs.reset();
+    drivetrain.resetGyro();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double error = setpoint - drivetrain.ahrs.getAngle();
+    double error = setpoint - drivetrain.getGyroHeading();
     this.integral += (error*.02);
     double derivative = (error - this.previous_error) /.02;
     double rcw = P*error + I*this.integral + D*derivative;
@@ -54,7 +59,7 @@ public class PIDGyroAim extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (Math.abs(drivetrain.ahrs.getAngle() - setpoint) < .5) {
+    if (Math.abs(drivetrain.getGyroHeading() - setpoint) < .5) {
       return true;
     } else {
       return false;
