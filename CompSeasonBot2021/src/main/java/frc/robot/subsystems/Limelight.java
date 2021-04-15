@@ -26,6 +26,7 @@ public class Limelight extends SubsystemBase {
 
   private final PIDController limelightPID; 
   private final double kP, kI, kD, kMaxOutput, kMinOutput;  //Gains, may move elsewhere.
+
   //private final double kIz, kFF;
 
   /** Creates a new Limelight. */
@@ -38,6 +39,9 @@ public class Limelight extends SubsystemBase {
     this.yOffsetEntry = limelight.getEntry("ty");
     this.targetAreaEntry = limelight.getEntry("ta");
     this.ledModeEntry = limelight.getEntry("ledMode");
+
+    this.setLEDState(0);
+    this.LEDsEnabled = false;
     
     // PID variable initalization
     kP = 0.03;
@@ -47,6 +51,7 @@ public class Limelight extends SubsystemBase {
     //kFF = 0.1;  // Not used for PIDController class
     this.kMaxOutput = 1.0;
     this.kMinOutput = -1.0;
+    this.kThreshold = 1.0;
 
     this.limelightPID = new PIDController(kP, kI, kD);
 
@@ -81,6 +86,10 @@ public class Limelight extends SubsystemBase {
     return this.kMaxOutput;
   }
 
+  public double getThreshold() {
+    return this.kThreshold;
+  }
+
   public double getXOffset() {
     return this.xOffsetEntry.getDouble(0.0);
   }
@@ -95,26 +104,59 @@ public class Limelight extends SubsystemBase {
 
   public boolean hasTarget() {
     // defaults to false to negate false-positives
-    return this.targetEntry.getBoolean(false);
+    return this.targetEntry.getDouble(0.0) == 1.0;
   }
 
-  /*public NetworkTableEntry getYOffset() {
-    return this.yOffset;
+  public void enableLEDs() {
+    this.ledModeEntry.setNumber(3);
   }
 
-  public NetworkTableEntry getTargetArea() {
-    return this.targetArea;
+  public void disableLEDs() {
+    this.ledModeEntry.setNumber(1);
+  }
+
+  public double getDistance() {
+    double h1, h2, a1, a2, distance;
+    h1 = 42; // Height of the camera from the ground
+    h2 = 92; // Height of power port (goal): 122.25
+    a1 = Math.toRadians(23.5); // Camera offset in degrees
+    a2 = Math.toRadians(this.getYOffset()); // Limelight ty
+    SmartDashboard.putNumber("a2", a2);
+    distance = (h2 - h1) / Math.tan(a1 + a2);
+    return distance;
+  }
+
+  // Toggle LEDs based on current state
+  /*public void toggleLEDs() {
+
   }*/
 
   /**
-   * Toggles the LED of the limelight.
-   * @param state - 0 for off and 1 for on
+   * Sets the state of the Limelight LEDs.
+   * @param state - 0 is off and 1 is on.
    */
-  public void toggleLimelightLED(int state) {
+  public void setLEDState(int state) {
     if (state == 0) {
-      this.ledModeEntry.setNumber(1);
+      this.ledModeEntry.setNumber(1); // 1 is off.
+      this.LEDsEnabled = true;
     } else if (state == 1) {
-      this.ledModeEntry.setNumber(3);
+      this.ledModeEntry.setNumber(3); // 3 is on.
+      this.LEDsEnabled = false;
+    } else {
+      return;
+    }
+  }
+
+  /**
+   * Toggles the Limelight LEDs.
+   */
+  public void toggleLEDs() {
+    if (this.LEDsEnabled == false) {
+      this.ledModeEntry.setNumber(3); // 1 is on.
+      this.LEDsEnabled = true;
+    } else if (this.LEDsEnabled == true) {
+      this.ledModeEntry.setNumber(1); // 3 is off.
+      this.LEDsEnabled = false;
     } else {
       return;
     }
