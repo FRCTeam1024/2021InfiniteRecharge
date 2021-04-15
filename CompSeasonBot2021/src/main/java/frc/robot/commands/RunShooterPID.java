@@ -42,7 +42,7 @@ public class RunShooterPID extends CommandBase {
   public void execute() {
     
     /* Update target speed from SmartDashboard */
-    // targetSpeed = SmartDashboard.getNumber("Shooter RPM", 0);
+    targetSpeed = SmartDashboard.getNumber("Shooter RPM", 0);
     m_Shooter.runControlledShooter(targetSpeed);
 
   }

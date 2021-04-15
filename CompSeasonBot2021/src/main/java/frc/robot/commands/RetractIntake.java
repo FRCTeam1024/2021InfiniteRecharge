@@ -1,17 +1,18 @@
 
 package frc.robot.commands;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class RetractIntake extends CommandBase {
   /**
    * Creates a new ExtendIntake.
    */
-  private final Intake m_Intake;
+  Boolean isFinished;
+  Intake intake;
   public RetractIntake(Intake intake) {
-    m_Intake = intake;
+    this.intake = intake;
+    isFinished = false;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_Intake);
   }
 
   // Called when the command is initially scheduled.
@@ -22,7 +23,9 @@ public class RetractIntake extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_Intake.retractIntake();
+    intake.retractIntake();
+    System.out.println("retract intake");
+    isFinished = true;
   }
 
   // Called once the command ends or is interrupted.
@@ -33,6 +36,6 @@ public class RetractIntake extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    return isFinished;
   }
 }

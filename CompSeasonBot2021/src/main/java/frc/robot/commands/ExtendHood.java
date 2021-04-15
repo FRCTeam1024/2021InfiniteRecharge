@@ -5,28 +5,29 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Hood;
+import frc.robot.subsystems.*;
 
 public class ExtendHood extends CommandBase {
-  private final Hood m_Hood;
- 
+  Hood m_Hood;
+  Boolean isFinished;
   /** Creates a new ToggleHood. */
   public ExtendHood(Hood subsystem) {
     m_Hood = subsystem;
+    isFinished = false;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_Hood);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    m_Hood.extendHood();
-    System.out.println("extending hood");
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    m_Hood.extendHood();
+    System.out.println("extending hood");
+    isFinished = true;
   }
 
   // Called once the command ends or is interrupted.
@@ -36,6 +37,6 @@ public class ExtendHood extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    return isFinished;
   }
 }

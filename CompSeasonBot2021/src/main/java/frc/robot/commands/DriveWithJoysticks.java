@@ -13,18 +13,20 @@ import frc.robot.subsystems.Drivetrain;
 
 public class DriveWithJoysticks extends CommandBase {
 
-  private final Joystick leftJoystick;
-  private final Joystick rightJoystick;
+  Joystick leftJoystick;
+  Joystick rightJoystick;
 
   private final Drivetrain drivetrain;
   /**
    * Creates a new DriveWithJoysticks.
    */
-  public DriveWithJoysticks(Drivetrain drive, Joystick left, Joystick right) {
-    drivetrain = drive;
-    leftJoystick = left;
-    rightJoystick = right;
+  public DriveWithJoysticks(Drivetrain drivetrain, Joystick leftJoystick, Joystick rightJoystick) {
+    this.drivetrain = drivetrain;
+    this.leftJoystick = leftJoystick;
+    this.rightJoystick = rightJoystick;
     
+    rightJoystick = new Joystick(0);
+    leftJoystick = new Joystick(2);
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
   }

@@ -3,29 +3,30 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.commands;
-import frc.robot.subsystems.Hood;
+import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class RetractHood extends CommandBase {
-  private final Hood m_Hood;
+  Hood m_Hood;
+  Boolean isFinished;
 
   /** Creates a new RetractHood. */
-  public RetractHood(Hood subsystem) {
+  public RetractHood(Hood subsystem ) {
     m_Hood = subsystem;
+    isFinished = false;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_Hood);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    m_Hood.retractHood();
-    System.out.println("retract hood");
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    m_Hood.retractHood();
+    System.out.println("retract hood");
+    isFinished = true;
   }
 
   // Called once the command ends or is interrupted.
@@ -35,6 +36,6 @@ public class RetractHood extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    return isFinished;
   }
 }

@@ -53,8 +53,5 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    if (intakeMotor.get() != 0.0) {
-      System.out.println(intakeMotor.get());
-    }
   }
 }

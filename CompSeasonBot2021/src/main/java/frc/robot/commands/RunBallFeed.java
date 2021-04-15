@@ -18,7 +18,7 @@ public class RunBallFeed extends CommandBase {
   public RunBallFeed(BallFeed ballFeed, double motorSpeed) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.ballFeed = ballFeed;
-    this.motorSpeed = motorSpeed;
+    this.motorSpeed = motorSpeed;    
 
   }
 

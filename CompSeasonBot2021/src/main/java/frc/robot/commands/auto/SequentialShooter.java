@@ -21,6 +21,6 @@ public class SequentialShooter extends SequentialCommandGroup {
           new WaitUntilCommand(shooter::isStable),
           new RunBothFeeders(ballFeed).withInterrupt(shooter::isNotStable)
           );
-          //System.out.println("running SequentialShooter");
+          System.out.println("running SequentialShooter");
   }
 }
