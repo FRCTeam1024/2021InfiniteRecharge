@@ -10,7 +10,7 @@ import frc.robot.subsystems.*;
 public class AutoTurnHeading extends CommandBase {
   /** Creates a new AutoTurnHeading. */
   private final Drivetrain drivetrain;
-  private final double heading;
+  private final double heading, angleThreshold;
   private double turnAngle;
   private int MSstayed = 0; //don't know if this is as necessary for turning, but I'll go ahead and put it in anyways
 
@@ -18,6 +18,14 @@ public class AutoTurnHeading extends CommandBase {
     // Use addRequirements() here to declare subsystem dependencies.
     drivetrain = drive;
     heading = h;
+    angleThreshold = 5;
+    addRequirements(drivetrain);
+  }
+
+  public AutoTurnHeading(Drivetrain drive, double h, double threshold) {
+    drivetrain = drive;
+    heading = h;
+    angleThreshold = threshold;
     addRequirements(drivetrain);
   }
 
@@ -54,14 +62,14 @@ public class AutoTurnHeading extends CommandBase {
   // Returns true when the command should end. +/- 1.5 degrees is about the best we can do with encoders because of lash in the gears
   @Override
   public boolean isFinished() {
-    if(drivetrain.getHeading() > (turnAngle - 1.5) && drivetrain.getHeading() < (turnAngle + 1.5)){
+    if(drivetrain.getHeading() > (turnAngle - angleThreshold) && drivetrain.getHeading() < (turnAngle + angleThreshold)){
       MSstayed += 20;
       if(MSstayed > 500){
         return true;
-      }else{
+      } else{
         return false;
       }
-    }else{
+    } else{
       MSstayed = 0;
       return false;
     }
