@@ -24,8 +24,10 @@ public class Limelight extends SubsystemBase {
   private NetworkTableEntry targetAreaEntry;
   private NetworkTableEntry ledModeEntry;
 
+  private boolean LEDsEnabled = false;
+
   private final PIDController limelightPID; 
-  private final double kP, kI, kD, kMaxOutput, kMinOutput;  //Gains, may move elsewhere.
+  private final double kP, kI, kD, kMaxOutput, kMinOutput, kThreshold;  //Gains, may move elsewhere.
 
   //private final double kIz, kFF;
 
