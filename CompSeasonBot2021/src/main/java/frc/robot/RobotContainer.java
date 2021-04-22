@@ -284,9 +284,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    
-    return new GalacticSearch(drivetrain, intake, pixy, ballFeed);
-    //return m_AutoChooser.getSelected();
-    // return limelightCenterPID;
+
+    return m_AutoChooser.getSelected();
+ 
   }
 }
