@@ -220,6 +220,9 @@ public class RobotContainer {
 
   private void configureDashboard(){
     
+    //Display the name and version number of the code.
+    SmartDashboard.putString("Running Code Version:", BuildConfig.APP_NAME + " " + BuildConfig.APP_VERSION);
+
     SmartDashboard.putData("Score Power Cell", new ShootPowerCell(intake, ballFeed, drivetrain, shooter));
     SmartDashboard.putNumber("Ballfeed Speed", ballFeed.getBallFedVelocity());
     //runShooterAndBallFeed.whenActive(new RunShooterFeed(ballFeed, 0.25), new RunBallFeed(ballFeed, 0.25));

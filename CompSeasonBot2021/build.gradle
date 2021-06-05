@@ -1,6 +1,7 @@
 plugins {
     id "java"
     id "edu.wpi.first.GradleRIO" version "2021.2.1"
+    id "com.github.gmazzo.buildconfig" version "3.0.0" //Used to autogenerate a buildconfig class
 }
 
 sourceCompatibility = JavaVersion.VERSION_11
@@ -8,6 +9,22 @@ targetCompatibility = JavaVersion.VERSION_11
 
 def ROBOT_MAIN_CLASS = "frc.robot.Main"
 
+/*
+Gets the version name from the latest Git tag */ 
+def stdout = new ByteArrayOutputStream() 
+            exec { commandLine 'git', 'describe', '--tags', '--dirty' 
+            standardOutput = stdout }
+
+/*
+Sets up fields to be included in the buildConfig class */
+buildConfig {
+
+    packageName("frc.robot")
+    useJavaOutput()
+    buildConfigField('String', 'APP_NAME', "\"${project.name}\"")
+    buildConfigField('String', 'APP_VERSION', "\"${stdout.toString().trim()}\"")
+}
+                                
 // Define my targets (RoboRIO) and artifacts (deployable files)
 // This is added by GradleRIO's backing project EmbeddedTools.
 deploy {
