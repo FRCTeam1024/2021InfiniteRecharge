@@ -23,7 +23,9 @@ public class Climber extends SubsystemBase {
    * Creates a new Climber.
    */
   public Climber() {
-    
+      hookMotor.configFactoryDefault();
+      climberMotorLeft.configFactoryDefault();
+      climberMotorRight.configFactoryDefault();
   }
   
   public void moveClimber(double leftMotorPower, double rightMotorPower) {

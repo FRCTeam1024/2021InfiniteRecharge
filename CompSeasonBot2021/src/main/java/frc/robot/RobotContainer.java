@@ -152,17 +152,15 @@ public class RobotContainer {
  
 
     // Linking buttons to commands here...
-    /*
     xboxButtonA.whileHeld(new RunClimberHook(climber, -0.25));
     xboxButtonX.whileHeld(new RunClimberHook(climber, 0.50));
     xboxButtonY.toggleWhenActive(new RunShooterPID(shooter, 3400));
     xboxButtonB.whileHeld(new RunBothWinches(climber, 1.0, 1.0));
-    */
 
-    xboxButtonA.toggleWhenActive(new RunShooterPID(shooter, 4900));
-    xboxButtonX.toggleWhenActive(new RunShooterPID(shooter, 2400));
-    xboxButtonY.toggleWhenActive(new RunShooterPID(shooter, 2600));
-    xboxButtonB.whileHeld(new RunBothWinches(climber, 1.0, 1.0));
+    //xboxButtonA.toggleWhenActive(new RunShooterPID(shooter, 4900));
+    //xboxButtonX.toggleWhenActive(new RunShooterPID(shooter, 2400));
+    //xboxButtonY.whileHeld(new RunBothWinches(climber, -1.0, -1.0));
+    //xboxButtonB.whileHeld(new RunBothWinches(climber, 1.0, 1.0));
     
 
     leftButton3.toggleWhenPressed(new ShiftHigh(drivetrain));
@@ -171,10 +169,10 @@ public class RobotContainer {
     leftTrigger.whenPressed(new LimelightCenter(limelight, drivetrain));
     rightTrigger.whenPressed(new LimelightShooter(limelight, drivetrain, shooter, ballFeed));
 
-    button5.toggleWhenPressed(new ExtendHood(hood));
-    button6.toggleWhenPressed(new RetractHood(hood));
+    button5.toggleWhenPressed(new ExtendHood(hood)); //R4
+    button6.toggleWhenPressed(new RetractHood(hood)); //R5
 
-    button7.toggleWhenPressed(new RunShooter(shooter, 0.75));
+    button7.toggleWhenPressed(new RunShooter(shooter, 0.75)); //R6
 
     button13.whenPressed(new LimelightLED(limelight, 1));
     button12.whenPressed(new LimelightLED(limelight, 0));
@@ -187,7 +185,7 @@ public class RobotContainer {
       xboxLeftClimberStick.whenActive(new RunClimberRight(climber, xboxController.getRawAxis(CONSTANTS_OI.XBOX_LEFT_STICK_Y_AXIS)));
     }
     //xboxLeftClimberStick.whenActive(new RunClimberLeft(climber, xboxController.getRawAxis(CONSTANTS_OI.XBOX_LEFT_STICK_Y_AXIS)));
-    //  xboxRightClimberStick.whenActive(new RunClimberRight(climber, xboxController.getRawAxis(CONSTANTS_OI.XBOX_RIGHT_STICK_Y_AXIS)));
+    //xboxRightClimberStick.whenActive(new RunClimberRight(climber, xboxController.getRawAxis(CONSTANTS_OI.XBOX_RIGHT_STICK_Y_AXIS)));
 
     //xboxLeftTrigger.whileHeld(new RunIntake(intake, .61));
     // when intake is done and we want to run it with ball feeder, replace above line with this
@@ -217,7 +215,7 @@ public class RobotContainer {
 
     xboxBackButton.whileHeld(new RunBallFeed(ballFeed, -0.75));
   }
-
+     
   private void configureDashboard(){
     
     //Display the name and version number of the code.

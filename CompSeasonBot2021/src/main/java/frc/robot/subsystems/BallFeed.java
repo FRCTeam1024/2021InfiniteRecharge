@@ -25,6 +25,8 @@ public class BallFeed extends SubsystemBase {
     ballFeedMotor = new WPI_TalonSRX(19);
     shooterFeedMotor = new WPI_TalonSRX(13);
     //shooterfeed motor 13
+    ballFeedMotor.configFactoryDefault();
+    shooterFeedMotor.configFactoryDefault();
   }
 
   public void runBallFeedMotor(double motorSpeed){

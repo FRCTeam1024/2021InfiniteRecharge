@@ -278,6 +278,7 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("RightSidePower", getRightSidePower());
     SmartDashboard.putNumber("LeftSidePower", getLeftSidePower());
     SmartDashboard.putNumber("Distance", getDistance());
+    
   }
 
 
