@@ -132,18 +132,18 @@ public class RobotContainer {
     //JUST FOR MARC
     // public JoystickButton runIntakeAndBallFeedJoystick = new JoystickButton(leftJoystick, 1);
     final JoystickButton leftButton3 = new JoystickButton(leftJoystick, 3);
-    final JoystickButton leftButton4 = new JoystickButton(rightJoystick, 4);
+    final JoystickButton rightButton4 = new JoystickButton(rightJoystick, 4);
 
     final JoystickButton leftTrigger = new JoystickButton(leftJoystick, 1);
     final JoystickButton rightTrigger = new JoystickButton(rightJoystick, 1);
 
-    final JoystickButton button5 = new JoystickButton(rightJoystick, 5);
-    final JoystickButton button6 = new JoystickButton(rightJoystick, 6);
+    final JoystickButton rightButton5 = new JoystickButton(rightJoystick, 5);
+    final JoystickButton rightButton6 = new JoystickButton(rightJoystick, 6);
 
-    final JoystickButton button7 = new JoystickButton(rightJoystick, 7);
+    final JoystickButton rightButton7 = new JoystickButton(rightJoystick, 7);
 
-    final JoystickButton button13 = new JoystickButton(rightJoystick, 13);
-    final JoystickButton button12 = new JoystickButton(rightJoystick, 12);
+    final JoystickButton rightButton13 = new JoystickButton(rightJoystick, 13);
+    final JoystickButton rightButton12 = new JoystickButton(rightJoystick, 12);
 
     final JoystickButton switchCamModeDefault = new JoystickButton(leftJoystick, 2);
     final JoystickButton switchCamModeCamera = new JoystickButton(rightJoystick, 2);
@@ -164,18 +164,18 @@ public class RobotContainer {
     
 
     leftButton3.toggleWhenPressed(new ShiftHigh(drivetrain));
-    leftButton4.toggleWhenPressed(new ShiftLow(drivetrain));
+    rightButton4.toggleWhenPressed(new ShiftLow(drivetrain));
 
     leftTrigger.whenPressed(new LimelightCenter(limelight, drivetrain));
     rightTrigger.whenPressed(new LimelightShooter(limelight, drivetrain, shooter, ballFeed));
 
-    button5.toggleWhenPressed(new ExtendHood(hood)); //R4
-    button6.toggleWhenPressed(new RetractHood(hood)); //R5
+    rightButton5.toggleWhenPressed(new ExtendHood(hood));
+    rightButton6.toggleWhenPressed(new RetractHood(hood));
 
-    button7.toggleWhenPressed(new RunShooter(shooter, 0.75)); //R6
+    rightButton7.toggleWhenPressed(new RunShooter(shooter, 0.75));
 
-    button13.whenPressed(new LimelightLED(limelight, 1));
-    button12.whenPressed(new LimelightLED(limelight, 0));
+    rightButton13.whenPressed(new LimelightLED(limelight, 1));
+    rightButton12.whenPressed(new LimelightLED(limelight, 0));
 
     //DEAD BAND FOR LOGITECH JOYSTICK CONTROLLERS
     if(xboxController.getLeftStickY() > 0.2 || xboxController.getLeftStickY() < 0.2){
