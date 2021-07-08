@@ -29,7 +29,7 @@ public class Climber extends SubsystemBase {
   }
   
   public void moveClimber(double leftMotorPower, double rightMotorPower) {
-    climberMotorLeft.set(ControlMode.PercentOutput, leftMotorPower);
+    climberMotorLeft.set(ControlMode.PercentOutput, -leftMotorPower);
     climberMotorRight.set(ControlMode.PercentOutput, rightMotorPower);
   }  
 

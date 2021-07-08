@@ -155,7 +155,7 @@ public class RobotContainer {
     logitecButtonA.whileHeld(new RunClimberHook(climber, -0.25));
     logitecButtonX.whileHeld(new RunClimberHook(climber, 0.50));
     logitecButtonY.toggleWhenActive(new RunShooterPID(shooter, 3400));
-    logitecButtonB.whileHeld(new RunBothWinches(climber, 1.0, 1.0));
+    logitecButtonB.whileHeld(new RunClimber(climber, 1.0, 1.0));
 
     //logitecButtonA.toggleWhenActive(new RunShooterPID(shooter, 4900));
     //logitecButtonX.toggleWhenActive(new RunShooterPID(shooter, 2400));
@@ -178,11 +178,14 @@ public class RobotContainer {
     rightButton12.whenPressed(new LimelightLED(limelight, 0));
 
     //DEAD BAND FOR LOGITECH JOYSTICK CONTROLLERS
+    // I don't think this does what we think it does. Lets consider moving these functions to joystick buttons.
     if(logitecController.getLeftStickY() > 0.2 || logitecController.getLeftStickY() < 0.2){
-      logitecLeftStick.whenActive(new RunClimberLeft(climber, logitecController.getLeftStickY()));
+      logitecLeftStick.whenActive(new RunClimber(climber, logitecController.getLeftStickY(), 
+                                                          logitecController.getRightStickY()));
     }
     if(logitecController.getRightStickY() > 0.2 || logitecController.getRightStickY() < 0.2){
-      logitecLeftStick.whenActive(new RunClimberRight(climber, logitecController.getRightStickY()));
+      logitecRightStick.whenActive(new RunClimber(climber, logitecController.getLeftStickY(),
+                                                          logitecController.getRightStickY()));
     }
     //logitecLeftStick.whenActive(new RunClimberLeft(climber, logitecController.getRawAxis(CONSTANTS_OI.XBOX_LEFT_STICK_Y_AXIS)));
     //logitecRightStick.whenActive(new RunClimberRight(climber, logitecController.getRawAxis(CONSTANTS_OI.XBOX_RIGHT_STICK_Y_AXIS)));

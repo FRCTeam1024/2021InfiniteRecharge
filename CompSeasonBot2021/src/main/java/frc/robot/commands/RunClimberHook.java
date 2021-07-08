@@ -20,7 +20,7 @@ public class RunClimberHook extends CommandBase {
     this.climber = climber;
     this.motorPower = motorPower;
     // Use addRequirements() here to declare subsystem dependencies.
-   // addRequirements(climber);
+    addRequirements(climber);
   }
 
   // Called when the command is initially scheduled.
