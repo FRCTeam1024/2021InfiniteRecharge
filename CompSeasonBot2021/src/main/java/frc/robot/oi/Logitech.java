@@ -24,12 +24,12 @@ public class Logitech extends XboxController {
 
     public double getLeftStickY() {
         //return super.getRawAxis(XboxController.Axis.kLeftY.value);
-        return getRawAxis(1); // got this off driver station
+        return getRawAxis(CONSTANTS_OI.XBOX_LEFT_STICK_Y_AXIS); // got this off driver station
     }
 
     public double getRightStickY() {
         // return super.getRawAxis(XboxController.Axis.kRightY.value);
-        return getRawAxis(3); // from driver station
+        return getRawAxis(CONSTANTS_OI.XBOX_RIGHT_STICK_Y_AXIS); // from driver station
     }
 
     // gets angle of the DPad on the XBox controller pressed with increments of 45 degree angle. 

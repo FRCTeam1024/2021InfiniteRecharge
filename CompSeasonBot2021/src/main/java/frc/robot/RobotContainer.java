@@ -51,7 +51,7 @@ public class RobotContainer {
   // The robot's operator interface controllers are defined here...
   private final Joystick leftJoystick = new Joystick(1);
   private final Joystick rightJoystick = new Joystick(2);
-  private final Logitech xboxController = new Logitech(0);
+  private final Logitech logitecController = new Logitech(0);
 
   //Define various autos to select from
   private final Command m_SlalomAuto = new SlalomPathArc(drivetrain);
@@ -103,31 +103,31 @@ public class RobotContainer {
     // below done with Marc
     //UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(0);
     //camera.setResolution(144, 144);
-     // public JoystickButton runShooterAndBallFeed = new JoystickButton(leftJoystick, 6);
+     // public JoystickButton leftButton6 = new JoystickButton(leftJoystick, 6);
   
     // Buttons on each controller are defined here...
-    final JoystickButton xboxLeftTrigger = new JoystickButton(xboxController, CONSTANTS_OI.XBOX_LEFT_TRIGGER);
-    final JoystickButton xboxLeftBumper = new JoystickButton(xboxController, XboxController.Button.kBumperLeft.value);
+    final JoystickButton logitecLeftTrigger = new JoystickButton(logitecController, CONSTANTS_OI.XBOX_LEFT_TRIGGER);
+    final JoystickButton logitecLeftBumper = new JoystickButton(logitecController, XboxController.Button.kBumperLeft.value);
 
 
-    final JoystickButton xboxLeftClimberStick = new JoystickButton(xboxController, XboxController.Button.kStickLeft.value);
-    final JoystickButton xboxRightClimberStick = new JoystickButton(xboxController, XboxController.Button.kStickRight.value);
+    final JoystickButton logitecLeftStick = new JoystickButton(logitecController, XboxController.Button.kStickLeft.value);
+    final JoystickButton logitecRightStick = new JoystickButton(logitecController, XboxController.Button.kStickRight.value);
     
-    final JoystickButton xboxButtonX = new JoystickButton(xboxController, 1);
-    final JoystickButton xboxButtonA = new JoystickButton(xboxController, 2);
-    final JoystickButton xboxButtonB = new JoystickButton(xboxController, 3);
-    final JoystickButton xboxButtonY = new JoystickButton(xboxController, 4);
+    final JoystickButton logitecButtonX = new JoystickButton(logitecController, 1);
+    final JoystickButton logitecButtonA = new JoystickButton(logitecController, 2);
+    final JoystickButton logitecButtonB = new JoystickButton(logitecController, 3);
+    final JoystickButton logitecButtonY = new JoystickButton(logitecController, 4);
     
-    final JoystickButton xboxRightBumper = new JoystickButton(xboxController, XboxController.Button.kBumperRight.value);
-    final JoystickButton xboxRightTrigger = new JoystickButton(xboxController, CONSTANTS_OI.XBOX_RIGHT_TRIGGER);
+    final JoystickButton logitecRightBumper = new JoystickButton(logitecController, XboxController.Button.kBumperRight.value);
+    final JoystickButton logitecRightTrigger = new JoystickButton(logitecController, CONSTANTS_OI.XBOX_RIGHT_TRIGGER);
     
-    final Trigger xboxDPadUp = new Trigger( () -> xboxController.getDPadState().equals(Logitech.DPadState.UP));
-    final Trigger xboxDPadLeft = new Trigger( () -> xboxController.getDPadState().equals(Logitech.DPadState.LEFT));
-    final Trigger xboxDPadRight = new Trigger( () -> xboxController.getDPadState().equals(Logitech.DPadState.RIGHT));
-    final Trigger xboxDPadDown = new Trigger( () -> xboxController.getDPadState().equals(Logitech.DPadState.DOWN));
+    final Trigger logitecDPadUp = new Trigger( () -> logitecController.getDPadState().equals(Logitech.DPadState.UP));
+    final Trigger logitecDPadLeft = new Trigger( () -> logitecController.getDPadState().equals(Logitech.DPadState.LEFT));
+    final Trigger logitecDPadRight = new Trigger( () -> logitecController.getDPadState().equals(Logitech.DPadState.RIGHT));
+    final Trigger logitecDPadDown = new Trigger( () -> logitecController.getDPadState().equals(Logitech.DPadState.DOWN));
 
-    final JoystickButton xboxBackButton = new JoystickButton(xboxController, CONSTANTS_OI.XBOX_BACK_BUTTON);
-    final JoystickButton xboxStartButton = new JoystickButton(xboxController, CONSTANTS_OI.XBOX_START_BUTTON);
+    final JoystickButton logitecBackButton = new JoystickButton(logitecController, CONSTANTS_OI.XBOX_BACK_BUTTON);
+    final JoystickButton logitecStartButton = new JoystickButton(logitecController, CONSTANTS_OI.XBOX_START_BUTTON);
 
     //JUST FOR MARC
     // public JoystickButton runIntakeAndBallFeedJoystick = new JoystickButton(leftJoystick, 1);
@@ -145,22 +145,22 @@ public class RobotContainer {
     final JoystickButton rightButton13 = new JoystickButton(rightJoystick, 13);
     final JoystickButton rightButton12 = new JoystickButton(rightJoystick, 12);
 
-    final JoystickButton switchCamModeDefault = new JoystickButton(leftJoystick, 2);
-    final JoystickButton switchCamModeCamera = new JoystickButton(rightJoystick, 2);
-    // public JoystickButton runShooterJoystick = new JoystickButton(rightJoystick, 3);
-    // public JoystickButton runBothFeedersJoystick = new JoystickButton(rightJoystick, 1);
+    final JoystickButton leftButton2 = new JoystickButton(leftJoystick, 2);
+    final JoystickButton rightButton2 = new JoystickButton(rightJoystick, 2);
+    // public JoystickButton rightButton3 = new JoystickButton(rightJoystick, 3);
+    // public JoystickButton rightTrigger = new JoystickButton(rightJoystick, 1);
  
 
     // Linking buttons to commands here...
-    xboxButtonA.whileHeld(new RunClimberHook(climber, -0.25));
-    xboxButtonX.whileHeld(new RunClimberHook(climber, 0.50));
-    xboxButtonY.toggleWhenActive(new RunShooterPID(shooter, 3400));
-    xboxButtonB.whileHeld(new RunBothWinches(climber, 1.0, 1.0));
+    logitecButtonA.whileHeld(new RunClimberHook(climber, -0.25));
+    logitecButtonX.whileHeld(new RunClimberHook(climber, 0.50));
+    logitecButtonY.toggleWhenActive(new RunShooterPID(shooter, 3400));
+    logitecButtonB.whileHeld(new RunBothWinches(climber, 1.0, 1.0));
 
-    //xboxButtonA.toggleWhenActive(new RunShooterPID(shooter, 4900));
-    //xboxButtonX.toggleWhenActive(new RunShooterPID(shooter, 2400));
-    //xboxButtonY.whileHeld(new RunBothWinches(climber, -1.0, -1.0));
-    //xboxButtonB.whileHeld(new RunBothWinches(climber, 1.0, 1.0));
+    //logitecButtonA.toggleWhenActive(new RunShooterPID(shooter, 4900));
+    //logitecButtonX.toggleWhenActive(new RunShooterPID(shooter, 2400));
+    //logitecButtonY.whileHeld(new RunBothWinches(climber, -1.0, -1.0));
+    //logitecButtonB.whileHeld(new RunBothWinches(climber, 1.0, 1.0));
     
 
     leftButton3.toggleWhenPressed(new ShiftHigh(drivetrain));
@@ -178,22 +178,22 @@ public class RobotContainer {
     rightButton12.whenPressed(new LimelightLED(limelight, 0));
 
     //DEAD BAND FOR LOGITECH JOYSTICK CONTROLLERS
-    if(xboxController.getLeftStickY() > 0.2 || xboxController.getLeftStickY() < 0.2){
-      xboxLeftClimberStick.whenActive(new RunClimberLeft(climber, xboxController.getRawAxis(CONSTANTS_OI.XBOX_LEFT_STICK_Y_AXIS)));
+    if(logitecController.getLeftStickY() > 0.2 || logitecController.getLeftStickY() < 0.2){
+      logitecLeftStick.whenActive(new RunClimberLeft(climber, logitecController.getLeftStickY()));
     }
-    if(xboxController.getRightStickY() > 0.2 || xboxController.getRightStickY() < 0.2){
-      xboxLeftClimberStick.whenActive(new RunClimberRight(climber, xboxController.getRawAxis(CONSTANTS_OI.XBOX_LEFT_STICK_Y_AXIS)));
+    if(logitecController.getRightStickY() > 0.2 || logitecController.getRightStickY() < 0.2){
+      logitecLeftStick.whenActive(new RunClimberRight(climber, logitecController.getRightStickY()));
     }
-    //xboxLeftClimberStick.whenActive(new RunClimberLeft(climber, xboxController.getRawAxis(CONSTANTS_OI.XBOX_LEFT_STICK_Y_AXIS)));
-    //xboxRightClimberStick.whenActive(new RunClimberRight(climber, xboxController.getRawAxis(CONSTANTS_OI.XBOX_RIGHT_STICK_Y_AXIS)));
+    //logitecLeftStick.whenActive(new RunClimberLeft(climber, logitecController.getRawAxis(CONSTANTS_OI.XBOX_LEFT_STICK_Y_AXIS)));
+    //logitecRightStick.whenActive(new RunClimberRight(climber, logitecController.getRawAxis(CONSTANTS_OI.XBOX_RIGHT_STICK_Y_AXIS)));
 
-    //xboxLeftTrigger.whileHeld(new RunIntake(intake, .61));
+    //logitecLeftTrigger.whileHeld(new RunIntake(intake, .61));
     // when intake is done and we want to run it with ball feeder, replace above line with this
     // runIntakeIn.whileHeld(new ParallelCommandGroup(new RunIntake(intake, 1.0), 
     //                                               new RunBallFeed(ballFeed, -1.0)));
-    xboxLeftTrigger.whileHeld(new RunIntakeAndBallFeed(intake, ballFeed, 0.35, 0.75));
-    //xboxLeftBumper.whileHeld(new RunIntake(intake, -.61));
-    xboxLeftBumper.whileHeld(new RunIntakeAndBallFeedAndShooterFeed(intake, ballFeed, -0.35, -0.75, 1.0));
+    logitecLeftTrigger.whileHeld(new RunIntakeAndBallFeed(intake, ballFeed, 0.35, 0.75));
+    //logitecLeftBumper.whileHeld(new RunIntake(intake, -.61));
+    logitecLeftBumper.whileHeld(new RunIntakeAndBallFeedAndShooterFeed(intake, ballFeed, -0.35, -0.75, 1.0));
 
     // runIntakeAndBallFeedJoystick.whileHeld(new RunIntakeAndBallFeed(intake, ballFeed, 0.35, 0.75));
     // runShooterJoystick.toggleWhenActive(new RunShooter(shooter, 1.0));
@@ -201,19 +201,19 @@ public class RobotContainer {
     // Left and right joysticks. Button below circle pad
     // Left - Default limelight
     // Right - Camera View
-    switchCamModeDefault.toggleWhenPressed(new SwitchCamMode(0));
-    switchCamModeCamera.toggleWhenPressed(new SwitchCamMode(1));
-    xboxDPadUp.toggleWhenActive(new ExtendIntake(intake));
-    xboxDPadDown.toggleWhenActive(new RetractIntake(intake));
+    leftButton2.toggleWhenPressed(new SwitchCamMode(0));
+    rightButton2.toggleWhenPressed(new SwitchCamMode(1));
+    logitecDPadUp.toggleWhenActive(new ExtendIntake(intake));
+    logitecDPadDown.toggleWhenActive(new RetractIntake(intake));
   
-    // xboxDPadLeft.whileActiveContinuous(new RunColorWheel(colorWheel, 0.5));
-    // xboxDPadRight.whileActiveContinuous(new RunColorWheel(colorWheel, -0.5));
-    xboxRightBumper.toggleWhenPressed(new RunShooterPID(shooter, 4900)); //run at max speed
-    xboxRightTrigger.whileHeld(new RunShooterFeed(ballFeed, -1.0));
+    // logitecDPadLeft.whileActiveContinuous(new RunColorWheel(colorWheel, 0.5));
+    // logitecDPadRight.whileActiveContinuous(new RunColorWheel(colorWheel, -0.5));
+    logitecRightBumper.toggleWhenPressed(new RunShooterPID(shooter, 4900)); //run at max speed
+    logitecRightTrigger.whileHeld(new RunShooterFeed(ballFeed, -1.0));
 
-    xboxStartButton.whileHeld(new RunBallFeed(ballFeed, 0.75));
+    logitecStartButton.whileHeld(new RunBallFeed(ballFeed, 0.75));
 
-    xboxBackButton.whileHeld(new RunBallFeed(ballFeed, -0.75));
+    logitecBackButton.whileHeld(new RunBallFeed(ballFeed, -0.75));
   }
      
   private void configureDashboard(){
