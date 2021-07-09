@@ -29,8 +29,14 @@ public class Climber extends SubsystemBase {
   }
   
   public void moveClimber(double leftMotorPower, double rightMotorPower) {
+    if(leftMotorPower > -0.2 && leftMotorPower < 0.2){
+      leftMotorPower = 0;
+    }
+    if(rightMotorPower > -0.2 && rightMotorPower < 0.2){
+      rightMotorPower = 0;
+    }
     climberMotorLeft.set(ControlMode.PercentOutput, -leftMotorPower);
-    climberMotorRight.set(ControlMode.PercentOutput, rightMotorPower);
+    climberMotorRight.set(ControlMode.PercentOutput, -rightMotorPower);
   }  
 
   public void moveClimberHook(double motorPower){

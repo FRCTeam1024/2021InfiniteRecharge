@@ -26,7 +26,8 @@ import frc.robot.commands.auto.BarrelPathArc;
 import frc.robot.oi.CONSTANTS_OI;
 import frc.robot.oi.Logitech;
 import edu.wpi.first.wpilibj2.command.Command;
-
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -66,6 +67,7 @@ public class RobotContainer {
   SendableChooser<Command> m_AutoChooser = new SendableChooser<>();
 
   private final DriveWithJoysticks driveWithJoysticks = new DriveWithJoysticks(drivetrain, leftJoystick, rightJoystick);
+  private final RunClimber runClimber = new RunClimber(climber, logitecController);
   //private final AnglePixy anglePixy = new AnglePixy(pixy);
 
 
@@ -80,6 +82,7 @@ public class RobotContainer {
 
     //Assign default commands
     drivetrain.setDefaultCommand(driveWithJoysticks);
+    climber.setDefaultCommand(runClimber);
     //pixy.setDefaultCommand(anglePixy);
     // climber.setDefaultCommand(driveClimberDefault);
 
@@ -152,41 +155,29 @@ public class RobotContainer {
  
 
     // Linking buttons to commands here...
-    logitecButtonA.whileHeld(new RunClimberHook(climber, -0.25));
-    logitecButtonX.whileHeld(new RunClimberHook(climber, 0.50));
-    logitecButtonY.toggleWhenActive(new RunShooterPID(shooter, 3400));
-    logitecButtonB.whileHeld(new RunClimber(climber, 1.0, 1.0));
-
     //logitecButtonA.toggleWhenActive(new RunShooterPID(shooter, 4900));
     //logitecButtonX.toggleWhenActive(new RunShooterPID(shooter, 2400));
     //logitecButtonY.whileHeld(new RunBothWinches(climber, -1.0, -1.0));
     //logitecButtonB.whileHeld(new RunBothWinches(climber, 1.0, 1.0));
-    
 
-    leftButton3.toggleWhenPressed(new ShiftHigh(drivetrain));
-    rightButton4.toggleWhenPressed(new ShiftLow(drivetrain));
+    logitecButtonA.whileHeld(new RunIntakeAndBallFeedAndShooterFeed(intake, ballFeed, -1.0, -1.0, -1.0));
 
-    leftTrigger.whenPressed(new LimelightCenter(limelight, drivetrain));
-    rightTrigger.whenPressed(new LimelightShooter(limelight, drivetrain, shooter, ballFeed));
+    logitecLeftBumper.toggleWhenPressed(new ParallelCommandGroup(new RunShooterPID(shooter,2400), new RetractHood(hood)));
+    logitecRightBumper.toggleWhenPressed(new ParallelCommandGroup(new RunShooterPID(shooter,4900), new ExtendHood(hood)));
+    logitecRightTrigger.whenActive(new SequentialCommandGroup(new LimelightAutoAim(limelight, drivetrain),
+        new ShootPowerCell(intake, ballFeed, drivetrain, shooter)));
+    logitecLeftTrigger.whileHeld(new SequentialCommandGroup(new ExtendIntake(intake), new RunIntakeAndBallFeed(intake, ballFeed, 1.0, 1.0)));
+    logitecLeftTrigger.whenReleased(new RetractIntake(intake));
+    //Possible tthat the Extend/Retract Intake may be reversed? check this first next meeting
 
-    rightButton5.toggleWhenPressed(new ExtendHood(hood));
-    rightButton6.toggleWhenPressed(new RetractHood(hood));
+    logitecDPadUp.whileActiveOnce(new RunClimberHook(climber, 0.7));
+    logitecDPadDown.whileActiveOnce(new RunClimberHook(climber, -0.7));
 
-    rightButton7.toggleWhenPressed(new RunShooter(shooter, 0.75));
-
-    rightButton13.whenPressed(new LimelightLED(limelight, 1));
-    rightButton12.whenPressed(new LimelightLED(limelight, 0));
 
     //DEAD BAND FOR LOGITECH JOYSTICK CONTROLLERS
-    // I don't think this does what we think it does. Lets consider moving these functions to joystick buttons.
-    if(logitecController.getLeftStickY() > 0.2 || logitecController.getLeftStickY() < 0.2){
-      logitecLeftStick.whenActive(new RunClimber(climber, logitecController.getLeftStickY(), 
-                                                          logitecController.getRightStickY()));
-    }
-    if(logitecController.getRightStickY() > 0.2 || logitecController.getRightStickY() < 0.2){
-      logitecRightStick.whenActive(new RunClimber(climber, logitecController.getLeftStickY(),
-                                                          logitecController.getRightStickY()));
-    }
+    // Lets consider moving these functions to joystick buttons.
+    //logitecLeftStick.whenActive(new RunClimber(climber, logitecController.getLeftStickY(), logitecController.getRightStickY()));
+    //logitecRightStick.whenActive(new RunClimber(climber, logitecController.getLeftStickY(), logitecController.getRightStickY()));
     //logitecLeftStick.whenActive(new RunClimberLeft(climber, logitecController.getRawAxis(CONSTANTS_OI.XBOX_LEFT_STICK_Y_AXIS)));
     //logitecRightStick.whenActive(new RunClimberRight(climber, logitecController.getRawAxis(CONSTANTS_OI.XBOX_RIGHT_STICK_Y_AXIS)));
 
@@ -194,9 +185,8 @@ public class RobotContainer {
     // when intake is done and we want to run it with ball feeder, replace above line with this
     // runIntakeIn.whileHeld(new ParallelCommandGroup(new RunIntake(intake, 1.0), 
     //                                               new RunBallFeed(ballFeed, -1.0)));
-    logitecLeftTrigger.whileHeld(new RunIntakeAndBallFeed(intake, ballFeed, 0.35, 0.75));
     //logitecLeftBumper.whileHeld(new RunIntake(intake, -.61));
-    logitecLeftBumper.whileHeld(new RunIntakeAndBallFeedAndShooterFeed(intake, ballFeed, -0.35, -0.75, 1.0));
+
 
     // runIntakeAndBallFeedJoystick.whileHeld(new RunIntakeAndBallFeed(intake, ballFeed, 0.35, 0.75));
     // runShooterJoystick.toggleWhenActive(new RunShooter(shooter, 1.0));
@@ -204,19 +194,11 @@ public class RobotContainer {
     // Left and right joysticks. Button below circle pad
     // Left - Default limelight
     // Right - Camera View
-    leftButton2.toggleWhenPressed(new SwitchCamMode(0));
-    rightButton2.toggleWhenPressed(new SwitchCamMode(1));
-    logitecDPadUp.toggleWhenActive(new ExtendIntake(intake));
-    logitecDPadDown.toggleWhenActive(new RetractIntake(intake));
   
     // logitecDPadLeft.whileActiveContinuous(new RunColorWheel(colorWheel, 0.5));
     // logitecDPadRight.whileActiveContinuous(new RunColorWheel(colorWheel, -0.5));
-    logitecRightBumper.toggleWhenPressed(new RunShooterPID(shooter, 4900)); //run at max speed
-    logitecRightTrigger.whileHeld(new RunShooterFeed(ballFeed, -1.0));
+    //logitecRightBumper.toggleWhenPressed(new RunShooterPID(shooter, 4900)); //run at max speed
 
-    logitecStartButton.whileHeld(new RunBallFeed(ballFeed, 0.75));
-
-    logitecBackButton.whileHeld(new RunBallFeed(ballFeed, -0.75));
   }
      
   private void configureDashboard(){
@@ -239,7 +221,7 @@ public class RobotContainer {
     SmartDashboard.putData("Stop Climber", new StopClimber(climber));
 
     SmartDashboard.putData("Run Climber Two", new RunClimberRight(climber, -0.35));
-    SmartDashboard.putData("Run Climber", new RunClimber(climber, -0.35, 0.35));
+    SmartDashboard.putData("Run Climber", new RunClimber(climber, logitecController));
 
     SmartDashboard.putData("Extend Intake", new ExtendIntake(intake));
     SmartDashboard.putData("Retract Intake", new RetractIntake(intake));

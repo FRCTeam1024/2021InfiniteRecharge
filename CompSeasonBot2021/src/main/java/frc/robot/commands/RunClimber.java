@@ -6,6 +6,8 @@
 /*----------------------------------------------------------------------------*/
 
 package frc.robot.commands;
+
+import frc.robot.oi.Logitech;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
@@ -16,10 +18,10 @@ public class RunClimber extends CommandBase {
   Climber climber;
   double motorSpeedOne;
   double motorSpeedTwo;
-  public RunClimber(Climber climber, double motorSpeedOne, double motorSpeedTwo) {
+  Logitech logitecController;
+  public RunClimber(Climber climber, Logitech logitecController) {
     this.climber = climber;
-    this.motorSpeedOne = motorSpeedOne;    
-    this.motorSpeedTwo = motorSpeedTwo;
+    this.logitecController = logitecController;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(climber);
   }
@@ -32,7 +34,8 @@ public class RunClimber extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    climber.moveClimber(motorSpeedOne, motorSpeedTwo);
+    System.out.println("Run Climber: " + logitecController.getLeftStickY() + ", " + logitecController.getRightStickY());
+    climber.moveClimber(logitecController.getLeftStickY(), logitecController.getRightStickY());
   }
 
   // Called once the command ends or is interrupted.
