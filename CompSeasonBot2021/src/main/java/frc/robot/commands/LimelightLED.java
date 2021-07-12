@@ -9,12 +9,10 @@ import frc.robot.subsystems.*;
 
 public class LimelightLED extends CommandBase {
   private final Limelight limelight;
-  private final int state;
-  private boolean finished;
+  private boolean state;
 
   /** Creates a new LimelightLED. */
-  public LimelightLED(Limelight limelight, int state) {
-    this.finished = false;
+  public LimelightLED(Limelight limelight, boolean state) {
     this.limelight = limelight;
     this.state = state;
     // Use addRequirements() here to declare subsystem dependencies.
@@ -24,8 +22,12 @@ public class LimelightLED extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    limelight.setLEDState(this.state);
-    this.finished = true;
+    if (state){
+      limelight.enableLEDs();
+    }
+    else{
+      limelight.disableLEDs();
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -39,6 +41,6 @@ public class LimelightLED extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return this.finished;
+    return true;
   }
 }
