@@ -108,7 +108,7 @@ public class RobotContainer {
     //camera.setResolution(144, 144);
      // public JoystickButton leftButton6 = new JoystickButton(leftJoystick, 6);
   
-    // Buttons on each controller are defined here...
+    // Buttons for Logitech controller defined here:
     final JoystickButton logitecLeftTrigger = new JoystickButton(logitecController, CONSTANTS_OI.XBOX_LEFT_TRIGGER);
     final JoystickButton logitecLeftBumper = new JoystickButton(logitecController, XboxController.Button.kBumperLeft.value);
 
@@ -132,8 +132,7 @@ public class RobotContainer {
     final JoystickButton logitecBackButton = new JoystickButton(logitecController, CONSTANTS_OI.XBOX_BACK_BUTTON);
     final JoystickButton logitecStartButton = new JoystickButton(logitecController, CONSTANTS_OI.XBOX_START_BUTTON);
 
-    //JUST FOR MARC
-    // public JoystickButton runIntakeAndBallFeedJoystick = new JoystickButton(leftJoystick, 1);
+    // Joystick buttons defined here:
     final JoystickButton leftButton3 = new JoystickButton(leftJoystick, 3);
     final JoystickButton rightButton4 = new JoystickButton(rightJoystick, 4);
 
@@ -153,6 +152,11 @@ public class RobotContainer {
     // public JoystickButton rightButton3 = new JoystickButton(rightJoystick, 3);
     // public JoystickButton rightTrigger = new JoystickButton(rightJoystick, 1);
  
+    //Other non-OI Triggers defined here:
+    final Trigger shooterRunning = new Trigger( () -> shooter.getShooterSpeed() > 100);
+    final Trigger shooterStable = new Trigger( () -> shooter.isStable());
+
+
 
     // Linking buttons to commands here...
     //logitecButtonA.toggleWhenActive(new RunShooterPID(shooter, 4900));
@@ -160,19 +164,42 @@ public class RobotContainer {
     //logitecButtonY.whileHeld(new RunBothWinches(climber, -1.0, -1.0));
     //logitecButtonB.whileHeld(new RunBothWinches(climber, 1.0, 1.0));
 
-    logitecButtonA.whileHeld(new RunIntakeAndBallFeedAndShooterFeed(intake, ballFeed, -1.0, -1.0, -1.0));
+    //Run all feeds in reverse while held.  Stop all feeds when released
+    //Allows operator to clear jams or release balls
+    logitecButtonA.whenHeld(new RunIntakeAndBallFeedAndShooterFeed(intake, ballFeed, -.35, -.75, -1.0),false);  //Speeds as previously determined
 
-    logitecLeftBumper.toggleWhenPressed(new ParallelCommandGroup(new RunShooterPID(shooter,2400), new RetractHood(hood)));
-    logitecRightBumper.toggleWhenPressed(new ParallelCommandGroup(new RunShooterPID(shooter,4900), new ExtendHood(hood)));
-    logitecRightTrigger.whenActive(new SequentialCommandGroup(new LimelightAutoAim(limelight, drivetrain),
-        new ShootPowerCell(intake, ballFeed, drivetrain, shooter)));
-    logitecLeftTrigger.whileHeld(new SequentialCommandGroup(new ExtendIntake(intake), new RunIntakeAndBallFeed(intake, ballFeed, 1.0, 1.0)));
+    //Run shooter wheel at selected speed. Continues until cancelled by B button
+    //Changed these from toggle as with a toggle it is difficult for the operator to know what state it is in.
+    Command ReadyForNearShot = new ParallelCommandGroup(new RunShooterPID(shooter,2400), new RetractHood(hood));
+    Command ReadyForFarShot = new ParallelCommandGroup(new RunShooterPID(shooter,4900), new ExtendHood(hood));
+    logitecLeftBumper.whenActive(ReadyForNearShot.withInterrupt(logitecButtonB::get));
+    logitecRightBumper.whenActive(ReadyForFarShot.withInterrupt(logitecButtonB::get));
+
+    //Launch power cells by running the ballfeed and shooterfeed wheels.  Stop when released.
+    //Only fires if the button is held and the shooter is running and at a stable speed.
+    logitecRightTrigger.and(shooterRunning).and(shooterStable).whileActiveOnce(
+          new RunIntakeAndBallFeedAndShooterFeed(intake, ballFeed, 0, .75, 1),false);
+
+    //Auto align to target using limelight then shoot.  Stop when released.
+    //How reliable is this limelight targeting?  Are we using the correct limelight command?
+    //Moved to button Y, if we do like this better than manual we can move back to trigger. 
+    logitecButtonY.whenHeld(new SequentialCommandGroup(new LimelightAutoAim(limelight, drivetrain),
+        new ShootPowerCell(intake, ballFeed, drivetrain, shooter)),false);
+
+    //Extend intake and run intake and ball feed while held.  Stop feeds and raise intake when released.
+    //Allows operator to pick up balls
+    logitecLeftTrigger.whenHeld(new SequentialCommandGroup(new ExtendIntake(intake), new RunIntakeAndBallFeed(intake, ballFeed, .61, .75)),false);// Speeds as previously determined
     logitecLeftTrigger.whenReleased(new RetractIntake(intake));
     //Possible tthat the Extend/Retract Intake may be reversed? check this first next meeting
 
-    logitecDPadUp.whileActiveOnce(new RunClimberHook(climber, 0.7));
-    logitecDPadDown.whileActiveOnce(new RunClimberHook(climber, -0.7));
+    //Raise or lower the climber hook with up and down D-pad buttons. Move while pressed, stop when released.
+    //Allows operator to position the climber hook on the bar.
+    logitecDPadUp.whileActiveOnce(new RunClimberHook(climber, 0.5),false);   //Previously used speeds
+    logitecDPadDown.whileActiveOnce(new RunClimberHook(climber, -0.25),false);
 
+    //Shift to high or low gear
+    leftTrigger.whenActive(new ShiftLow(drivetrain));
+    rightTrigger.whenActive(new ShiftHigh(drivetrain));
 
     //DEAD BAND FOR LOGITECH JOYSTICK CONTROLLERS
     // Lets consider moving these functions to joystick buttons.

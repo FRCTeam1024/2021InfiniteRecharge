@@ -24,6 +24,7 @@ public class RunIntakeAndBallFeed extends CommandBase {
     this.intakeSpeed = intakeSpeed;
     this.ballFeedSpeed = ballFeedSpeed;
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(intake, ballFeed);
   }
 
   // Called when the command is initially scheduled.

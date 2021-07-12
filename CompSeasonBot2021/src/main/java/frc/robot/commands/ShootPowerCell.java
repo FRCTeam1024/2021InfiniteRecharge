@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 public class ShootPowerCell extends ParallelCommandGroup {
   /**
    * Creates a new ShootPowerCell.
+   * 
+   * I don't think this will work right. I have written an alternative in-line ParallelCommandGroup- DLP
    */
   
 
