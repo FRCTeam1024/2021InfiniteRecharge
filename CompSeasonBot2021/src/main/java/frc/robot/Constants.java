@@ -21,7 +21,13 @@ public final class Constants {
      * Controller initialization timeout duration
      * set to 0 to skip waiting for confirmation
      */
-    public static final int kTimeoutMs = 60;    //example was 30 made larger because was timing out, may be able to go back
+    public static final int kTimeoutMs = 500;    //example was 30 made larger because was timing out, may be able to go back
+
+    public static final class MechConstants {
+        public static final double kBFSpeed = .75;
+        public static final double kSFSpeed = 1;
+    }
+
 
     public static final class DriveConstants {
 

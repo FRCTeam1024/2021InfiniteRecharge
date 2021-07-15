@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
+import frc.robot.Constants.MechConstants;
+
 public class FailSafeAutoBackward extends CommandBase {
   /**
    * Creates a new FailSafeAuto.
@@ -22,15 +24,15 @@ public class FailSafeAutoBackward extends CommandBase {
   double shooterFeedSpeed;
   Drivetrain drivetrain;
   Boolean isFinished;
-  public FailSafeAutoBackward(Drivetrain drivetrain, Shooter shooter, BallFeed ballFeed, double shooterSpeed, double ballFeedSpeed, double shooterFeedSpeed) {
+  public FailSafeAutoBackward(Drivetrain drivetrain, Shooter shooter, BallFeed ballFeed) {
     this.shooter = shooter;
     this.ballFeed = ballFeed;
     this.drivetrain = drivetrain;
-    this.shooterSpeed = shooterSpeed;  //in RPM
-    this.ballFeedSpeed = ballFeedSpeed;
-    this.shooterFeedSpeed = shooterFeedSpeed;
+    this.shooterSpeed = 4900;  //in RPM
+
     isFinished = false;
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(shooter, ballFeed, drivetrain);
   }
 
   // Called when the command is initially scheduled.
@@ -44,8 +46,8 @@ public class FailSafeAutoBackward extends CommandBase {
     shooter.runControlledShooter(shooterSpeed);
     Timer.delay(3);
    // Timer.delay(3);
-    ballFeed.runShooterFeedMotor(shooterFeedSpeed);
-    ballFeed.runBallFeedMotor(ballFeedSpeed);
+    ballFeed.runShooterFeedMotor(MechConstants.kSFSpeed);
+    ballFeed.runBallFeedMotor(MechConstants.kBFSpeed);
     
     
     Timer.delay(0.15);
@@ -54,16 +56,16 @@ public class FailSafeAutoBackward extends CommandBase {
     ballFeed.stopShooterFeedMotor();
     Timer.delay(3);
 
-    ballFeed.runShooterFeedMotor(shooterFeedSpeed);
-    ballFeed.runBallFeedMotor(ballFeedSpeed);
+    ballFeed.runShooterFeedMotor(MechConstants.kSFSpeed);
+    ballFeed.runBallFeedMotor(MechConstants.kBFSpeed);
     Timer.delay(0.15);
 
     ballFeed.stopBallFeedMotor();
     ballFeed.stopShooterFeedMotor();
     Timer.delay(3);
 
-    ballFeed.runShooterFeedMotor(shooterFeedSpeed);
-    ballFeed.runBallFeedMotor(ballFeedSpeed);
+    ballFeed.runShooterFeedMotor(MechConstants.kSFSpeed);
+    ballFeed.runBallFeedMotor(MechConstants.kBFSpeed);
 
     Timer.delay(0.15);
     ballFeed.stopBallFeedMotor();

@@ -6,6 +6,8 @@ import frc.robot.commands.RunBothFeeders;
 import frc.robot.subsystems.BallFeed;
 import frc.robot.subsystems.Shooter;
 
+import frc.robot.Constants.MechConstants;
+
 public class SequentialShooter extends SequentialCommandGroup {
   
    // Creates a new SequentialShooter.
@@ -15,11 +17,11 @@ public class SequentialShooter extends SequentialCommandGroup {
   public SequentialShooter(Shooter shooter, BallFeed ballFeed) {
      // Add your commands in the super() call, e.g.
      super(new WaitUntilCommand(shooter::isStable),
-          new RunBothFeeders(ballFeed).withInterrupt(shooter::isNotStable),
+          new RunBothFeeders(ballFeed, MechConstants.kBFSpeed, MechConstants.kSFSpeed).withInterrupt(shooter::isNotStable),
           new WaitUntilCommand(shooter::isStable),
-          new RunBothFeeders(ballFeed).withInterrupt(shooter::isNotStable),
+          new RunBothFeeders(ballFeed, MechConstants.kBFSpeed, MechConstants.kSFSpeed).withInterrupt(shooter::isNotStable),
           new WaitUntilCommand(shooter::isStable),
-          new RunBothFeeders(ballFeed).withInterrupt(shooter::isNotStable)
+          new RunBothFeeders(ballFeed, MechConstants.kBFSpeed, MechConstants.kSFSpeed).withInterrupt(shooter::isNotStable)
           );
           //System.out.println("running SequentialShooter");
   }

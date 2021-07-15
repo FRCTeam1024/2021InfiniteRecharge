@@ -15,7 +15,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
 
+import frc.robot.Constants.MechConstants;
+
 import frc.robot.commands.auto.FailSafeAutoWithVelocity;
+import frc.robot.commands.auto.FailSafeAutoBackward;
+import frc.robot.commands.auto.AutoSequentialShooter;
+import frc.robot.commands.auto.AutoForwardMotionMagic;
 import frc.robot.commands.auto.GalacticSearch;
 import frc.robot.commands.auto.LimelightCenter;
 import frc.robot.commands.auto.LimelightShooter;
@@ -59,8 +64,11 @@ public class RobotContainer {
   private final Command m_BarrelAuto = new BarrelPathArc(drivetrain);
   private final Command m_BounceAuto = new BouncePathArc(drivetrain);
   // private final Command m_autoCommand = new LimelightCenter(drivetrain);
-  // private final Command m_autoCommand = new FailSafeAutoBackward(drivetrain, shooter, ballFeed, 1.0, 1.0, -1.0);
-  //private final Command m_autoCommand = new AutoSequentialShooter(shooter, ballFeed);
+  private final Command m_FailSafeBackward = new FailSafeAutoBackward(drivetrain, shooter, ballFeed);
+  private final Command m_SequentialShooter = new AutoSequentialShooter(shooter, ballFeed);
+  private final Command m_ShootThenBackup = new SequentialCommandGroup(
+      new AutoSequentialShooter(shooter, ballFeed).withTimeout(10),
+      new AutoForwardMotionMagic(drivetrain, -36));
   private final Command m_GalacticAuto = new GalacticSearch(drivetrain, intake, pixy, ballFeed);
 
   //Create a chooser for auto
@@ -176,19 +184,20 @@ public class RobotContainer {
     logitecRightBumper.whenActive(ReadyForFarShot.withInterrupt(logitecButtonB::get));
 
     //Launch power cells by running the ballfeed and shooterfeed wheels.  Stop when released.
-    //Only fires if the button is held and the shooter is running and at a stable speed.
-    logitecRightTrigger.and(shooterRunning).and(shooterStable).whileActiveOnce(
-          new RunIntakeAndBallFeedAndShooterFeed(intake, ballFeed, 0, .75, 1),false);
+    //Only fires if the button is held and the shooter is running.
+    logitecRightTrigger.and(shooterRunning).whileActiveOnce(
+          new RunBothFeeders(ballFeed, MechConstants.kBFSpeed, MechConstants.kSFSpeed),false);
 
     //Auto align to target using limelight then shoot.  Stop when released.
-    //How reliable is this limelight targeting?  Are we using the correct limelight command?
     //Moved to button Y, if we do like this better than manual we can move back to trigger. 
-    logitecButtonY.whenHeld(new SequentialCommandGroup(new LimelightAutoAim(limelight, drivetrain),
-        new ShootPowerCell(intake, ballFeed, drivetrain, shooter)),false);
+    logitecButtonY.and(shooterRunning).whileActiveOnce(
+        new SequentialCommandGroup(new LimelightAutoAim(limelight, drivetrain),
+        new RunBothFeeders(ballFeed, MechConstants.kBFSpeed, MechConstants.kSFSpeed)),false);
 
     //Extend intake and run intake and ball feed while held.  Stop feeds and raise intake when released.
     //Allows operator to pick up balls
-    logitecLeftTrigger.whenHeld(new SequentialCommandGroup(new ExtendIntake(intake), new RunIntakeAndBallFeed(intake, ballFeed, .61, .75)),false);// Speeds as previously determined
+    logitecLeftTrigger.whenHeld(new SequentialCommandGroup(new ExtendIntake(intake), 
+        new RunIntakeAndBallFeed(intake, ballFeed, .61, .75)),false);// Speeds as previously determined
     logitecLeftTrigger.whenReleased(new RetractIntake(intake));
     //Possible tthat the Extend/Retract Intake may be reversed? check this first next meeting
 
@@ -230,40 +239,42 @@ public class RobotContainer {
      
   private void configureDashboard(){
     
+    //Commented out a bunch of this to declutter the dashboard for competition.
+    //I don't think we need most of this anymore
+
     //Display the name and version number of the code.
     SmartDashboard.putString("Running Code Version:", BuildConfig.APP_NAME + " " + BuildConfig.APP_VERSION);
 
-    SmartDashboard.putData("Score Power Cell", new ShootPowerCell(intake, ballFeed, drivetrain, shooter));
+    //SmartDashboard.putData("Score Power Cell", new ShootPowerCell(intake, ballFeed, drivetrain, shooter));
     SmartDashboard.putNumber("Ballfeed Speed", ballFeed.getBallFedVelocity());
     //runShooterAndBallFeed.whenActive(new RunShooterFeed(ballFeed, 0.25), new RunBallFeed(ballFeed, 0.25));
 
 
-    SmartDashboard.putData("Extend hood", new ExtendHood(hood));  
-    SmartDashboard.putData("Retract hood", new RetractHood(hood));
+    //SmartDashboard.putData("Extend hood", new ExtendHood(hood));  
+    //SmartDashboard.putData("Retract hood", new RetractHood(hood));
    
-    SmartDashboard.putData(drivetrain);  
-    SmartDashboard.putData("Run Intake", new RunIntake(intake, 0.35));
+    //SmartDashboard.putData("Run Intake", new RunIntake(intake, 0.35));
 
-    SmartDashboard.putData("Run Climber One", new RunClimberLeft(climber, 0.35));
-    SmartDashboard.putData("Stop Climber", new StopClimber(climber));
+    //SmartDashboard.putData("Run Climber One", new RunClimberLeft(climber, 0.35));
+    //SmartDashboard.putData("Stop Climber", new StopClimber(climber));
 
-    SmartDashboard.putData("Run Climber Two", new RunClimberRight(climber, -0.35));
-    SmartDashboard.putData("Run Climber", new RunClimber(climber, logitecController));
+    //SmartDashboard.putData("Run Climber Two", new RunClimberRight(climber, -0.35));
+    //SmartDashboard.putData("Run Climber", new RunClimber(climber, logitecController));
 
-    SmartDashboard.putData("Extend Intake", new ExtendIntake(intake));
-    SmartDashboard.putData("Retract Intake", new RetractIntake(intake));
-    SmartDashboard.putData("Run BallFeed", new RunBallFeed(ballFeed, -0.50));
-    SmartDashboard.putData("Limelight Aim and Shoot", new LimelightShooter(limelight, drivetrain, shooter, ballFeed));
-    SmartDashboard.putData("Limelight Aim", new LimelightCenter(limelight, drivetrain));
-    SmartDashboard.putData("Run ShooterFeed", new RunShooterFeed(ballFeed, 1.0));
-    SmartDashboard.putData("Drive", new BasicDriveCommand(drivetrain));
-    SmartDashboard.putData("Sequential Shooter", new SequentialShooter(shooter, ballFeed));
-    SmartDashboard.putData("Fail Safe Auto", new FailSafeAutoWithVelocity(shooter, ballFeed, 1.0, 1.0, 1.0));
-    SmartDashboard.putData("PID Gyro Aim", new PIDGyroAim(drivetrain, 65));
+    //SmartDashboard.putData("Extend Intake", new ExtendIntake(intake));
+    //SmartDashboard.putData("Retract Intake", new RetractIntake(intake));
+    //SmartDashboard.putData("Run BallFeed", new RunBallFeed(ballFeed, -0.50));
+    //SmartDashboard.putData("Limelight Aim and Shoot", new LimelightShooter(limelight, drivetrain, shooter, ballFeed));
+    //SmartDashboard.putData("Limelight Aim", new LimelightCenter(limelight, drivetrain));
+    //SmartDashboard.putData("Run ShooterFeed", new RunShooterFeed(ballFeed, 1.0));
+
+    //SmartDashboard.putData("Sequential Shooter", new SequentialShooter(shooter, ballFeed));
+    //SmartDashboard.putData("Fail Safe Auto", new FailSafeAutoWithVelocity(shooter, ballFeed, 1.0, 1.0, 1.0));
+    //SmartDashboard.putData("PID Gyro Aim", new PIDGyroAim(drivetrain, 65));
     SmartDashboard.putData("Reset Gyro Senser", new ResetGyro(drivetrain));
     SmartDashboard.putNumber("Gyro Angle", drivetrain.getGyroHeading());
 
-    SmartDashboard.putData("Limelight PID", new LimelightAutoAim(limelight, drivetrain));
+    //SmartDashboard.putData("Limelight PID", new LimelightAutoAim(limelight, drivetrain));
 
     // Interstellar Accuracy Challenge Speed Buttons
     /* Ignore this for now
@@ -273,18 +284,23 @@ public class RobotContainer {
     SmartDashboard.putData("Shooter Zone 4", new RunShooter(shooter, 0.40)); // hood back ?, hood forward ?
     SmartDashboard.putData("Shooter Zone 5", new RunShooter(shooter, 0.40)); // hood back ?, hood forward ?
     */
-    SmartDashboard.putNumber("Servo tilt", 0);
+    //SmartDashboard.putNumber("Servo tilt", 0);
     SmartDashboard.putNumber("Shooter RPM", 3400);
-    SmartDashboard.putData("Run Shooter PID", new RunShooterPID(shooter, 3400));
+    //SmartDashboard.putData("Run Shooter PID", new RunShooterPID(shooter, 3400));
   
     //SmartDashboard.putData("Simply seek powercell", new SimpleSeekPowercell(pixy, drivetrain));
 
     //Add commands to auto chooser, set default to null to avoid surprise operation
     m_AutoChooser.setDefaultOption("None", null);
+    m_AutoChooser.addOption("OLD - AutoSequentialShooter", m_SequentialShooter);  //Don't know if this works
+    m_AutoChooser.addOption("OLD - FailSafeAutoBackwards", m_FailSafeBackward);  //Don't know if this works
+
+    /* Removing so we don't accidently select during competition.
     m_AutoChooser.addOption("Slalom", m_SlalomAuto);
     m_AutoChooser.addOption("Barrel", m_BarrelAuto);
     m_AutoChooser.addOption("Bounce", m_BounceAuto);
     m_AutoChooser.addOption("Galactic Search", m_GalacticAuto);
+    */
 
     //Put the auto chooser on the dashboard
     SmartDashboard.putData(m_AutoChooser);

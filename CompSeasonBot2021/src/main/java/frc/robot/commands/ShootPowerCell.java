@@ -14,7 +14,8 @@ public class ShootPowerCell extends ParallelCommandGroup {
   /**
    * Creates a new ShootPowerCell.
    * 
-   * I don't think this will work right. I have written an alternative in-line ParallelCommandGroup- DLP
+   * I don't think this will work right. I think we can just use runballfeedandshooterfeed instead.  Intak
+   * will already be running via a seperate command.
    */
   
 

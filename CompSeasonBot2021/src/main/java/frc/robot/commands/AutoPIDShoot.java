@@ -12,6 +12,8 @@ import frc.robot.subsystems.BallFeed;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Shooter;
 
+import frc.robot.Constants.MechConstants;
+
 public class AutoPIDShoot extends CommandBase {
   private final Hood hood;
   private final Limelight limelight;
@@ -37,7 +39,7 @@ public class AutoPIDShoot extends CommandBase {
   public void initialize() {
     new ExtendHood(this.hood);
     limelight.enableLEDs();
-    new RunBothFeeders(this.ballfeed);
+    new RunBothFeeders(this.ballfeed, MechConstants.kBFSpeed, MechConstants.kSFSpeed);
     new RunShooterPID(this.shooter, 2500);
     new WaitCommand(2.0);
     /*if(this.limelight.hasTarget()) {
