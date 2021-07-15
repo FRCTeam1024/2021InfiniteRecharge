@@ -294,6 +294,7 @@ public class RobotContainer {
     m_AutoChooser.setDefaultOption("None", null);
     m_AutoChooser.addOption("OLD - AutoSequentialShooter", m_SequentialShooter);  //Don't know if this works
     m_AutoChooser.addOption("OLD - FailSafeAutoBackwards", m_FailSafeBackward);  //Don't know if this works
+    m_AutoChooser.addOption("NEW - ShootTenBackup", m_ShootThenBackup);
 
     /* Removing so we don't accidently select during competition.
     m_AutoChooser.addOption("Slalom", m_SlalomAuto);
