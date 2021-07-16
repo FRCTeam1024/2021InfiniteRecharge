@@ -487,6 +487,7 @@ public class Drivetrain extends SubsystemBase {
     System.out.println("My Distance Target Is: " + target_Distance +"\n");
     System.out.println("My Heading Target Is: " + target_Heading+"\n");
 
+
     /* Configure for MotionMagic on Quad Encoders' Sum and Auxiliary PID on Quad Encoders' Difference */
 		m_RightLeader.set(ControlMode.MotionMagic, target_Distance, DemandType.AuxPID, target_Heading);
 		m_LeftLeader.follow(m_RightLeader, FollowerType.AuxOutput1);
@@ -494,14 +495,18 @@ public class Drivetrain extends SubsystemBase {
 
   /* Set Gear High */
   public void shiftHi() {
-    m_Shift.set(false);
-    System.out.println("The drivetrain is in Hi Gear\n");
+    if(m_Shift.get() == true){
+      m_Shift.set(false);
+      System.out.println("The drivetrain is in Hi Gear\n");
+    }
   }
 
   /* Set Gear Low */
   public void shiftLow() {
-    m_Shift.set(true);
-    System.out.println("The drivetrain is in Low Gear\n");
+    if(m_Shift.get() == false){
+      m_Shift.set(true);
+      System.out.println("The drivetrain is in Low Gear\n");
+    }
   }
 
   /**

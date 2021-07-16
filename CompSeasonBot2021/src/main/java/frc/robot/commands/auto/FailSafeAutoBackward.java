@@ -43,7 +43,7 @@ public class FailSafeAutoBackward extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooter.runControlledShooter(shooterSpeed);
+    /**shooter.runControlledShooter(shooterSpeed);
     Timer.delay(3);
    // Timer.delay(3);
     ballFeed.runShooterFeedMotor(MechConstants.kSFSpeed);
@@ -71,7 +71,7 @@ public class FailSafeAutoBackward extends CommandBase {
     ballFeed.stopBallFeedMotor();
     ballFeed.stopShooterFeedMotor();
 
-    isFinished = true;
+    isFinished = true;**/
 
     drivetrain.drive(.5, .5);
     Timer.delay(1);
