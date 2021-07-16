@@ -25,7 +25,7 @@ public final class Constants {
 
     public static final class MechConstants {
         public static final double kBFSpeed = .75;
-        public static final double kSFSpeed = 1;
+        public static final double kSFSpeed = -1;
     }
 
 

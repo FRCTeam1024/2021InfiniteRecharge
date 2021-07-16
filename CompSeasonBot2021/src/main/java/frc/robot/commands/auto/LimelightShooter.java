@@ -20,6 +20,6 @@ public class LimelightShooter extends SequentialCommandGroup {
   public LimelightShooter(Limelight limelight, Drivetrain drivetrain, Shooter shooter, BallFeed ballFeed) {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
-    super(new LimelightCenter(limelight, drivetrain), new AutoSequentialShooter(shooter, ballFeed));
+    super(new LimelightCenter(limelight, drivetrain), new AutoSequentialShooter(shooter, ballFeed, 4900));
   }
 }

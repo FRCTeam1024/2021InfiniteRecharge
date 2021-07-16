@@ -27,6 +27,7 @@ import frc.robot.commands.auto.LimelightShooter;
 import frc.robot.commands.auto.SequentialShooter;
 import frc.robot.commands.auto.SlalomPathArc;
 import frc.robot.commands.auto.BouncePathArc;
+import frc.robot.commands.auto.FINiteRechargeAutoPath;
 import frc.robot.commands.auto.BarrelPathArc;
 import frc.robot.oi.CONSTANTS_OI;
 import frc.robot.oi.Logitech;
@@ -65,10 +66,11 @@ public class RobotContainer {
   private final Command m_BounceAuto = new BouncePathArc(drivetrain);
   // private final Command m_autoCommand = new LimelightCenter(drivetrain);
   private final Command m_FailSafeBackward = new FailSafeAutoBackward(drivetrain, shooter, ballFeed);
-  private final Command m_SequentialShooter = new AutoSequentialShooter(shooter, ballFeed);
+  private final Command m_SequentialShooter = new AutoSequentialShooter(shooter, ballFeed, 4900);
   private final Command m_ShootThenBackup = new SequentialCommandGroup(
-      new AutoSequentialShooter(shooter, ballFeed).withTimeout(10),
+      new AutoSequentialShooter(shooter, ballFeed, 4900).withTimeout(10),
       new AutoForwardMotionMagic(drivetrain, -36));
+  private final Command m_FINiteRechargeCommand = new FINiteRechargeAutoPath(limelight, drivetrain, shooter, ballFeed, hood);
   private final Command m_GalacticAuto = new GalacticSearch(drivetrain, intake, pixy, ballFeed);
 
   //Create a chooser for auto
@@ -174,7 +176,8 @@ public class RobotContainer {
 
     //Run all feeds in reverse while held.  Stop all feeds when released
     //Allows operator to clear jams or release balls
-    logitecButtonA.whenHeld(new RunIntakeAndBallFeedAndShooterFeed(intake, ballFeed, -.35, -.75, -1.0),false);  //Speeds as previously determined
+    logitecButtonA.whenHeld(new RunIntakeAndBallFeedAndShooterFeed(intake, ballFeed, -.35,
+        -MechConstants.kBFSpeed, -MechConstants.kSFSpeed),false);  //Speeds as previously determined
 
     //Run shooter wheel at selected speed. Continues until cancelled by B button
     //Changed these from toggle as with a toggle it is difficult for the operator to know what state it is in.
@@ -295,6 +298,8 @@ public class RobotContainer {
     m_AutoChooser.addOption("OLD - AutoSequentialShooter", m_SequentialShooter);  //Don't know if this works
     m_AutoChooser.addOption("OLD - FailSafeAutoBackwards", m_FailSafeBackward);  //Don't know if this works
     m_AutoChooser.addOption("NEW - ShootTenBackup", m_ShootThenBackup);
+    m_AutoChooser.addOption("FINiteRecharge", m_FINiteRechargeCommand);
+    
 
     /* Removing so we don't accidently select during competition.
     m_AutoChooser.addOption("Slalom", m_SlalomAuto);

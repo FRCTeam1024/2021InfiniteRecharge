@@ -19,9 +19,9 @@ public class AutoSequentialShooter extends ParallelRaceGroup {
   /**
    * Creates a new AutoSequentialShooter.
    */
-  public AutoSequentialShooter(Shooter shooter, BallFeed ballFeed) {
+  public AutoSequentialShooter(Shooter shooter, BallFeed ballFeed, double RPM) {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());super();
-    super(new RunShooterPID(shooter, 4900), new SequentialShooter(shooter, ballFeed));
+    super(new RunShooterPID(shooter, RPM), new SequentialShooter(shooter, ballFeed));
   }
 }

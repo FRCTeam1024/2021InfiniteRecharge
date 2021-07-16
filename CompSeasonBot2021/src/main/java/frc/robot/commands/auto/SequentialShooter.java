@@ -1,6 +1,8 @@
 package frc.robot.commands.auto;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.commands.RunBothFeeders;
 import frc.robot.subsystems.BallFeed;
@@ -16,12 +18,9 @@ public class SequentialShooter extends SequentialCommandGroup {
    
   public SequentialShooter(Shooter shooter, BallFeed ballFeed) {
      // Add your commands in the super() call, e.g.
-     super(new WaitUntilCommand(shooter::isStable),
-          new RunBothFeeders(ballFeed, MechConstants.kBFSpeed, MechConstants.kSFSpeed).withInterrupt(shooter::isNotStable),
-          new WaitUntilCommand(shooter::isStable),
-          new RunBothFeeders(ballFeed, MechConstants.kBFSpeed, MechConstants.kSFSpeed).withInterrupt(shooter::isNotStable),
-          new WaitUntilCommand(shooter::isStable),
-          new RunBothFeeders(ballFeed, MechConstants.kBFSpeed, MechConstants.kSFSpeed).withInterrupt(shooter::isNotStable)
+     super(/*new WaitUntilCommand(shooter::isStable)*/
+          new WaitCommand(3),
+          new RunBothFeeders(ballFeed, MechConstants.kBFSpeed, MechConstants.kSFSpeed)
           );
           //System.out.println("running SequentialShooter");
   }

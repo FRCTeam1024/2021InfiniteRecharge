@@ -121,7 +121,7 @@ public class Shooter extends SubsystemBase {
 
   // Created for compatibilty with existing code, may want to do this differently
   public boolean isStable(){
-    return(withinLoops > kStableLoops);
+    return(withinLoops > kStableLoops && getShooterSpeed() > 3000);
   }
 
   // Created for compatibility with existing code, may want to do this differently

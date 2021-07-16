@@ -44,10 +44,10 @@ public class Intake extends SubsystemBase {
     intakeMotor.set(0.0);
   }
   public void extendIntake(){
-    intakeSolenoid.set(false);
+    intakeSolenoid.set(true);
   }
   public void retractIntake(){
-     intakeSolenoid.set(true);
+     intakeSolenoid.set(false);
   }
 
   @Override
