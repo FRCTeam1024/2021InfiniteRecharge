@@ -69,7 +69,7 @@ public class Shooter extends SubsystemBase {
      * Setting Gains here, for tuning, override these using Spark MAX GUI, then hard code here
      * once we settle on values.  Consider moving these to Constants.java eventually
      */
-    kP = .0012;       // .0012 test value is working well, may need to get higher to reduce droop
+    kP = .0010;       // .0012 test value is working well, may need to get higher to reduce droop
     kI = 0;
     kD = 0.07;        // 0.07 test value is working well 
     kIz = 0; 
@@ -121,7 +121,8 @@ public class Shooter extends SubsystemBase {
 
   // Created for compatibilty with existing code, may want to do this differently
   public boolean isStable(){
-    return(withinLoops > kStableLoops && getShooterSpeed() > 3000);
+    return(withinLoops > kStableLoops && getShooterSpeed() - lastTarget < +kErrThreshold &&
+                  getShooterSpeed() - lastTarget > -kErrThreshold);
   }
 
   // Created for compatibility with existing code, may want to do this differently
@@ -162,6 +163,7 @@ public class Shooter extends SubsystemBase {
     //Put some debug info to the dashboard
     SmartDashboard.putNumber("Shooter Velocity", getShooterSpeed());
     SmartDashboard.putBoolean("Shooter Stable", isStable());
+    SmartDashboard.putNumber("Error", getShooterSpeed() - lastTarget);
     // For tuning purposes (delete when tuning is finished.)
     if(SmartDashboard.getNumber("Shoot P", kP) != tuneP && tuneP > 0.0 && tuneP <= 0.1) {
       tuneP = SmartDashboard.getNumber("Shoot P", kP);

@@ -182,7 +182,7 @@ public class RobotContainer {
     //Run shooter wheel at selected speed. Continues until cancelled by B button
     //Changed these from toggle as with a toggle it is difficult for the operator to know what state it is in.
     Command ReadyForNearShot = new ParallelCommandGroup(new RunShooterPID(shooter,2400), new RetractHood(hood));
-    Command ReadyForFarShot = new ParallelCommandGroup(new RunShooterPID(shooter,4900), new ExtendHood(hood));
+    Command ReadyForFarShot = new ParallelCommandGroup(new RunShooterPID(shooter,4000), new ExtendHood(hood));
     logitecLeftBumper.whenActive(ReadyForNearShot.withInterrupt(logitecButtonB::get));
     logitecRightBumper.whenActive(ReadyForFarShot.withInterrupt(logitecButtonB::get));
 
