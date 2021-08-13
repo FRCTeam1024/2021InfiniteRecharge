@@ -22,6 +22,7 @@ public final class Constants {
      * set to 0 to skip waiting for confirmation
      */
     public static final int kTimeoutMs = 500;    //example was 30 made larger because was timing out, may be able to go back
+    public static final boolean isCompBot = Robot.isCompBot(); // isCompBot ? 8 : 4
 
     public static final class MechConstants {
         public static final double kBFSpeed = .75;

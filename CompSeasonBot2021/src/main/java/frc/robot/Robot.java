@@ -8,6 +8,7 @@
 package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -25,8 +26,9 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
  */
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
-
   private RobotContainer m_robotContainer;
+  private final DigitalInput compBotJumper = new DigitalInput(9);
+  private static boolean compBotState;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -37,7 +39,14 @@ public class Robot extends TimedRobot {
 
     //Display and log the name and version of the code that is running
     System.out.println("Running "+BuildConfig.APP_NAME+" "+BuildConfig.APP_VERSION);
-    
+
+    // Check whether the current robot is the competition robot or the practice robot:
+    if(compBotJumper.get() == false) {
+      compBotState = false;
+    } else {
+      compBotState = true;
+    }
+
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
@@ -107,6 +116,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+    SmartDashboard.putBoolean("Is Comp Bot", isCompBot());
   }
 
   @Override
@@ -120,5 +130,10 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
+  }
+
+  // Returns true if the current robot is the competition robot. Otherwise, false for practice bot.
+  public static boolean isCompBot() {
+    return compBotState;
   }
 }
