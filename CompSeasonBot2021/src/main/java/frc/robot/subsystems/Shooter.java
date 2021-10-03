@@ -161,18 +161,18 @@ public class Shooter extends SubsystemBase {
     }
 
     //Put some debug info to the dashboard
-    SmartDashboard.putNumber("Shooter Velocity", getShooterSpeed());
-    SmartDashboard.putBoolean("Shooter Stable", isStable());
-    SmartDashboard.putNumber("Error", getShooterSpeed() - lastTarget);
+    //SmartDashboard.putNumber("Shooter Velocity", getShooterSpeed());
+    //SmartDashboard.putBoolean("Shooter Stable", isStable());
+    //SmartDashboard.putNumber("Error", getShooterSpeed() - lastTarget);
     // For tuning purposes (delete when tuning is finished.)
-    if(SmartDashboard.getNumber("Shoot P", kP) != tuneP && tuneP > 0.0 && tuneP <= 0.1) {
-      tuneP = SmartDashboard.getNumber("Shoot P", kP);
-      leadMotor.getPIDController().setP(tuneP);
-    }
-    if(SmartDashboard.getNumber("Shoot D", kD) != tuneD && tuneD >= 0.0 && tuneD < 1.0) {
-      tuneD = SmartDashboard.getNumber("Shoot D", kD);
-      leadMotor.getPIDController().setD(tuneD);
-    }
+    //if(SmartDashboard.getNumber("Shoot P", kP) != tuneP && tuneP > 0.0 && tuneP <= 0.1) {
+    //  tuneP = SmartDashboard.getNumber("Shoot P", kP);
+    //  leadMotor.getPIDController().setP(tuneP);
+    //}
+    //if(SmartDashboard.getNumber("Shoot D", kD) != tuneD && tuneD >= 0.0 && tuneD < 1.0) {
+    // tuneD = SmartDashboard.getNumber("Shoot D", kD);
+    //  leadMotor.getPIDController().setD(tuneD);
+    //}
     //SmartDashboard.putNumber("Shooter Power One", getOutput());
     //SmartDashboard.putNumber("Shooter Power Two", getOutputTwo());
   }

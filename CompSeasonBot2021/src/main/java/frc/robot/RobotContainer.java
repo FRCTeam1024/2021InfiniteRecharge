@@ -174,33 +174,34 @@ public class RobotContainer {
 
     //Run all feeds in reverse while held.  Stop all feeds when released
     //Allows operator to clear jams or release balls
-    logitecButtonA.whenHeld(new RunIntakeAndBallFeedAndShooterFeed(intake, ballFeed, -.35,
+    logitecButtonX.whenHeld(new RunIntakeAndBallFeedAndShooterFeed(intake, ballFeed, -.35,
         -MechConstants.kBFSpeed, -MechConstants.kSFSpeed),false);  //Speeds as previously determined
 
     //Run shooter wheel at selected speed. Continues until cancelled by B button
     //Changed these from toggle as with a toggle it is difficult for the operator to know what state it is in.
     Command ReadyForNearShot = new ParallelCommandGroup(new RunShooterPID(shooter,2400), new RetractHood(hood));
     Command ReadyForFarShot = new ParallelCommandGroup(new RunShooterPID(shooter,4000), new ExtendHood(hood));
-    logitecLeftBumper.whenActive(ReadyForNearShot.withInterrupt(logitecButtonB::get));
-    logitecRightBumper.whenActive(ReadyForFarShot.withInterrupt(logitecButtonB::get));
+    logitecRightBumper.whenActive(ReadyForNearShot.withInterrupt(logitecButtonB::get));
+    logitecRightTrigger.whenActive(ReadyForFarShot.withInterrupt(logitecButtonB::get));
 
     //Launch power cells by running the ballfeed and shooterfeed wheels.  Stop when released.
-    //Only fires if the button is held and the shooter is running.
-    logitecRightTrigger.and(shooterRunning).whileActiveOnce(
+    //Only fires if the button is held and the shooter is running and stable.
+    logitecButtonA.and(shooterRunning).and(shooterStable).whileActiveOnce(
           new RunBothFeeders(ballFeed, MechConstants.kBFSpeed, MechConstants.kSFSpeed),false);
 
     //Auto align to target using limelight then shoot.  Stop when released.
     //Moved to button Y, if we do like this better than manual we can move back to trigger. 
-    logitecButtonY.and(shooterRunning).whileActiveOnce(
+    logitecButtonY.and(shooterRunning).and(shooterStable).whileActiveOnce(
         new SequentialCommandGroup(new LimelightAutoAim(limelight, drivetrain),
         new RunBothFeeders(ballFeed, MechConstants.kBFSpeed, MechConstants.kSFSpeed)),false);
 
-    //Extend intake and run intake and ball feed while held.  Stop feeds and raise intake when released.
-    //Allows operator to pick up balls
-    logitecLeftTrigger.whenHeld(new SequentialCommandGroup(new ExtendIntake(intake), 
-        new RunIntakeAndBallFeed(intake, ballFeed, .61, .75)),false);// Speeds as previously determined
+    //Extend intake while held.  Raise intake when released.
+    //Operator needs to also run the intake in order to pick up balls.
+    logitecLeftTrigger.whenPressed(new ExtendIntake(intake));
     logitecLeftTrigger.whenReleased(new RetractIntake(intake));
-    //Possible tthat the Extend/Retract Intake may be reversed? check this first next meeting
+
+    //Run intake rollers and ball feed to pickup balls regardles of intake position
+    logitecLeftBumper.whileHeld(new RunIntakeAndBallFeed(intake, ballFeed, .61, .75));// Speeds as previously determined
 
     //Raise or lower the climber hook with up and down D-pad buttons. Move while pressed, stop when released.
     //Allows operator to position the climber hook on the bar.
@@ -295,7 +296,7 @@ public class RobotContainer {
     m_AutoChooser.setDefaultOption("None", null);
     m_AutoChooser.addOption("OLD - AutoSequentialShooter", m_SequentialShooter);  //Don't know if this works
     m_AutoChooser.addOption("OLD - FailSafeAutoBackwards", m_FailSafeBackward);  //Don't know if this works
-    m_AutoChooser.addOption("NEW - ShootTenBackup", m_ShootThenBackup);
+    m_AutoChooser.addOption("NEW - ShootThenBackup", m_ShootThenBackup);
     m_AutoChooser.addOption("FINiteRecharge", m_FINiteRechargeCommand);
     
 
