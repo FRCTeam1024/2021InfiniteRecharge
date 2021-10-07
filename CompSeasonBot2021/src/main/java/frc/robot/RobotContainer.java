@@ -201,7 +201,7 @@ public class RobotContainer {
     logitecLeftTrigger.whenReleased(new RetractIntake(intake));
 
     //Run intake rollers and ball feed to pickup balls regardles of intake position
-    logitecLeftBumper.whileHeld(new RunIntakeAndBallFeed(intake, ballFeed, .61, .75));// Speeds as previously determined
+    logitecLeftBumper.whenHeld(new RunIntakeAndBallFeed(intake, ballFeed, .61, .75), true);// Speeds as previously determined
 
     //Raise or lower the climber hook with up and down D-pad buttons. Move while pressed, stop when released.
     //Allows operator to position the climber hook on the bar.
